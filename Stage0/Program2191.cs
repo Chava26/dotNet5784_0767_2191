@@ -6,11 +6,11 @@ namespace Targil0 {
      static void Main(string[] args)
         {
             Welcom2191();
-            WelcomYYYY();
+            Welcom0767();
 
             Console.ReadKey();
         }
-         static partial void WelcomYYYY();
+         static partial void Welcom0767();
 
         private static void Welcom2191()
         {
