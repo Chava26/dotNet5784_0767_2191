@@ -1,7 +1,6 @@
-﻿namespace DalFacade
-{
-    public class Class1
-    {
+﻿namespace DalFacade;
 
-    }
+public class Class1
+{
+
 }
