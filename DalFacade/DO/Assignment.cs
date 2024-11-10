@@ -3,14 +3,18 @@
 using System.Threading.Channels;
 
 namespace DO;
+    public record class Assignment 
+    {
+  
+        public int Id { get; init; }
+        public int CallId { get; init; }
+        public int VolunteerId { get; init; }
+        public DateTime StartDepartment { get; init; }
+        public DateTime? FinishDepartment { get; init; }
+      public Assignment() {
+        Id = DalList.Config.NextAssignmentId;
+        StartDepartment = DalList.Config.Clock;
 
+      }
+    }
 
-public record class Assignment 
-{
-    public int Id { get; set; }
-    public int CallId { get; set; }
-    public int VolunteerId { get; set; }
-    public DateTime StartDepartment { get; set; }
-    public DateTime? FinishDepartment { get; set; }
-  public Assignment() : this() { }
-}

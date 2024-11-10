@@ -3,7 +3,7 @@
 /// <summary>
 /// Summary description for Class1
 /// </summary>
-partial public class Program
+public partial  class Program
 {
 	static partial void welcom0767()
 	{
