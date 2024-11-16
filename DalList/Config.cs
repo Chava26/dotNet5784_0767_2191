@@ -24,4 +24,6 @@ namespace DalList
      
        
     }
-}
+
+    public Config() : this(0) { }
+    }

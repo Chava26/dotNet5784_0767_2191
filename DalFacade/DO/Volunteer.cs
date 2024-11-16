@@ -2,8 +2,6 @@
 
 namespace DO;
 
-
-
     public record Volunteer
     {
         public int Id { get; init; }
@@ -16,7 +14,7 @@ namespace DO;
         public double? Latitude { get; init; }
         public double? MaximumDistance { get; init; }
 
-        public Volunteer() { }
+        public Volunteer() : this(0) { }
 
-   
-    }
+
+}
