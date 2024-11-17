@@ -14,35 +14,60 @@ public class VolunteerImplementation : IVolunteer
     /// <exception cref="InvalidOperationException"></exception>
     public void Create(ref Volunteer item)
     {
-        Read(item.id)
-        //DataSource.Volunteers.Any(volunteer => volunteer.Id == item.Id)
-        //    throw new InvalidOperationException("A volunteer with the same ID already exists.");
+        if(Read(item.Id)!=null)
+            throw new InvalidOperationException("A volunteer with the same ID already exists.");
 
-        //DataSource.Volunteers.Add(item);
+
+        DataSource.Volunteers.Add(item);
     }
-
+    /// <summary>
+    /// The function deletes the Volunteer whose ID is equal to the received ID
+    /// </summary>
+    /// <param name="id"></param>
+    /// <exception cref="NotImplementedException"></exception>
     public void Delete(int id)
     {
-        throw new NotImplementedException();
-    }
+        Volunteer matchingObject = Read(id)?? throw new NotImplementedException("Object of type Volunteer with such ID does not exist."); ;
+           
+        DataSource.Volunteers.Remove(matchingObject);
 
+    }
+    /// <summary>
+    /// The faction deletes the entire list of volunteers
+    /// </summary>
     public void DeleteAll()
     {
-        throw new NotImplementedException();
+        DataSource.Volunteers.Clear();
     }
-
+    /// <summary>
+    ///    The function searches the list for a volunteer with the same ID if it finds it returns the volunteer and if not returns NULL
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public Volunteer? Read(int id)
     {
-        throw new NotImplementedException();
+          return DataSource.Volunteers.FirstOrDefault(volunteer => volunteer.Id == id);
     }
+    /// <summary>
+    /// The function returns to the entire list of volunteers
+    /// </summary>
+    /// <returns></returns>
 
     public List<Volunteer> ReadAll()
     {
-        throw new NotImplementedException();
-    }
 
+        return new List<Volunteer>(DataSource.Volunteers);
+
+    }
+    /// <summary>
+    /// The function updates the volunteer's details by deleting him from the list of volunteers and adding him back with the updated details
+    /// </summary>
+    /// <param name="item"></param>
+    /// <exception cref="InvalidOperationException"></exception>
     public void Update(Volunteer item)
     {
-        throw new NotImplementedException();
+        Volunteer matchingObject = Read(item.Id) ?? throw new InvalidOperationException("An object of type Volunteer with such ID does not exist.");
+        Delete(matchingObject.Id);
+        Create(ref item);
     }
 }

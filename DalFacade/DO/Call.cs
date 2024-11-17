@@ -11,8 +11,9 @@ namespace DO;
         public double Longitude { get; init; }
         public DateTime OpeningTime { get; init; }
         public DateTime? MaximumTimeToFinish { get; init; }
-        public Call() {
-         Id = DalList.Config.NextCallId;
+    public Call()
+    {
+        // Id = DalList.Config.NextCallId;
          OpeningTime = DalList.Config.Clock;
 
         }

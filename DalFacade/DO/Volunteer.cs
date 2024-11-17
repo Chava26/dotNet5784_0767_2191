@@ -14,7 +14,7 @@ namespace DO;
         public double? Latitude { get; init; }
         public double? MaximumDistance { get; init; }
 
-        public Volunteer() : this(0) { }
+        //public Volunteer() : this(0, "", "", "") { } // empty ctor for stage 3 
 
 
 }
