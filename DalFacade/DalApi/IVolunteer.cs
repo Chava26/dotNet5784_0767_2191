@@ -4,7 +4,7 @@ using DO;
 public interface IVolunteer
 {
 
-    public void Create(ref Volunteer item); //Creates new entity object in DAL
+    public void Create(Volunteer item); //Creates new entity object in DAL
     Volunteer? Read(int id); //Reads entity object by its ID 
     List<Volunteer> ReadAll(); // Reads all entity objects
     void Update(Volunteer item); //Updates entity object

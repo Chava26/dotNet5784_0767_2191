@@ -12,13 +12,10 @@ public class CallImplementation : ICall
     /// </summary>
     /// <param name="call"></param>
     /// <exception cref="InvalidOperationException"></exception>
-    public int Create(Call call)
+    public void Create(Call call)
     {
-        Call newCall = call;
-        int newId= DalList.Config.NextCallId;
+        Call newCall = call with { Id = DalList.Config.NextCallId };
         DataSource.Calls.Add(newCall);
-        return newId;
-
     }
 
 

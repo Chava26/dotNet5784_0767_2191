@@ -12,7 +12,7 @@ public class VolunteerImplementation : IVolunteer
     /// </summary>
     /// <param name="item"></param>
     /// <exception cref="InvalidOperationException"></exception>
-    public void Create(ref Volunteer item)
+    public void Create(Volunteer item)
     {
         if(Read(item.Id)!=null)
             throw new InvalidOperationException("A volunteer with the same ID already exists.");
@@ -68,6 +68,6 @@ public class VolunteerImplementation : IVolunteer
     {
         Volunteer matchingObject = Read(item.Id) ?? throw new InvalidOperationException("An object of type Volunteer with such ID does not exist.");
         Delete(matchingObject.Id);
-        Create(ref item);
+        Create(item);
     }
 }

@@ -3,8 +3,12 @@ namespace DO;
 
     public record class Enums
     {
-        public enum JobType { volunteer, manager };
+
+        public enum Role { volunteer, manager };
         public enum DistanceType { airDistance, walkingDistance, drivingDistance };
-        public enum callType { };
+        public enum CallType { necessary , noNecessary};
         public enum EndOfTreatment { treated, selfCancel, administratorCancel,expired };
     }
+
+
+
