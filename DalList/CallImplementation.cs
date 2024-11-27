@@ -27,7 +27,7 @@ public class CallImplementation : ICall
     /// <exception cref="NotImplementedException"></exception>
     public void Delete(int id)
     {
-        Call matchingObject = Read(id) ?? throw new NotImplementedException("Object of type Volunteer with such ID does not exist.");
+        Call matchingObject = Read(id) ?? throw new NotImplementedException("Object of type Call with such ID does not exist.");
         DataSource.Calls.Remove(matchingObject);
 
     }

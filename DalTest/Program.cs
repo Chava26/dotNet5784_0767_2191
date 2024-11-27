@@ -2,6 +2,7 @@
 using DalApi;
 using DO;
 using Microsoft.VisualBasic;
+using System.ComponentModel.Design;
 using static DO.Enums;
 
 
@@ -59,7 +60,7 @@ namespace DalTest
             Console.Write("Enter your password");
             string password = Console.ReadLine()!;
             Console.Write("Enter  (1 for Manager, 2 for Volunteer, etc.): ");
-            Role role = (Role)int.Parse(Console.ReadLine()!);
+            if (!Enum.TryParse(Console.ReadLine(), out Role role)) throw new FormatException("role is invalid!");
             Console.Write("Is Active? (true/false): ");
             bool Active = bool.Parse(Console.ReadLine()!);
             Console.Write("Enter your address");
@@ -71,14 +72,14 @@ namespace DalTest
             Console.Write("Enter your Longitude");
             double Longitude = double.Parse(Console.ReadLine()!);
             Console.Write("Enter Distance Type  (1 for Aerial Distance, 2 for walking Distance,3 for driving Distance, etc.): ");
-            DistanceType distanceType = (DistanceType)int.Parse(Console.ReadLine()!);
+            if (!Enum.TryParse(Console.ReadLine(), out DistanceType distanceType)) throw new FormatException("distanceType is invalid!");
             return new Volunteer(id, name, email, phone, role, Active, MaximumDistance, password, address, Longitude, Latitude, distanceType);
         }
-        private static Call CreateCall(int id)
+        private static Call CreateCall()
         {
 
             Console.Write("Enter Call Type (1 for Type1, 2 for Type2, etc.): ");
-            Enums.CallType _callType = (Enums.CallType)int.Parse(Console.ReadLine()!);
+            if (!Enum.TryParse(Console.ReadLine(), out Enums.CallType _callType)) throw new FormatException("callType is invalid!");
             Console.Write("Enter Description of the problem");
             string description = Console.ReadLine()!;
             Console.Write("Enter your address");
@@ -88,9 +89,9 @@ namespace DalTest
             Console.Write("Enter your Longitude");
             double Longitude = double.Parse(Console.ReadLine()!);
             Console.Write("Enter Opening Time (YYYY-MM-DD HH:MM): ");
-            DateTime TimeOfOpen = DateTime.Parse(Console.ReadLine()!);
+            if (!DateTime.TryParse(Console.ReadLine(), out DateTime TimeOfOpen)) throw new FormatException("TimeOfOpen is invalid!");
             Console.Write("Enter Max Time Finish Calling (YYYY-MM-DD HH:MM): ");
-            DateTime MaxTimeToFinish = DateTime.Parse(Console.ReadLine()!);
+            if (!DateTime.TryParse(Console.ReadLine(), out DateTime MaxTimeToFinish)) throw new FormatException("MaxTimeToFinish is invalid!");
             return new Call(_callType, address, Longitude, Latitude, TimeOfOpen, MaxTimeToFinish, description);
 
         }
@@ -98,13 +99,13 @@ namespace DalTest
         private static Assignment CreateAssignment(int id)
         {
             Console.Write("Enter Call ID: ");
-            int CallId = int.Parse(Console.ReadLine()!);
+            if (!int.TryParse(Console.ReadLine(), out int CallId)) throw new FormatException("your Id is invalid!");
             Console.Write("Enter Volunteer ID: ");
             int volunteerId = int.Parse(Console.ReadLine()!);
             Console.Write("Enter Type Of End Time : 1 for treated, 2 for Self Cancellation,3 for CancelingAnAdministrator,4 for CancellationHasExpired ");
-            EndOfTreatment typeOfEndTime = (EndOfTreatment)int.Parse(Console.ReadLine()!);
+            if (!Enum.TryParse(Console.ReadLine(), out EndOfTreatment typeOfEndTime)) throw new FormatException("type Of End Time is invalid!");
             Console.Write("Enter Ending Time of Treatment ( YYYY-MM-DD HH:MM): ");
-            DateTime EndTime = DateTime.Parse(Console.ReadLine()!);
+            if (!DateTime.TryParse(Console.ReadLine(), out DateTime EndTime)) throw new FormatException("EndTime is invalid!");
             return new Assignment(id, CallId, volunteerId, typeOfEndTime, EndTime);
         }
 
@@ -112,7 +113,8 @@ namespace DalTest
         {
             Console.WriteLine("Enter your details");
             Console.Write("Enter ID: ");
-            int yourId = int.Parse(Console.ReadLine()!);
+            if (!int.TryParse(Console.ReadLine(), out int yourId)) throw new FormatException("your Id is invalid!");
+
             switch (choice)
             {
                 case "VolunteerSubmenu":
@@ -120,7 +122,7 @@ namespace DalTest
                     s_dalVolunteer!.Create(Vol);
                     break;
                 case "CallSubmenu":
-                    Call Call = CreateCall(yourId);
+                    Call Call = CreateCall();
                     s_dalCall!.Create(Call);
                     break;
                 case "AssignmentSubmenu":
@@ -134,7 +136,8 @@ namespace DalTest
         {
             Console.WriteLine("Enter your details");
             Console.Write("Enter ID: ");
-            int yourId = int.Parse(Console.ReadLine()!);
+            if (!int.TryParse(Console.ReadLine(), out int yourId)) throw new FormatException("your Id is invalid!");
+
             switch (choice)
             {
                 case "VolunteerSubmenu":
@@ -142,7 +145,7 @@ namespace DalTest
                     s_dalVolunteer!.Update(Vol);
                     break;
                 case "CallSubmenu":
-                    Call Call = CreateCall(yourId);
+                    Call Call = CreateCall();
                     s_dalCall!.Update(Call);
                     break;
                 case "AssignmentSubmenu":
@@ -154,7 +157,7 @@ namespace DalTest
         private static void Read(string choice)
         {
             Console.WriteLine("Enter ID: ");
-            int yourId = int.Parse(Console.ReadLine()!);
+            if (!int.TryParse(Console.ReadLine(), out int yourId)) throw new FormatException("your Id is invalid!");
             switch (choice)
             {
                 case "VolunteerSubmenu":
@@ -190,7 +193,7 @@ namespace DalTest
         private static void Delete(string choice)
         {
             Console.WriteLine("Enter ID: ");
-            int yourId = int.Parse(Console.ReadLine()!);
+            if (!int.TryParse(Console.ReadLine(), out int yourId)) throw new FormatException("your Id is invalid!");
             switch (choice)
             {
                 case "VolunteerSubmenu":
@@ -222,12 +225,19 @@ namespace DalTest
         }
         private static void EntityMenu(string choice)
         {
-            Console.WriteLine("Enter a number");
+            Console.WriteLine("Menu for entity");
             foreach (SubMenu option in Enum.GetValues(typeof(SubMenu)))
             {
                 Console.WriteLine($"{(int)option}. {option}");
             }
-            if (!Enum.TryParse(Console.ReadLine(), out SubMenu subChoice)) throw new FormatException("Invalid choice");
+            Console.WriteLine("Enter a number");
+            bool isValid = Enum.TryParse(Console.ReadLine(), out SubMenu subChoice);
+            while (!isValid)
+            {
+                Console.WriteLine("Your choise number is not valid, please enter again");
+                isValid = Enum.TryParse(Console.ReadLine(), out subChoice);
+            }
+            //if (!Enum.TryParse(Console.ReadLine(), out SubMenu subChoice)) throw new FormatException("Invalid choice");
             while (subChoice != 0)
             {
                 switch (subChoice)
@@ -259,11 +269,11 @@ namespace DalTest
                         break;
                 }
                 Console.WriteLine("Enter a number");
-                bool isValid=Enum.TryParse(Console.ReadLine(), out subChoice);
-                while(!isValid)
+                bool _isValid = Enum.TryParse(Console.ReadLine(), out subChoice);
+                while (!_isValid)
                 {
                     Console.WriteLine("Your choise number is not valid, please enter again");
-                    isValid = Enum.TryParse(Console.ReadLine(), out subChoice);
+                    _isValid = Enum.TryParse(Console.ReadLine(), out subChoice);
 
                 }
             }
@@ -276,8 +286,12 @@ namespace DalTest
                 Console.WriteLine($"{(int)option}. {option}");
             }
             Console.Write("Select an option: ");
-            if (!Enum.TryParse(Console.ReadLine(), out ConfigSubmenu userInput)) throw new FormatException("Invalid choice");
-                while (userInput is not ConfigSubmenu.Exit)
+            bool isVaild = Enum.TryParse(Console.ReadLine(), out ConfigSubmenu userInput);
+            while (!isVaild){
+                Console.WriteLine("Your choise  is not valid, please enter again");
+                isVaild = Enum.TryParse(Console.ReadLine(), out userInput);
+            }
+            while (userInput is not ConfigSubmenu.Exit)
                 {
                     switch (userInput)
                     {
@@ -304,12 +318,15 @@ namespace DalTest
                             Console.WriteLine($"RiskRange : {s_dalConfig!.RiskRange}");
                             break;
                         case ConfigSubmenu.DisplayConfigVar:
-                            Console.Write("הזן ערך חדש עבור RiskRange (בפורמט שעות:דקות:שניות): ");
+                            Console.Write("write new format for RiskRange (with seconds minutes  and hours): ");
                             string riskRangeInput = Console.ReadLine()!;
-                            if (!TimeSpan.TryParse(riskRangeInput, out TimeSpan newRiskRange)) throw new FormatException("Invalid choice");
+                            if (TimeSpan.TryParse(riskRangeInput, out TimeSpan newRiskRange)) 
                             {
                                 s_dalConfig!.RiskRange = newRiskRange;
                                 Console.WriteLine($"RiskRange update to: {s_dalConfig.RiskRange}");
+                            }
+                           else{
+                            Console.WriteLine($"your format not good");
                             }
                             break;
 
@@ -319,16 +336,16 @@ namespace DalTest
 
 
                     }
-                bool isValid = Enum.TryParse(Console.ReadLine(), out userInput);
-                while (!isValid)
-                {
-                    Console.WriteLine("Your choise number is not valid, please enter again");
-                    isValid = Enum.TryParse(Console.ReadLine(), out userInput);
 
-                }
-                
-            }
-            
+                    bool isValid = Enum.TryParse(Console.ReadLine(), out userInput);
+                    while (!isValid)
+                    {
+                        Console.WriteLine("Your choise number is not valid, please enter again");
+                        isValid = Enum.TryParse(Console.ReadLine(), out userInput);
+
+                    }
+               
+            } 
         }
         private static void Main(string[] args)
         {
@@ -340,7 +357,12 @@ namespace DalTest
                     Console.WriteLine($"{(int)option}. {option}");
                 }
                 Console.Write("Select an option: ");
-                if (!Enum.TryParse(Console.ReadLine(), out MainMenu userInput)) throw new FormatException("Invalid choice");
+                bool isVaild = Enum.TryParse(Console.ReadLine(), out MainMenu userInput);
+                while (!isVaild)
+                {
+                    Console.WriteLine("Your choise  is not valid, please enter again");
+                    isVaild = Enum.TryParse(Console.ReadLine(), out  userInput);
+                }
                 while (userInput is not MainMenu.ExitMainMenu)
                 {
                     switch (userInput)
@@ -381,7 +403,13 @@ namespace DalTest
                         Console.WriteLine($"{(int)option}. {option}");
                     }
                     Console.Write("Select an option: ");
-                    if (!Enum.TryParse(Console.ReadLine(), out userInput)) throw new FormatException("Invalid choice");
+                    bool isValid = Enum.TryParse(Console.ReadLine(), out userInput);
+                    while (!isValid)
+                    {
+                        Console.WriteLine("Your choise number is not valid, please enter again");
+                        isValid = Enum.TryParse(Console.ReadLine(), out userInput);
+
+                    }
                 }
             }
             catch (Exception ex)
