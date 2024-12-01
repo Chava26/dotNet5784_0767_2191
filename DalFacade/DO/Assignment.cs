@@ -14,16 +14,20 @@ namespace DO;
 
 public record Assignment
 (
-    int Id,
+    
     int CallId,
     int VolunteerId,
-    EndOfTreatment TypeOfEndTime,
-     DateTime EntryTime,
-    DateTime? EndTime = null
+    EndOfTreatment? TypeOfEndTime,
+    DateTime EntryTime,
+    DateTime? EndTime = null,
+    int Id=0
 )
 
 {
-    public Assignment() : this(0, 0, 0, EndOfTreatment.treated, DateTime.Now) { }
+    /// <summary>
+    ///  Default constructor
+    /// </summary>
+    public Assignment() : this(0,0, EndOfTreatment.treated, DateTime.Now) { }
 }
 
 //namespace DO;

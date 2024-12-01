@@ -4,22 +4,21 @@ using System.Collections.Generic;
 using DalApi;
 using DO;
 using System;
+using DalList;
 
 public class AssignmentImplementation : IAssignment
 {
     /// <summary>
-    ///  Adds a Assignment only if one with the same ID is not found If one already exists throws an error
+    ///  Adds a call
     /// </summary>
-    /// <param name="item"></param>
+    /// <param name="call"></param>
     /// <exception cref="InvalidOperationException"></exception>
-    public void Create( Assignment item)
+    public void Create(Assignment assignment)
     {
-        if (Read(item.Id) != null)
-            throw new InvalidOperationException("A assignment with the same ID already exists.");
-
-
-        DataSource.Assignments.Add(item);
+        Assignment newAssignment = assignment with { Id = Config.NextAssignmentId };
+        DataSource.Assignments.Add(newAssignment);
     }
+
     /// <summary>
     /// The function deletes the Assignment whose ID is equal to the received ID
     /// </summary>

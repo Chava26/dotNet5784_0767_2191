@@ -143,7 +143,7 @@ public static class Initialization
     34.7443, 34.8248, 34.9065, 34.8878, 35.2854,
     34.9197, 34.8019, 34.8383, 35.3047, 35.7496,
     35.5833, 35.2940, 35.5683, 35.0944, 34.7383,
-    35.4500, 34.7872, 35.0247
+    35.4500, 34.7872, 35.0247,35.5683, 35.0944
 };
 
         double[] latitudes = {
@@ -156,8 +156,7 @@ public static class Initialization
     32.0171, 32.0684, 32.1782, 32.0840, 32.6082,
     32.4340, 30.6100, 32.0853, 32.9170, 33.0622,
     32.8333, 31.7768, 33.2082, 33.0044, 31.8775,
-    31.8667, 32.0158, 32.4746
-};
+    31.8667, 32.0158, 32.4746,31.8014, 31.6693};
 
         string[] addresses = {
     "Highway 2","Highway 6","Begin Boulevard,Jerusalem","Glilot Interchange",
@@ -168,7 +167,8 @@ public static class Initialization
     "Kiryat Shmona","Modiin","Safed (Tzfat)","Metula","Dimona", "Yokneam",
     "Bat Yam","Ramat Gan","Kfar Saba","Petah Tikva","Afula","Hadera",
     "Mitzpe Ramon","Bnei Brak","Karmiel","Golan Heights","Sea of Galilee",
-    "Maale Adumim","Qiryat Shemona","Nahariya", "Yavne","Jericho Area","Holon","Harish"
+    "Maale Adumim","Qiryat Shemona","Nahariya", "Yavne","Jericho Area","Holon","Harish",
+    "Bat Yam","Ramat Gan","Kfar Saba","Petah Tikva","Afula","Hadera"
 };
 
 
@@ -176,7 +176,7 @@ public static class Initialization
         {
 
             CallType _callType = (CallType)s_rand.Next(0, Enum.GetValues(typeof(CallType)).Length);
-            DateTime TimeOfOpen = new DateTime(s_dalConfig!.Clock.Hour - 2, 1, 1); //stage 1
+            DateTime TimeOfOpen = new (s_dalConfig!.Clock.Hour - 2, 1, 1); //stage 1
             DateTime MaxTimeToFinish = TimeOfOpen.AddDays(s_rand.Next((s_dalConfig.Clock - TimeOfOpen).Days));
             double Longitude = longitudes[i];
             double Latitude = latitudes[i];
@@ -189,18 +189,54 @@ public static class Initialization
 
     private static void createAssignments()
     {
-        List<Volunteer>? volunteersList = s_dalVolunteer!.ReadAll();
-        List<Call>? callsList = s_dalCall!.ReadAll();
-        DateTime start = new DateTime(s_dalConfig!.Clock.Year, s_dalConfig.Clock.Month, s_dalConfig.Clock.Day, s_dalConfig.Clock.Hour - 7, 0, 0);
+        List<Volunteer>? volunteers = s_dalVolunteer!.ReadAll();
+        List<Call>? calls = s_dalCall!.ReadAll();
+        //DateTime startTime = new DateTime(s_dalConfig.Clock.Year, s_dalConfig.Clock.Month, s_dalConfig.Clock.Day, s_dalConfig.Clock.Hour - 5, 0, 0);
+        
         for (int i = 0; i < 50; i++)
         {
-            DateTime minTime = callsList[i].OpenTime;
-            DateTime? maxTime = (DateTime)callsList[i].MaxFinishTime!;
-            TimeSpan diff = (TimeSpan)(maxTime - minTime - TimeSpan.FromHours(2));
-            DateTime randomTime = minTime.AddMinutes(s_rand.Next((int)diff.TotalMinutes));
-            s_dalAssignment!.Create(new Assignment(0, callsList[i].Id, volunteersList[s_rand.Next(callsList.Count)].Id, (EndOfTreatment)
-            s_rand.Next(Enum.GetValues(typeof(EndOfTreatment)).Length - 1), randomTime.AddHours(2), randomTime));
+            DateTime minTime = calls[i].OpenTime;
+            DateTime maxTime = (DateTime)calls[i].MaxFinishTime!;
+            TimeSpan difference = maxTime - minTime - TimeSpan.FromHours(2);
+            int validDifference = (int)Math.Max(difference.TotalMinutes, 0);
+            DateTime randomTime = minTime.AddMinutes(s_rand.Next(validDifference));
+            s_dalAssignment!.Create(new Assignment(calls[s_rand.Next(calls.Count - 15)].Id, volunteers[s_rand.Next(volunteers.Count)].Id, (EndOfTreatment)
+           s_rand.Next(Enum.GetValues(typeof(EndOfTreatment)).Length - 1), randomTime.AddHours(2), randomTime));
+        
         }
+        //List<Volunteer>? volunteersList = s_dalVolunteer!.ReadAll();
+        //List<Call>? callsList = s_dalCall!.ReadAll();
+
+        //for (int i = 0; i < 50; i++)
+        //{
+        //    DateTime minTime = callsList[i].TimeOfOpen;
+        //    DateTime maxTime = (DateTime)callsList[i].MaxTimeToFinish;
+        //    TimeSpan diff = maxTime - minTime - TimeSpan.FromHours(2);
+        //    DateTime randomTime = minTime.AddMinutes(s_rand.Next((int)diff.TotalMinutes));
+        //    TypeOfEndTime typeOfEndTime;
+        //    if (i < 5)
+        //    {
+        //        typeOfEndTime = TypeOfEndTime.CancellationHasExpired;
+        //    }
+        //    else
+        //    {
+        //        typeOfEndTime = (TypeOfEndTime)s_rand.Next(Enum.GetValues(typeof(TypeOfEndTime)).Length - 1);
+        //    }
+        //    s_dalAssignment!.Create(new Assignment(0, callsList[s_rand.Next(callsList.Count - 15)].Id, volunteersList[s_rand.Next(volunteersList.Count)].Id, typeOfEndTime
+        //    , randomTime.AddHours(2), randomTime));
+        //}
+        //List<Volunteer>? volunteersList = s_dalVolunteer!.ReadAll();
+        //List<Call>? callsList = s_dalCall!.ReadAll();
+        //DateTime start = new DateTime(s_dalConfig!.Clock.Year, s_dalConfig.Clock.Month, s_dalConfig.Clock.Day, s_dalConfig.Clock.Hour - 7, 0, 0);
+        //for (int i = 0; i < 50; i++)
+        //{
+        //    DateTime minTime = callsList[i].OpenTime;
+        //    DateTime? maxTime = (DateTime)callsList[i].MaxFinishTime!;
+        //    TimeSpan diff = (TimeSpan)(maxTime - minTime - TimeSpan.FromHours(2));
+        //    DateTime randomTime = minTime.AddMinutes(s_rand.Next((int)diff.TotalMinutes));
+        //    s_dalAssignment!.Create(new Assignment(0, callsList[i].Id, volunteersList[s_rand.Next(callsList.Count)].Id, (EndOfTreatment)
+        //    s_rand.Next(Enum.GetValues(typeof(EndOfTreatment)).Length - 1), randomTime.AddHours(2), randomTime));
+        //}
 
     }
     public static void Do(IVolunteer? dalVolunteer, ICall? dalCall, IAssignment? dalAssignment, IConfig? dalConfig) //stage 1

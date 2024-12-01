@@ -31,30 +31,3 @@ public record Call
     /// </summary>
     public Call() : this(CallType.necessary, "", 0, 0, DateTime.MinValue) { }
 }
-//public record Call
-//{
-//    public int Id { get; set; }
-//    public string? Description { get; init; }
-//    public string FullAddress { get; set; }
-//    public double Latitude { get; init; }
-//    public double Longitude { get; init; }
-//    public DateTime OpeningTime { get; init; }
-//    public DateTime? MaximumTimeToFinish { get; init; }
-
-//public Call( string? _Description, string _Adress, double _Longitude, double _Latitude, DateTime _OpeningTime, DateTime? _MaximumTimeToFinish)
-//{
-//    Description = _Description;
-//    FullAddress = _Adress;
-//    Longitude = _Longitude;
-//    Latitude = _Latitude;
-//   OpeningTime = _OpeningTime;
-//    MaximumTimeToFinish = _MaximumTimeToFinish;
-//}
-
-//public Call()
-//{
-//    // Id = DalList.Config.NextCallId;
-//     OpeningTime = DalList.Config.Clock;
-
-//    }
-//}

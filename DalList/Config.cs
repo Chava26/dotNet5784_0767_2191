@@ -1,6 +1,13 @@
 ﻿
 namespace DalList
 {
+   /// <summary>
+/// Configuration Entity
+/// </summary>
+/// <param name="nextCallId">an ID number for the next new call</param>
+/// <param name="nextAssignmentId">a unique id for each new assignment</param>
+/// <param name="Clock">a system clock that is maintained seperatly from the pc</param>
+/// <param name="RiskRange">a time range from which there and on it is considered at risk</param>
     internal static class Config
     {
         internal const int startCallId = 1000;

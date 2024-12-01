@@ -6,22 +6,21 @@ using static global::DO.Enums;
 using System.Data;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-
 /// <summary>
 /// 
 /// </summary>
-/// <param name="Id"></param>
-/// <param name="Name"></param>
-/// <param name="Phone"></param>
-/// <param name="Email"></param>
-/// <param name="Password"></param>
-/// <param name="Adrass"></param>
+/// <param name="Id">Personal unique ID of the Volunteer (as in national id card)</param>
+/// <param name="Name">Private Name of the Volunteer</param>
+/// <param name="Phone">Phone number of the Volunteer</param>
+/// <param name="Email">Email number of the Volunteer</param>
+/// <param name="Password">Password of the Volunteer</param>
+/// <param name="Adress">A complete and true address in the correct format of the volunteer.</param>
 /// <param name="Latitude"></param>
 /// <param name="Longitude"></param>
-/// <param name="Job"></param>
-/// <param name="IsActive"></param>
-/// <param name="MaximumDistance"></param>
-/// <param name="DistanceType"></param>
+/// <param name="Role">Manager or volunteer</param>
+/// <param name="IsActive">Is the volunteer active or inactive?</param>
+/// <param name="MaximumDistance">The maximum distance to receive a assigment.</param>
+/// <param name="DistanceType">Distance type: Air distance, walking distance, driving distance</param>
 public record Volunteer
 (
     int Id,
