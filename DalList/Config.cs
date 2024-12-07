@@ -1,6 +1,5 @@
 ﻿
-namespace DalList
-{
+namespace Dal;
    /// <summary>
 /// Configuration Entity
 /// </summary>
@@ -32,7 +31,7 @@ namespace DalList
 
 
     }
-}
+
 
 
 

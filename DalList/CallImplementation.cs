@@ -5,16 +5,15 @@ using DalApi;
 using DO;
 using System;
 
-public class CallImplementation : ICall
+internal class CallImplementation : ICall
 {
     /// <summary>
     ///  Adds a call
     /// </summary>
     /// <param name="call"></param>
-    /// <exception cref="InvalidOperationException"></exception>
     public void Create(Call call)
     {
-        Call newCall = call with { Id = DalList.Config.NextCallId };
+        Call newCall = call with { Id = Config.NextCallId };
         DataSource.Calls.Add(newCall);
     }
 
@@ -24,10 +23,10 @@ public class CallImplementation : ICall
     /// The function deletes the Call whose ID is equal to the received ID
     /// </summary>
     /// <param name="id"></param>
-    /// <exception cref="NotImplementedException"></exception>
+    /// <exception cref="DalDoesNotExistException"></exception>
     public void Delete(int id)
     {
-        Call matchingObject = Read(id) ?? throw new NotImplementedException("Object of type Call with such ID does not exist.");
+        Call matchingObject = Read(id) ?? throw new DalDoesNotExistException($"Call with ID={id}is not exists");
         DataSource.Calls.Remove(matchingObject);
 
     }
@@ -48,22 +47,23 @@ public class CallImplementation : ICall
         return DataSource.Calls.FirstOrDefault(Call => Call.Id == id);
     }
     /// <summary>
-    /// The function returns to the entire list of Calls
+    /// The function returns to the entire IEnumerable of Calls
     /// </summary>
     /// <returns></returns>
 
-    public List<Call> ReadAll()
-    {
-        return new List<Call>(DataSource.Calls);
-    }
+    public IEnumerable<Call> ReadAll(Func<Call, bool>? filter = null) //stage 2
+         => filter == null
+          ? DataSource.Calls.Select(item => item)
+                : DataSource.Calls.Where(filter);
+
     /// <summary>
     /// The function updates the Call's details by deleting him from the list of Calls and adding him back with the updated details
     /// </summary>
     /// <param name="item"></param>
-    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="DalDoesNotExistException"></exception>
     public void Update(Call call)
     {
-        Call matchingObject = Read(call.Id) ?? throw new InvalidOperationException("An object of type call with such ID does not exist.");
+        Call matchingObject = Read(call.Id) ?? throw new DalDoesNotExistException($"call with ID={call.Id}is not exists");
         Delete(matchingObject.Id);
         Create(call);
     }

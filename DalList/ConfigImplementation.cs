@@ -1,9 +1,8 @@
 ﻿using DalApi;
-using DalList;
 
 namespace Dal;
 
-public class ConfigImplementation : IConfig
+internal class ConfigImplementation : IConfig
 {
     public DateTime Clock
     {

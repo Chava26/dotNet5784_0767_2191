@@ -5,7 +5,7 @@ using DalApi;
 using DO;
 using System;
 
-public class VolunteerImplementation : IVolunteer
+internal class VolunteerImplementation : IVolunteer
 {
     /// <summary>
     ///  Adds a volunteer only if one with the same ID is not found If one already exists throws an error
@@ -15,20 +15,18 @@ public class VolunteerImplementation : IVolunteer
     public void Create(Volunteer item)
     {
         if(Read(item.Id)!=null)
-            throw new InvalidOperationException("A volunteer with the same ID already exists.");
-
-
+            throw new DalAlreadyExistsException($"Volunteer with ID={item.Id} already exists");
         DataSource.Volunteers.Add(item);
     }
     /// <summary>
     /// The function deletes the Volunteer whose ID is equal to the received ID
     /// </summary>
     /// <param name="id"></param>
-    /// <exception cref="NotImplementedException"></exception>
+    /// <exception cref="DalDoesNotExistException"></exception>
     public void Delete(int id)
     {
-        Volunteer matchingObject = Read(id)?? throw new NotImplementedException("Object of type Volunteer with such ID does not exist."); ;
-           
+        Volunteer matchingObject = Read(id) ?? throw new DalDoesNotExistException($"Volunteer with ID={id}is not exists ");
+
         DataSource.Volunteers.Remove(matchingObject);
 
     }
@@ -49,16 +47,16 @@ public class VolunteerImplementation : IVolunteer
           return DataSource.Volunteers.FirstOrDefault(volunteer => volunteer.Id == id);
     }
     /// <summary>
-    /// The function returns to the entire list of volunteers
+    /// The function returns to the entire IEnumerable of Volunteers
     /// </summary>
     /// <returns></returns>
 
-    public List<Volunteer> ReadAll()
-    {
+    public IEnumerable<Volunteer> ReadAll(Func<Volunteer, bool>? filter = null) //stage 2
+         => filter == null
+          ? DataSource.Volunteers.Select(item => item)
+                : DataSource.Volunteers.Where(filter);
 
-        return new List<Volunteer>(DataSource.Volunteers);
 
-    }
     /// <summary>
     /// The function updates the volunteer's details by deleting him from the list of volunteers and adding him back with the updated details
     /// </summary>
@@ -66,7 +64,7 @@ public class VolunteerImplementation : IVolunteer
     /// <exception cref="InvalidOperationException"></exception>
     public void Update(Volunteer item)
     {
-        Volunteer matchingObject = Read(item.Id) ?? throw new InvalidOperationException("An object of type Volunteer with such ID does not exist.");
+        Volunteer matchingObject = Read(item.Id) ?? throw new DalDoesNotExistException($"Volunteer with ID={item.Id}is not exists");
         Delete(matchingObject.Id);
         Create(item);
     }

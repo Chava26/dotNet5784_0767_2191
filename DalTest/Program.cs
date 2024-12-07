@@ -1,9 +1,7 @@
-﻿using Dal;
-using DalApi;
-using DO;
-using Microsoft.VisualBasic;
-using System.ComponentModel.Design;
-using static DO.Enums;
+﻿using Dal; // Namespace for the DAL implementation
+using DalApi; // Namespace for the DAL API interface
+using DO; // Namespace for Data Objects
+using static DO.Enums; // Allows direct access to Enums without specifying the class name
 
 
 namespace DalTest
@@ -11,23 +9,41 @@ namespace DalTest
 
     internal class Program
     {
-        public static IVolunteer? s_dalVolunteer = new VolunteerImplementation(); //stage 1
-        public static ICall? s_dalCall = new CallImplementation(); //stage 1
-        public static IAssignment? s_dalAssignment = new AssignmentImplementation(); //stage 1
-        public static IConfig? s_dalConfig = new ConfigImplementation();
+
+        // Static initialization of the DAL instance (Stage 2 implementation)
+        static readonly IDal s_dal = new DalList();
+
+        /// <summary>
+        /// Main menu options for user interaction
+        /// </summary>
         public enum MainMenu
         {  ExitMainMenu,  AssignmentSubmenu,  VolunteerSubmenu,  CallSubmenu,  InitializeData,  DisplayAllData,  ConfigSubmenu,  ResetDatabase
         }
+        /// <summary>
+        /// Submenu options for CRUD operations
+        /// </summary>
         public enum SubMenu
         {
-            Exit,Create,Read,ReadAll,UpDate,Delete,DeleteAll
+            Exit, Create, Read, ReadAll, UpDate, Delete, DeleteAll
         }
+
+        /// <summary>
+        /// Options specific to the Config submenu
+        /// </summary>
         private enum ConfigSubmenu
         {
             Exit,AdvanceClockByMinute,AdvanceClockByHour,AdvanceClockByDay,AdvanceClockByMonth,AdvanceClockByYear,DisplayClock,ChangeClockOrRiskRange,DisplayConfigVar,   Reset
         }
-        private static Volunteer CreateVolunteer(int id)
+        /// <summary>
+        /// Function to create a new volunteer
+        /// </summary>
+        /// <param name="id">Unique ID for the volunteer</param>
+        /// <returns>A new volunteer object</returns>
+        private static Volunteer CreateVolunteer()
         {
+            Console.WriteLine("Enter your details");
+            Console.Write("Enter ID: ");
+            if (!int.TryParse(Console.ReadLine(), out int id)) throw new FormatException("your Id is invalid!");
             Console.Write("Enter your name");
             string name = Console.ReadLine()!;
             Console.Write("Enter your email");
@@ -52,9 +68,13 @@ namespace DalTest
             if (!Enum.TryParse(Console.ReadLine(), out DistanceType distanceType)) throw new FormatException("distanceType is invalid!");
             return new Volunteer(id, name, email, phone, role, Active, MaximumDistance, password, address, Longitude, Latitude, distanceType);
         }
+        /// <summary>
+        /// Function to create a new call
+        /// </summary>
+        /// <returns>A new call object</returns>
         private static Call CreateCall()
         {
-
+            Console.WriteLine("Enter your details");
             Console.Write("Enter Call Type (1 for Type1, 2 for Type2, etc.): ");
             if (!Enum.TryParse(Console.ReadLine(), out Enums.CallType _callType)) throw new FormatException("callType is invalid!");
             Console.Write("Enter Description of the problem");
@@ -72,9 +92,13 @@ namespace DalTest
             return new Call(_callType, address, Longitude, Latitude, TimeOfOpen, MaxTimeToFinish, description);
 
         }
-
+        /// <summary>
+        /// Function to create a new assignment
+        /// </summary>
+        /// <returns>A new assignment object</returns>
         private static Assignment CreateAssignment()
         {
+            Console.WriteLine("Enter your details");
             Console.Write("Enter Call ID: ");
             if (!int.TryParse(Console.ReadLine(), out int CallId)) throw new FormatException("your Id is invalid!");
             Console.Write("Enter Volunteer ID: ");
@@ -85,313 +109,358 @@ namespace DalTest
             if (!DateTime.TryParse(Console.ReadLine(), out DateTime EndTime)) throw new FormatException("EndTime is invalid!");
             return new Assignment(CallId, volunteerId, typeOfEndTime, EndTime);
         }
-
-        private static void Create(string choice)
+        /// <summary>
+        /// Function to create a new entity and add it to the relevant list
+        /// </summary>
+        /// <param name="choice">Entity type (Volunteer, Call, Assignment)</param>
+        private static void CreateEntity(string choice, dynamic entityType)
         {
+            try
+            {
+
+
+                switch (choice)
+                {
+                    case "Volunteer":
+                        Volunteer Vol = CreateVolunteer();
+                        entityType.Create(Vol);
+                        break;
+                    case "Call":
+                        Call Call = CreateCall();
+                        entityType.Create(Call);
+                        break;
+                    case "Assignment":
+                        Assignment Ass = CreateAssignment();
+                        entityType.Create(Ass);
+                        break;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in Create : {ex.Message}");
+
+            }
+
+        }
+        /// <summary>
+        /// The function creates or updates an entity in its respective array.
+        /// </summary>
+        /// <param name="choice">The submenu option indicating which entity to handle.</param>
+        /// <exception cref="FormatException">Thrown if the user provides an invalid ID.</exception>
+        private static void UpdateEntity(string choice, dynamic entityType)
+        {
+            try
+            {
             Console.WriteLine("Enter your details");
             Console.Write("Enter ID: ");
-            if (!int.TryParse(Console.ReadLine(), out int yourId)) throw new FormatException("your Id is invalid!");
+
+           
+
+            // Handle updates based on the submenu choice.
             switch (choice)
             {
-                case "VolunteerSubmenu":
-                    Volunteer Vol = CreateVolunteer(yourId);
-                    s_dalVolunteer!.Create(Vol);
+                case "Volunteer":
+                    // Create and update a volunteer entity.
+                    Volunteer Vol = CreateVolunteer();
+                     entityType.Update(Vol);
                     break;
-                case "CallSubmenu":
+                case "Call":
+                    // Create and update a call entity.
                     Call Call = CreateCall();
-                    s_dalCall!.Create(Call);
+                      entityType.Update(Call);
                     break;
-                case "AssignmentSubmenu":
+                case "Assignment":
+                    // Create and update an assignment entity.
                     Assignment Ass = CreateAssignment();
-                    s_dalAssignment!.Create(Ass);
+                    entityType.Update(Ass);
                     break;
+            }
+            }catch(Exception ex) {
+                Console.WriteLine($"Error in Update : {ex.Message}");
 
             }
+
         }
-        private static void Update(string choice)
+
+        /// <summary>
+        /// Reads a specific entity from the database based on its ID.
+        /// </summary>
+        /// <param name="choice">The submenu option indicating which entity to read.</param>
+        /// <exception cref="FormatException">Thrown if the user provides an invalid ID.</exception>
+        private static void ReadEntity(dynamic entityType)
         {
-            Console.WriteLine("Enter your details");
-            Console.Write("Enter ID: ");
-            if (!int.TryParse(Console.ReadLine(), out int yourId)) throw new FormatException("your Id is invalid!");
-            switch (choice)
+            try
             {
-                case "VolunteerSubmenu":
-                    Volunteer Vol = CreateVolunteer(yourId);
-                    s_dalVolunteer!.Update(Vol);
-                    break;
-                case "CallSubmenu":
-                    Call Call = CreateCall();
-                    s_dalCall!.Update(Call);
-                    break;
-                case "AssignmentSubmenu":
-                    Assignment Ass = CreateAssignment();
-                    s_dalAssignment!.Update(Ass);
-                    break;
+                Console.WriteLine("Enter Your ID");
+                // Parse the ID; throw an exception for invalid input.
+                if (!int.TryParse(Console.ReadLine(), out int yourId)) throw new InvalidFormatException("Your ID is invalid!");
+                entityType.Read(yourId);
+
             }
-        }
-        private static void Read(string choice)
-        {
-            Console.WriteLine("Enter ID: ");
-            if (!int.TryParse(Console.ReadLine(), out int yourId)) throw new FormatException("your Id is invalid!");
-            switch (choice)
+            catch (Exception ex)
             {
-                case "VolunteerSubmenu":
-                    s_dalVolunteer!.Read(yourId);
-                    break;
-                case "CallSubmenu":
-                    s_dalCall!.Delete(yourId);
-                    break;
-                case "AssignmentSubmenu":
-                    s_dalAssignment!.Delete(yourId);
-                    break;
-            }
-        }
-        private static void ReadAll(string choice)
-        {
-            switch (choice)
-            {
-                case "VolunteerSubmenu":
-                    foreach (var item in s_dalVolunteer!.ReadAll())
-                        Console.WriteLine(item);
-                    break;
-                case "CallSubmenu":
-                    foreach (var item in s_dalCall!.ReadAll())
-                        Console.WriteLine(item);
-                    break;
-                case "AssignmentSubmenu":
-                    foreach (var item in s_dalAssignment!.ReadAll())
-                        Console.WriteLine(item);
-                    break;
-            }
-        }
-        private static void Delete(string choice)
-        {
-            Console.WriteLine("Enter ID: ");
-            if (!int.TryParse(Console.ReadLine(), out int yourId)) throw new FormatException("your Id is invalid!");
-            switch (choice)
-            {
-                case "VolunteerSubmenu":
-                    s_dalVolunteer!.Delete(yourId);
-                    break;
-                case "CallSubmenu":
-                    s_dalCall!.Delete(yourId);
-                    break;
-                case "AssignmentSubmenu":
-                    s_dalAssignment!.Delete(yourId);
-                    break;
+                Console.WriteLine($"Error in Read : {ex.Message}");
             }
         }
 
-        private static void DeleteAll(string choice)
+        /// <summary>
+        /// Reads all entities from a specific array and displays them.
+        /// </summary>
+        /// <param name="choice">The submenu option indicating which entities to read.</param>
+        private static void ReadAllEntity( dynamic entityType)
         {
-            switch (choice)
+            try
             {
-                case "VolunteerSubmenu":
-                    s_dalVolunteer!.DeleteAll();
-                    break;
-                case "CallSubmenu":
-                    s_dalCall!.DeleteAll();
-                    break;
-                case "AssignmentSubmenu":
-                    s_dalAssignment!.DeleteAll();
-                    break;
+                foreach (var item in entityType.ReadAll())
+                    Console.WriteLine(item);
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in ReadAll : {ex.Message}");
+            }
+
         }
-        private static void EntityMenu(string choice)
+
+        /// <summary>
+        /// Deletes a specific entity from its array based on its ID.
+        /// </summary>   
+        /// <param name="choice">The submenu option indicating which entity to delete.</param>
+        /// <exception cref="FormatException">Thrown if the user provides an invalid ID.</exception>
+        private static void DeleteEntity(dynamic entityType)
         {
+            try
+            {
+                Console.WriteLine("Enter ID: ");
+
+                // Parse the ID; throw an exception for invalid input.
+                if (!int.TryParse(Console.ReadLine(), out int yourId)) throw new InvalidFormatException("Your ID is invalid!");
+
+                // Delete the specified entity based on the submenu choice.
+                entityType.Delete(yourId);
+                Console.WriteLine("Entity successfully deleted.");
+
+            }
+            catch (Exception ex) {
+                Console.WriteLine($"Error in delete : {ex.Message}");
+
+            }
+
+
+        }
+
+  
+
+        /// <summary>
+        /// Displays a menu for a specific entity and handles user actions.
+        /// </summary>
+        /// <param name="choice">The submenu option indicating which entity to manage.</param>
+        /// <exception cref="FormatException">Thrown if the user provides an invalid choice.</exception>
+        private static void EntityMenu(string choice, dynamic entityType)
+        {
+          try { 
             Console.WriteLine("Menu for entity");
+
+            // Display all submenu options.
             foreach (SubMenu option in Enum.GetValues(typeof(SubMenu)))
             {
                 Console.WriteLine($"{(int)option}. {option}");
             }
+
             Console.WriteLine("Enter a number");
-            //bool isValid = Enum.TryParse(Console.ReadLine(), out SubMenu subChoice);
-            //while (!isValid)
-            //{
-            //    Console.WriteLine("Your choise number is not valid, please enter again");
-            //    isValid = Enum.TryParse(Console.ReadLine(), out subChoice);
-            //}
-            if (!Enum.TryParse(Console.ReadLine(), out SubMenu subChoice)) throw new FormatException("Invalid choice");
-            while (subChoice != 0)
+
+            // Parse user input; throw an exception for invalid input.
+            if (!Enum.TryParse(Console.ReadLine(), out SubMenu subChoice))
+                throw new InvalidFormatException("The sub menu choice is not valid.");
+
+            // Handle actions until the user exits.
+            while (subChoice != SubMenu.Exit)
             {
+               
                 switch (subChoice)
                 {
                     case SubMenu.Create:
-                        Create(choice);
-                        break;
+                        CreateEntity(choice, entityType);
+                            break;
                     case SubMenu.Read:
-                        Console.WriteLine("Enter Your ID");
-
-                        Read(choice);
-                        break;
+                            ReadEntity(entityType);
+                            break;
                     case SubMenu.ReadAll:
-                        ReadAll(choice);
-                        break;
+                            ReadAllEntity(entityType);
+                            break;
                     case SubMenu.Delete:
-                        Delete(choice);
-                        break;
+                            DeleteEntity(entityType);
+                            break;
                     case SubMenu.DeleteAll:
-                        DeleteAll(choice);
-                        break;
-                    case SubMenu.UpDate:
-                        Update(choice);
-                        break;
-                    case SubMenu.Exit:
-                        return;
-                    default:
-                        Console.WriteLine("Your choise is not valid, please enter again");
-                        break;
-                }
-                Console.WriteLine("Enter a number");
-                bool _isValid = Enum.TryParse(Console.ReadLine(), out subChoice);
-                while (!_isValid)
-                {
-                    Console.WriteLine("Your choise number is not valid, please enter again");
-                    _isValid = Enum.TryParse(Console.ReadLine(), out subChoice);
+                            entityType.DeleteAll();
+                            Console.WriteLine("Entity successfully deleted all.");
 
+                            break;
+                    case SubMenu.UpDate:
+                            UpdateEntity(choice, entityType);
+                        break;
+                    default:
+                        Console.WriteLine("Your choice is not valid, please enter again");
+                        break;
                 }
+
+                Console.WriteLine("Enter a number");
+                if (!Enum.TryParse(Console.ReadLine(), out subChoice))
+                    throw new InvalidFormatException("The sub menu choice is not valid.");
+            }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in choice action : {ex.Message}");
             }
         }
+
+        /// <summary>
+        /// Displays the configuration submenu and handles configuration options.
+        /// </summary>
         private static void ConfigSubmenuu()
         {
+            try {
             Console.WriteLine("Config Menu:");
+
+            // Display all configuration options.
             foreach (ConfigSubmenu option in Enum.GetValues(typeof(ConfigSubmenu)))
             {
                 Console.WriteLine($"{(int)option}. {option}");
             }
+
             Console.Write("Select an option: ");
-            bool isVaild = Enum.TryParse(Console.ReadLine(), out ConfigSubmenu userInput);
-            while (!isVaild){
-                Console.WriteLine("Your choise  is not valid, please enter again");
-                isVaild = Enum.TryParse(Console.ReadLine(), out userInput);
-            }
-            while (userInput is not ConfigSubmenu.Exit)
+
+            // Parse user input; throw an exception for invalid input.
+            if (!Enum.TryParse(Console.ReadLine(), out ConfigSubmenu userInput))
+                throw new InvalidFormatException("The Config menu choice is not valid.");
+                // Handle actions until the user exits.
+                while (userInput is not ConfigSubmenu.Exit)
                 {
                     switch (userInput)
                     {
                         case ConfigSubmenu.AdvanceClockByMinute:
-                            s_dalConfig!.Clock = s_dalConfig.Clock.AddMinutes(1);
+                            s_dal!.Config.Clock = s_dal!.Config.Clock.AddMinutes(1);
                             break;
                         case ConfigSubmenu.AdvanceClockByHour:
-                            s_dalConfig!.Clock = s_dalConfig.Clock.AddHours(1);
+                            s_dal!.Config.Clock = s_dal!.Config.Clock.AddHours(1);
                             break;
                         case ConfigSubmenu.AdvanceClockByDay:
-                            s_dalConfig!.Clock = s_dalConfig.Clock.AddDays(1);
+                            s_dal!.Config.Clock = s_dal!.Config.Clock.AddDays(1);
                             break;
                         case ConfigSubmenu.AdvanceClockByMonth:
-                            s_dalConfig!.Clock = s_dalConfig.Clock.AddMonths(1);
+                            s_dal!.Config.Clock = s_dal!.Config.Clock.AddMonths(1);
                             break;
                         case ConfigSubmenu.AdvanceClockByYear:
-                            s_dalConfig!.Clock = s_dalConfig.Clock.AddYears(1);
+                            s_dal!.Config.Clock = s_dal!.Config.Clock.AddYears(1);
                             break;
                         case ConfigSubmenu.DisplayClock:
-                            Console.WriteLine(s_dalConfig!.Clock);
+                            Console.WriteLine(s_dal!.Config.Clock);
                             break;
                         case ConfigSubmenu.ChangeClockOrRiskRange:
-                            Console.WriteLine($"RiskRange : {s_dalConfig!.RiskRange}");
+                            Console.WriteLine($"RiskRange: {s_dal.Config!.RiskRange}");
                             break;
                         case ConfigSubmenu.DisplayConfigVar:
-                            Console.Write("write new format for RiskRange (with seconds minutes  and hours): ");
+                            Console.Write("Write new format for RiskRange (e.g., seconds, minutes, hours): ");
                             string riskRangeInput = Console.ReadLine()!;
-                            if (TimeSpan.TryParse(riskRangeInput, out TimeSpan newRiskRange)) 
+                            if (TimeSpan.TryParse(riskRangeInput, out TimeSpan newRiskRange))
                             {
-                                s_dalConfig!.RiskRange = newRiskRange;
-                                Console.WriteLine($"RiskRange update to: {s_dalConfig.RiskRange}");
+                                s_dal!.Config.RiskRange = newRiskRange;
+                                Console.WriteLine($"RiskRange updated to: {s_dal.Config.RiskRange}");
                             }
-                           else{
-                            Console.WriteLine($"your format not good");
+                            else
+                            {
+                                Console.WriteLine("Invalid format.");
                             }
                             break;
-
                         case ConfigSubmenu.Reset:
-                            s_dalConfig!.Reset();
+                            s_dal!.ResetDB();
                             break;
                     }
 
-                    bool isValid = Enum.TryParse(Console.ReadLine(), out userInput);
-                    while (!isValid)
-                    {
-                        Console.WriteLine("Your choise number is not valid, please enter again");
-                        isValid = Enum.TryParse(Console.ReadLine(), out userInput);
-                    }
-               
-            } 
+                    Console.Write("Select an option: ");
+                    if (!Enum.TryParse(Console.ReadLine(), out userInput))
+                        throw new InvalidFormatException("The Config menu choice is not valid.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in config menu : {ex.Message}");
+
+            }
         }
+        /// <summary>
+        /// Main function that displays the main menu and handles user actions.
+        /// </summary>
+        /// <param name="args">Command-line arguments (not used in this implementation).</param>
+        /// <exception cref="FormatException">Thrown if the user provides an invalid choice.</exception>
         private static void Main(string[] args)
         {
             try
             {
                 Console.WriteLine("Main Menu:");
+
+                // Display all main menu options.
                 foreach (MainMenu option in Enum.GetValues(typeof(MainMenu)))
                 {
                     Console.WriteLine($"{(int)option}. {option}");
                 }
+
                 Console.Write("Select an option: ");
-                //bool isVaild = Enum.TryParse(Console.ReadLine(), out MainMenu userInput);
-                //while (!isVaild)
-                //{
-                //    Console.WriteLine("Your choise  is not valid, please enter again");
-                //    isVaild = Enum.TryParse(Console.ReadLine(), out userInput);
-                //}
-                if (!Enum.TryParse(Console.ReadLine(), out MainMenu userInput)) throw new FormatException("Invalid choice");
-                    while (userInput is not MainMenu.ExitMainMenu)
+
+                // Parse user input; throw an exception for invalid input.
+                if (!Enum.TryParse(Console.ReadLine(), out MainMenu userInput))
+                    throw new InvalidFormatException("The menu choice is not valid.");
+
+                // Handle actions until the user exits the main menu.
+                while (userInput is not MainMenu.ExitMainMenu)
                 {
                     switch (userInput)
                     {
                         case MainMenu.AssignmentSubmenu:
+                            EntityMenu("Assignment", s_dal.Assignment);
+                            break;
                         case MainMenu.VolunteerSubmenu:
+                            EntityMenu("Volunteer", s_dal.Volunteer);
+                            break;
                         case MainMenu.CallSubmenu:
-                            string sChoice = userInput.ToString();
-                            EntityMenu(sChoice);
+                            EntityMenu("Call", s_dal.Call);
                             break;
                         case MainMenu.InitializeData:
-                          Initialization.Do(s_dalVolunteer, s_dalCall, s_dalAssignment, s_dalConfig);
+                            Initialization.Do(s_dal); // Initialize data.
                             break;
                         case MainMenu.DisplayAllData:
-                            {
-                                ReadAll("VolunteerSubmenu");
-                                ReadAll("CallSubmenu");
-                                ReadAll("AssignmentSubmenu");
-                            }
+                            ReadAllEntity(s_dal.Volunteer);
+                            ReadAllEntity(s_dal.Call);
+                            ReadAllEntity(s_dal.Assignment);
                             break;
                         case MainMenu.ConfigSubmenu:
-
                             ConfigSubmenuu();
-
                             break;
                         case MainMenu.ResetDatabase:
-
-                            s_dalConfig!.Reset(); //stage 1
-                            s_dalVolunteer!.DeleteAll(); //stage 1
-                            s_dalCall!.DeleteAll(); //stage 1
-                            s_dalAssignment!.DeleteAll(); //stage 1
-
+                            s_dal!.ResetDB(); // Reset the database.
                             break;
                     }
+
+                    // Display the main menu again after an action.
                     Console.WriteLine("Main Menu:");
                     foreach (MainMenu option in Enum.GetValues(typeof(MainMenu)))
                     {
                         Console.WriteLine($"{(int)option}. {option}");
                     }
+
                     Console.Write("Select an option: ");
-                    if (!Enum.TryParse(Console.ReadLine(), out userInput)) throw new FormatException("Invalid choice");
-
-                    //bool isValid = Enum.TryParse(Console.ReadLine(), out userInput);
-                    //while (!isValid)
-                    //{
-                    //    Console.WriteLine("Your choise number is not valid, please enter again");
-                    //    isValid = Enum.TryParse(Console.ReadLine(), out userInput);
-
-                    //}
+                    if (!Enum.TryParse(Console.ReadLine(), out userInput))
+                        throw new InvalidFormatException("The menu choice is not valid.");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                // Catch and display any exceptions.
+                Console.WriteLine($"Error in Main function: {ex.Message}");
             }
+
         }
     }
+
 }
-
-
-
