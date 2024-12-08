@@ -19,7 +19,7 @@ public record Assignment
     int VolunteerId,
     EndOfTreatment? TypeOfEndTime,
     DateTime EntryTime,
-    DateTime? EndTime = null,
+    DateTime? exitTime = null,
     int Id=0
 )
 

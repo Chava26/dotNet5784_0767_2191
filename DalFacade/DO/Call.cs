@@ -22,10 +22,10 @@ public record Call
     double Longitude,
     DateTime OpenTime,
     DateTime? MaxFinishTime = null,
-    string? Description = null
+    string? Description = null,
+    int Id=0
 )
 {
-    public int Id { get; init; }
     /// <summary>
     /// Default constructor
     /// </summary>

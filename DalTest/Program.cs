@@ -41,28 +41,27 @@ namespace DalTest
         /// <returns>A new volunteer object</returns>
         private static Volunteer CreateVolunteer()
         {
-            Console.WriteLine("Enter your details");
             Console.Write("Enter ID: ");
             if (!int.TryParse(Console.ReadLine(), out int id)) throw new FormatException("your Id is invalid!");
-            Console.Write("Enter your name");
+            Console.Write("Enter your name: ");
             string name = Console.ReadLine()!;
-            Console.Write("Enter your email");
+            Console.Write("Enter your email: ");
             string email = Console.ReadLine()!;
-            Console.Write("Enter your phone");
+            Console.Write("Enter your phone: ");
             string phone = Console.ReadLine()!;
-            Console.Write("Enter your password");
+            Console.Write("Enter your password: ");
             string password = Console.ReadLine()!;
             Console.Write("Enter  (1 for Manager, 2 for Volunteer, etc.): ");
             if (!Enum.TryParse(Console.ReadLine(), out Role role)) throw new FormatException("role is invalid!");
             Console.Write("Is Active? (true/false): ");
             bool Active = bool.Parse(Console.ReadLine()!);
-            Console.Write("Enter your address");
+            Console.Write("Enter your address: ");
             string address = Console.ReadLine()!;
-            Console.Write("Enter your Maximum Distance");
+            Console.Write("Enter your Maximum Distance: ");
             double MaximumDistance = double.Parse(Console.ReadLine()!);
-            Console.Write("Enter your Latitude");
+            Console.Write("Enter your Latitude: ");
             double Latitude = double.Parse(Console.ReadLine()!);
-            Console.Write("Enter your Longitude");
+            Console.Write("Enter your Longitude: ");
             double Longitude = double.Parse(Console.ReadLine()!);
             Console.Write("Enter Distance Type  (1 for Aerial Distance, 2 for walking Distance,3 for driving Distance, etc.): ");
             if (!Enum.TryParse(Console.ReadLine(), out DistanceType distanceType)) throw new FormatException("distanceType is invalid!");
@@ -72,16 +71,16 @@ namespace DalTest
         /// Function to create a new call
         /// </summary>
         /// <returns>A new call object</returns>
-        private static Call CreateCall()
+        private static Call CreateCall(bool ForUpdate = false)
         {
-            Console.WriteLine("Enter your details");
+
             Console.Write("Enter Call Type (1 for Type1, 2 for Type2, etc.): ");
             if (!Enum.TryParse(Console.ReadLine(), out Enums.CallType _callType)) throw new FormatException("callType is invalid!");
-            Console.Write("Enter Description of the problem");
+            Console.Write("Enter Description of the problem:  ");
             string description = Console.ReadLine()!;
-            Console.Write("Enter your address");
+            Console.Write("Enter your address: ");
             string address = Console.ReadLine()!;
-            Console.Write("Enter your Latitude");
+            Console.Write("Enter your Latitude: ");
             double Latitude = double.Parse(Console.ReadLine()!);
             Console.Write("Enter your Longitude");
             double Longitude = double.Parse(Console.ReadLine()!);
@@ -89,56 +88,81 @@ namespace DalTest
             if (!DateTime.TryParse(Console.ReadLine(), out DateTime TimeOfOpen)) throw new FormatException("TimeOfOpen is invalid!");
             Console.Write("Enter Max Time Finish Calling (YYYY-MM-DD HH:MM): ");
             if (!DateTime.TryParse(Console.ReadLine(), out DateTime MaxTimeToFinish)) throw new FormatException("MaxTimeToFinish is invalid!");
-            return new Call(_callType, address, Longitude, Latitude, TimeOfOpen, MaxTimeToFinish, description);
-
+            if (ForUpdate)
+            {
+                Console.Write("Enter Assignment ID for update: ");
+                if (!int.TryParse(Console.ReadLine(), out int CallId)) throw new InvalidFormatException("Calll Id is invalid!");
+                return new Call(_callType, address, Longitude, Latitude, TimeOfOpen, MaxTimeToFinish, description, CallId);
+            }
+            else
+            {
+                return new Call(_callType, address, Longitude, Latitude, TimeOfOpen, MaxTimeToFinish, description);
+            }
         }
         /// <summary>
         /// Function to create a new assignment
         /// </summary>
+        /// <exception cref="InvalidFormatException">Thrown if the user provides an invalid ID.</exception>
+
         /// <returns>A new assignment object</returns>
-        private static Assignment CreateAssignment()
+        private static Assignment CreateAssignment(bool ForUpdate=false)
         {
-            Console.WriteLine("Enter your details");
+            Console.WriteLine("Enter your details for ");
             Console.Write("Enter Call ID: ");
-            if (!int.TryParse(Console.ReadLine(), out int CallId)) throw new FormatException("your Id is invalid!");
+            if (!int.TryParse(Console.ReadLine(), out int CallId)) throw new InvalidFormatException("call Id is invalid!");
             Console.Write("Enter Volunteer ID: ");
-            if (!int.TryParse(Console.ReadLine(), out int volunteerId)) throw new FormatException("volunteer Id is invalid!");
-            Console.Write("Enter Type Of End Time : 1 for treated, 2 for Self Cancellation,3 for CancelingAnAdministrator,4 for CancellationHasExpired ");
-            if (!Enum.TryParse(Console.ReadLine(), out EndOfTreatment typeOfEndTime)) throw new FormatException("type Of End Time is invalid!");
-            Console.Write("Enter Ending Time of Treatment ( YYYY-MM-DD HH:MM): ");
-            if (!DateTime.TryParse(Console.ReadLine(), out DateTime EndTime)) throw new FormatException("EndTime is invalid!");
-            return new Assignment(CallId, volunteerId, typeOfEndTime, EndTime);
+            if (!int.TryParse(Console.ReadLine(), out int volunteerId)) throw new InvalidFormatException("volunteer Id is invalid!");
+            Console.Write("Enter Type Of End Time : 1 for treated, 2 for Self Cancellation,3 for CancelingAnAdministrator,4 for CancellationHasExpired: ");
+            if (!Enum.TryParse(Console.ReadLine(), out EndOfTreatment typeOfEndTime)) throw new InvalidFormatException("type Of End Time is invalid!");
+            Console.Write("Enter entry Time of Treatment ( YYYY-MM-DD HH:MM): ");
+            if (!DateTime.TryParse(Console.ReadLine(), out DateTime EntryTime)) throw new InvalidFormatException("EndTime is invalid!");
+            Console.Write("Enter exit Time of Treatment ( YYYY-MM-DD HH:MM): ");
+            if (!DateTime.TryParse(Console.ReadLine(), out DateTime exitTime)) throw new InvalidFormatException("EndTime is invalid!");
+
+            if (ForUpdate)
+            {
+                Console.Write("Enter Assignment ID for update: ");
+                if (!int.TryParse(Console.ReadLine(), out int AssignmentId)) throw new InvalidFormatException("Assignment Id is invalid!");
+                return new Assignment(CallId, volunteerId, typeOfEndTime, EntryTime, exitTime,AssignmentId);
+            }
+            else
+            {
+                return new Assignment(CallId, volunteerId, typeOfEndTime, EntryTime, exitTime);
+
+            }
+
         }
         /// <summary>
         /// Function to create a new entity and add it to the relevant list
         /// </summary>
         /// <param name="choice">Entity type (Volunteer, Call, Assignment)</param>
-        private static void CreateEntity(string choice, dynamic entityType)
+        private static void CreateEntity(string choice)
         {
             try
             {
-
+                Console.WriteLine("Enter your details for create");
 
                 switch (choice)
                 {
                     case "Volunteer":
                         Volunteer Vol = CreateVolunteer();
-                        entityType.Create(Vol);
+                        s_dal!.Volunteer.Create(Vol);
                         break;
                     case "Call":
                         Call Call = CreateCall();
-                        entityType.Create(Call);
+                        s_dal!.Call.Create(Call);
                         break;
                     case "Assignment":
                         Assignment Ass = CreateAssignment();
-                        entityType.Create(Ass);
+                        s_dal.Assignment.Create(Ass);
                         break;
-
                 }
+                Console.WriteLine($"Create {choice} is sucsses");
+
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error in Create : {ex.Message}");
+                Console.WriteLine($"Error in Create {ex.Message}");
 
             }
 
@@ -147,73 +171,97 @@ namespace DalTest
         /// The function creates or updates an entity in its respective array.
         /// </summary>
         /// <param name="choice">The submenu option indicating which entity to handle.</param>
-        /// <exception cref="FormatException">Thrown if the user provides an invalid ID.</exception>
-        private static void UpdateEntity(string choice, dynamic entityType)
+        /// <exception cref="InvalidFormatException">Thrown if the user provides an invalid ID.</exception>
+        private static void UpdateEntity(string choice)
         {
             try
             {
-            Console.WriteLine("Enter your details");
-            Console.Write("Enter ID: ");
-
-           
-
+             Console.Write("Enter a new detial with same id for update: ");
             // Handle updates based on the submenu choice.
             switch (choice)
             {
-                case "Volunteer":
-                    // Create and update a volunteer entity.
-                    Volunteer Vol = CreateVolunteer();
-                     entityType.Update(Vol);
-                    break;
-                case "Call":
-                    // Create and update a call entity.
-                    Call Call = CreateCall();
-                      entityType.Update(Call);
-                    break;
-                case "Assignment":
-                    // Create and update an assignment entity.
-                    Assignment Ass = CreateAssignment();
-                    entityType.Update(Ass);
-                    break;
-            }
-            }catch(Exception ex) {
-                Console.WriteLine($"Error in Update : {ex.Message}");
+                    case "Volunteer":
+                        // Create and update a volunteer entity.
+                        Volunteer Vol = CreateVolunteer();
+                        s_dal!.Volunteer.Update(Vol);
+                        break;
+                    case "Call":
+                        // Create and update a call entity.
+                        Call Call = CreateCall(true);
+                        s_dal.Call.Update(Call);
+                        break;
+                    case "Assignment":
+                        // Create and update an assignment entity.
+                        Assignment Ass = CreateAssignment(true);
+                        s_dal.Assignment.Update(Ass);
+                        break;
+                }
+                Console.WriteLine($"update {choice} is sucsses");
 
+            }
+            catch (Exception ex) {
+                Console.WriteLine($"Error in Update : {ex.Message}");
             }
 
         }
-
         /// <summary>
         /// Reads a specific entity from the database based on its ID.
         /// </summary>
         /// <param name="choice">The submenu option indicating which entity to read.</param>
-        /// <exception cref="FormatException">Thrown if the user provides an invalid ID.</exception>
-        private static void ReadEntity(dynamic entityType)
+        /// <exception cref="InvalidFormatException">Thrown if the user provides an invalid ID.</exception>
+        private static void ReadEntity(string choice)
         {
-            try
-            {
-                Console.WriteLine("Enter Your ID");
+            try {
+                Console.Write($"Enter {choice} ID to read: ");
+
                 // Parse the ID; throw an exception for invalid input.
                 if (!int.TryParse(Console.ReadLine(), out int yourId)) throw new InvalidFormatException("Your ID is invalid!");
-                entityType.Read(yourId);
 
+            // Read the specified entity based on the submenu choice.
+            switch (choice)
+            {
+                case "Volunteer":
+                        Console.WriteLine(s_dal!.Volunteer.Read(yourId));
+                    break;
+                case "Call":
+                        Console.WriteLine(s_dal!.Call.Read(yourId)); 
+                    break;
+                case "Assignment":
+                        Console.WriteLine(s_dal!.Assignment.Read(yourId)); 
+                    break;
+
+            }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error in Read : {ex.Message}");
             }
+
         }
 
         /// <summary>
         /// Reads all entities from a specific array and displays them.
         /// </summary>
         /// <param name="choice">The submenu option indicating which entities to read.</param>
-        private static void ReadAllEntity( dynamic entityType)
+        private static void ReadAllEntity(string choice)
         {
             try
             {
-                foreach (var item in entityType.ReadAll())
-                    Console.WriteLine(item);
+                switch (choice)
+                {
+                    case "Volunteer":
+                        foreach (var item in s_dal!.Volunteer.ReadAll())
+                            Console.WriteLine(item);
+                        break;
+                    case "Call":
+                        foreach (var item in s_dal!.Call.ReadAll())
+                            Console.WriteLine(item);
+                        break;
+                    case "Assignment":
+                        foreach (var item in s_dal.Assignment.ReadAll())
+                            Console.WriteLine(item);
+                        break;
+                }
             }
             catch (Exception ex)
             {
@@ -226,19 +274,29 @@ namespace DalTest
         /// Deletes a specific entity from its array based on its ID.
         /// </summary>   
         /// <param name="choice">The submenu option indicating which entity to delete.</param>
-        /// <exception cref="FormatException">Thrown if the user provides an invalid ID.</exception>
-        private static void DeleteEntity(dynamic entityType)
+        /// <exception cref="InvalidFormatException">Thrown if the user provides an invalid ID.</exception>
+        private static void DeleteEntity(string choice)
         {
             try
             {
                 Console.WriteLine("Enter ID: ");
-
                 // Parse the ID; throw an exception for invalid input.
                 if (!int.TryParse(Console.ReadLine(), out int yourId)) throw new InvalidFormatException("Your ID is invalid!");
-
                 // Delete the specified entity based on the submenu choice.
-                entityType.Delete(yourId);
-                Console.WriteLine("Entity successfully deleted.");
+
+                switch (choice)
+                {
+                    case "VolunteerSubmenu":
+                        s_dal!.Volunteer.Delete(yourId);
+                        break;
+                    case "CallSubmenu":
+                        s_dal.Call.Delete(yourId);
+                        break;
+                    case "AssignmentSubmenu":
+                        s_dal.Assignment.Delete(yourId);
+                        break;
+                }
+                Console.WriteLine("Enter ID: ");
 
             }
             catch (Exception ex) {
@@ -249,13 +307,38 @@ namespace DalTest
 
         }
 
-  
 
+        /// <summary>
+        /// Deletes all entities in a specific array.
+        /// </summary>
+        /// <param name="choice">The submenu option indicating which entities to delete.</param>
+        private static void DeleteAllEntity(string choice)
+        {
+            try { 
+            // Delete all entities of the chosen type.
+            switch (choice)
+            {
+                case "VolunteerSubmenu":
+                    s_dal.Volunteer.DeleteAll();
+                    break;
+                case "CallSubmenu":
+                    s_dal.Call.DeleteAll();
+                    break;
+                case "AssignmentSubmenu":
+                    s_dal.Assignment.DeleteAll();
+                    break;
+            }
+            Console.WriteLine("Entity successfully deleted all.");
+            }
+            catch (Exception ex) {
+                Console.WriteLine($"Error in delete all: {ex.Message}");
+            }
+        }
         /// <summary>
         /// Displays a menu for a specific entity and handles user actions.
         /// </summary>
         /// <param name="choice">The submenu option indicating which entity to manage.</param>
-        /// <exception cref="FormatException">Thrown if the user provides an invalid choice.</exception>
+        /// <exception cref="InvalidFormatException">Thrown if the user provides an invalid choice.</exception>
         private static void EntityMenu(string choice, dynamic entityType)
         {
           try { 
@@ -280,24 +363,23 @@ namespace DalTest
                 switch (subChoice)
                 {
                     case SubMenu.Create:
-                        CreateEntity(choice, entityType);
+                        CreateEntity(choice);
                             break;
                     case SubMenu.Read:
-                            ReadEntity(entityType);
+                            ReadEntity(choice);
                             break;
                     case SubMenu.ReadAll:
-                            ReadAllEntity(entityType);
+                            ReadAllEntity(choice);
                             break;
                     case SubMenu.Delete:
-                            DeleteEntity(entityType);
+                            DeleteEntity(choice);
                             break;
                     case SubMenu.DeleteAll:
-                            entityType.DeleteAll();
-                            Console.WriteLine("Entity successfully deleted all.");
+                            DeleteAllEntity(choice);
 
                             break;
                     case SubMenu.UpDate:
-                            UpdateEntity(choice, entityType);
+                            UpdateEntity(choice);
                         break;
                     default:
                         Console.WriteLine("Your choice is not valid, please enter again");
@@ -430,9 +512,9 @@ namespace DalTest
                             Initialization.Do(s_dal); // Initialize data.
                             break;
                         case MainMenu.DisplayAllData:
-                            ReadAllEntity(s_dal.Volunteer);
-                            ReadAllEntity(s_dal.Call);
-                            ReadAllEntity(s_dal.Assignment);
+                            ReadAllEntity("VolunteerSubmenu");
+                            ReadAllEntity("CallSubmenu");
+                            ReadAllEntity("AssignmentSubmenu");
                             break;
                         case MainMenu.ConfigSubmenu:
                             ConfigSubmenuu();
