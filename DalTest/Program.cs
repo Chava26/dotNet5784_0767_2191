@@ -1,7 +1,7 @@
 ﻿using Dal; // Namespace for the DAL implementation
 using DalApi; // Namespace for the DAL API interface
 using DO; // Namespace for Data Objects
-using static DO.Enums; // Allows direct access to Enums without specifying the class name
+//using static DO; // Allows direct access to Enums without specifying the class name
 
 
 namespace DalTest

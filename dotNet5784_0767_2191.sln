@@ -5,16 +5,26 @@ VisualStudioVersion = 17.6.33801.468
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stage0", "Stage0\Stage0.csproj", "{8D5BD322-C35E-449C-B4F5-2219833F9068}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") ="Solution Items", "Solution Items", "{6F22FA15-77B8-455F-8B62-68ED1A8997F3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6F22FA15-77B8-455F-8B62-68ED1A8997F3}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DalFacade", "DalFacade\DalFacade.csproj", "{5D42998A-6474-4376-AF1A-69AA5AB9118B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DalFacade", "DalFacade\DalFacade.csproj", "{5D42998A-6474-4376-AF1A-69AA5AB9118B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DalList", "DalList\DalList.csproj", "{FB3D3994-D510-4C01-8A99-80A9986E096A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DalList", "DalList\DalList.csproj", "{FB3D3994-D510-4C01-8A99-80A9986E096A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DalTest", "DalTest\DalTest.csproj", "{26A0EA2F-4E50-4389-B972-DCE34070C293}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DalTest", "DalTest\DalTest.csproj", "{26A0EA2F-4E50-4389-B972-DCE34070C293}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "xml", "xml", "{69525D10-784E-44FB-A004-95D5C8F55B43}"
+	ProjectSection(SolutionItems) = preProject
+		xml\assignments.xml = xml\assignments.xml
+		xml\calls.xml = xml\calls.xml
+		xml\data-config.xml = xml\data-config.xml
+		xml\volunteers.xml = xml\volunteers.xml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DalXml", "DalXml\DalXml.csproj", "{C95EF7BD-8E3D-471B-8308-812302B42BD9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,6 +48,10 @@ Global
 		{26A0EA2F-4E50-4389-B972-DCE34070C293}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26A0EA2F-4E50-4389-B972-DCE34070C293}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26A0EA2F-4E50-4389-B972-DCE34070C293}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C95EF7BD-8E3D-471B-8308-812302B42BD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C95EF7BD-8E3D-471B-8308-812302B42BD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C95EF7BD-8E3D-471B-8308-812302B42BD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C95EF7BD-8E3D-471B-8308-812302B42BD9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

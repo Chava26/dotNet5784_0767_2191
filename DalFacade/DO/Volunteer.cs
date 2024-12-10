@@ -2,7 +2,7 @@
 
 namespace DO;
 using System;
-using static global::DO.Enums;
+//using static global::DO.Enums;
 using System.Data;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -27,7 +27,7 @@ public record Volunteer
     string Name,
     string Email,
     string Phone,
-    Role Role,
+    Role role,
     bool IsActive,
     double? MaximumDistance = null,
     string? Password = null,
