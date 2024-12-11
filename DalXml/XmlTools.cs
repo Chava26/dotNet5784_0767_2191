@@ -113,6 +113,27 @@ static class XMLTools
         root.Element(elemName)?.SetValue((elemVal).ToString());
         XMLTools.SaveListToXMLElement(root, xmlFileName);
     }
+    public static TimeSpan GetConfigTimeSpanVal(string filePath, string elementName)
+    {
+        XElement config = XElement.Load(filePath);
+        string? timeSpanString = (string?)config.Element(elementName);
+        return timeSpanString != null ? TimeSpan.Parse(timeSpanString) : throw new Exception($"Missing element {elementName}");
+    }
+
+    public static void SetConfigTimeSpanVal(string filePath, string elementName, TimeSpan value)
+    {
+        XElement config = XElement.Load(filePath);
+        XElement? element = config.Element(elementName);
+        if (element == null)
+        {
+            config.Add(new XElement(elementName, value.ToString()));
+        }
+        else
+        {
+            element.Value = value.ToString();
+        }
+        config.Save(filePath);
+    }
     #endregion
 
 

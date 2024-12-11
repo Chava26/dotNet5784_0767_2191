@@ -16,6 +16,7 @@ internal class VolunteerImplementation : IVolunteer
     /// <exception cref="DalXMLFileLoadCreateException">Thrown if any required fields cannot be converted.</exception>
     static Volunteer getVolunteer(XElement s)
     {
+        
         return new DO.Volunteer()
         {
            
@@ -38,6 +39,7 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     /// <param name="volunteer">The Volunteer object to convert.</param>
     /// <returns>An XElement containing the Volunteer data.</returns>
+ 
     static XElement CreateVolunteerElement(Volunteer volunteer)
     {
         return new XElement("Volunteer",
@@ -88,7 +90,7 @@ internal class VolunteerImplementation : IVolunteer
         (VolunteersRootElem.Elements().FirstOrDefault(st => (int?)st.Element("Id") == item.Id)
         ?? throw new DO.DalDoesNotExistException($"Volunteer with ID={item.Id} does Not exist"))
         .Remove();
-        VolunteersRootElem.Add(new XElement("Volunteer", createVolunteerElement(item)));
+        VolunteersRootElem.Add(new XElement("Volunteer", CreateVolunteerElement(item)));
         XMLTools.SaveListToXMLElement(VolunteersRootElem, Config.s_volunteers_xml);
     }
     /// <summary>
@@ -117,7 +119,7 @@ internal class VolunteerImplementation : IVolunteer
     public IEnumerable<Volunteer> ReadAll(Func<Volunteer, bool>? filter = null)
     {
         IEnumerable<XElement> volunteerElements = XMLTools.LoadListFromXMLElement(Config.s_volunteers_xml).Elements("Volunteer");
-        IEnumerable<Volunteer> volunteers = volunteerElements.Select(e => GetVolunteer(e));
+        IEnumerable<Volunteer> volunteers = volunteerElements.Select(e => getVolunteer(e));
 
         return filter != null ? volunteers.Where(filter) : volunteers;
 
@@ -130,7 +132,7 @@ internal class VolunteerImplementation : IVolunteer
     public void Delete(int id)
     {
         XElement VolunteersRootElem = XMLTools.LoadListFromXMLElement(Config.s_volunteers_xml);
-        (VolunteersRootElem.Elements().FirstOrDefault(st => (int?)st.Element("Id") == item.Id)
+        (VolunteersRootElem.Elements().FirstOrDefault(st => (int?)st.Element("Id") == id)
         ?? throw new DO.DalDoesNotExistException($"Volunteer with ID={id} does Not exist"))
         .Remove();
     }

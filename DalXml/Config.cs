@@ -21,12 +21,12 @@ internal static class Config
     internal static int NextAssignmentId
     {
         get => XMLTools.GetAndIncreaseConfigIntVal(s_data_config_xml, "NextAssignmentId");
-       private set => XMLTools.SetConfigDateVal(s_data_config_xml, "NextAssignmentId", value);
+       private set => XMLTools.SetConfigIntVal(s_data_config_xml, "NextAssignmentId", value);
     }
     //public static TimeSpan RiskRange
     //{
-    //    get => XMLTools.GetConfigDateVal(s_data_config_xml, "RiskRange");
-    //    internal set => XMLTools.SetConfigDateVal(s_data_config_xml, "NextAssignmentId", value);
+    //    get => XMLTools.GetConfigTimeSpanVal(s_data_config_xml, "RiskRange");
+    //    internal set => XMLTools.SetConfigTimeSpanVal(s_data_config_xml, "NextAssignmentId", value);
     //}
     public static TimeSpan RiskRange { get; internal set; } = TimeSpan.FromHours(1);
 

@@ -1,6 +1,5 @@
 ﻿using DalApi; // Using the API for accessing the data layer (DAL)
 using DO; // Using the Data Objects representing the information
-using static DO.Enums; // Allows direct access to Enum values without specifying the class name
 using System.Data; // Provides support for database-related structures
 
 namespace DalTest;

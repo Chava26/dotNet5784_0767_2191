@@ -11,7 +11,9 @@ namespace DalTest
     {
 
         // Static initialization of the DAL instance (Stage 2 implementation)
-        static readonly IDal s_dal = new DalList();
+        //static readonly IDal s_dal = new DalList();//stage 2
+        static readonly IDal s_dal = new DalXml(); //stage 3
+
 
         /// <summary>
         /// Main menu options for user interaction
@@ -75,7 +77,7 @@ namespace DalTest
         {
 
             Console.Write("Enter Call Type (1 for Type1, 2 for Type2, etc.): ");
-            if (!Enum.TryParse(Console.ReadLine(), out Enums.CallType _callType)) throw new FormatException("callType is invalid!");
+            if (!Enum.TryParse(Console.ReadLine(), out CallType _callType)) throw new FormatException("callType is invalid!");
             Console.Write("Enter Description of the problem:  ");
             string description = Console.ReadLine()!;
             Console.Write("Enter your address: ");
