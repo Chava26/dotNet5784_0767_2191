@@ -19,7 +19,10 @@ namespace Dal;
 
        internal static DateTime Clock { get; set; } = DateTime.Now;
         public static TimeSpan RiskRange { get; internal set; }= TimeSpan.FromHours(1);
-        internal static void Reset()
+    /// <summary>
+    /// Resets the configuration values to their default settings.
+    /// </summary>
+    internal static void Reset()
         {
             nextCallId = startCallId;
             nextAssignmentId = startAssignmentId;
@@ -27,9 +30,6 @@ namespace Dal;
             RiskRange = TimeSpan.FromHours(1);
 
         }
-
-
-
     }
 
 

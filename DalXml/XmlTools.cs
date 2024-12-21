@@ -1,8 +1,14 @@
-﻿namespace Dal;
+﻿
+namespace Dal;
 
 using DO;
+
 using System.Xml;
+using System;
+
+
 using System.Xml.Linq;
+
 using System.Xml.Serialization;
 
 static class XMLTools
@@ -55,6 +61,8 @@ static class XMLTools
         try
         {
             rootElem.Save(xmlFilePath);
+            Console.WriteLine($"Saving XML to: {xmlFilePath}"); // הודעת דיבוג
+
         }
         catch (Exception ex)
         {
@@ -101,6 +109,31 @@ static class XMLTools
         DateTime dt = root.ToDateTimeNullable(elemName) ?? throw new FormatException($"can't convert:  {xmlFileName}, {elemName}");
         return dt;
     }
+    
+
+    public static TimeSpan GetConfigTimeSpanVal(string xmlFileName, string elemName)
+
+    {
+
+        XElement root = XMLTools.LoadListFromXMLElement(xmlFileName);
+
+        TimeSpan ts = root.ToTimeSpanNullable(elemName) ?? throw new FormatException($"can't convert: {xmlFileName}, {elemName}");
+
+        return ts;
+
+    }
+
+    public static void SetConfigTimeSpanVal(string xmlFileName, string elemName, TimeSpan elemVal)
+
+    {
+
+        XElement root = XMLTools.LoadListFromXMLElement(xmlFileName);
+
+        root.Element(elemName)?.SetValue(elemVal.ToString());
+
+        XMLTools.SaveListToXMLElement(root, xmlFileName);
+
+    }
     public static void SetConfigIntVal(string xmlFileName, string elemName, int elemVal)
     {
         XElement root = XMLTools.LoadListFromXMLElement(xmlFileName);
@@ -112,27 +145,6 @@ static class XMLTools
         XElement root = XMLTools.LoadListFromXMLElement(xmlFileName);
         root.Element(elemName)?.SetValue((elemVal).ToString());
         XMLTools.SaveListToXMLElement(root, xmlFileName);
-    }
-    public static TimeSpan GetConfigTimeSpanVal(string filePath, string elementName)
-    {
-        XElement config = XElement.Load(filePath);
-        string? timeSpanString = (string?)config.Element(elementName);
-        return timeSpanString != null ? TimeSpan.Parse(timeSpanString) : throw new Exception($"Missing element {elementName}");
-    }
-
-    public static void SetConfigTimeSpanVal(string filePath, string elementName, TimeSpan value)
-    {
-        XElement config = XElement.Load(filePath);
-        XElement? element = config.Element(elementName);
-        if (element == null)
-        {
-            config.Add(new XElement(elementName, value.ToString()));
-        }
-        else
-        {
-            element.Value = value.ToString();
-        }
-        config.Save(filePath);
     }
     #endregion
 

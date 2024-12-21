@@ -17,7 +17,7 @@ internal class VolunteerImplementation : IVolunteer
     static Volunteer getVolunteer(XElement s)
     {
         
-        return new DO.Volunteer()
+        return new Volunteer()
         {
            
             Id = s.ToIntNullable("Id") ?? throw new DalXMLFileLoadCreateException("can't convert id"),

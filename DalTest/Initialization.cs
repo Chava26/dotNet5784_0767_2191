@@ -1,8 +1,13 @@
 ﻿using DalApi; // Using the API for accessing the data layer (DAL)
 using DO; // Using the Data Objects representing the information
 using System.Data; // Provides support for database-related structures
+using System.Numerics;
 
+using System.Xml.Linq;
 namespace DalTest;
+
+
+
 
 // Static class for initializing data in the system
 public static class Initialization
@@ -126,6 +131,7 @@ public static class Initialization
 
         for (int i = 0; i < 50; i++) // Loop to create 50 emergency calls
         {
+
             CallType _callType = (CallType)s_rand.Next(0, Enum.GetValues(typeof(CallType)).Length); // Random call type
             DateTime TimeOfOpen = new DateTime(s_dal!.Config.Clock.Hour - 2, 1, 1); // Call open time
             DateTime MaxTimeToFinish = TimeOfOpen.AddDays(s_rand.Next((s_dal!.Config.Clock - TimeOfOpen).Days)); // Maximum finish time
@@ -166,15 +172,23 @@ public static class Initialization
     // Main function to start the initialization process
     public static void Do(IDal dal)
     {
-        // Check if the DAL object is null
-        s_dal = dal ?? throw new NullReferenceException("DAL object cannot be null!");
+        try
+        {         // Check if the DAL object is null
+            s_dal = dal ?? throw new NullReferenceException("DAL object cannot be null!");
 
-        Console.WriteLine("Reset Configuration values and List values...");
-        s_dal.ResetDB(); // Reset the database
+            Console.WriteLine("Reset Configuration values and List values...");
+            s_dal.ResetDB(); // Reset the database
 
-        // Call functions to create the entities
-        createVolunteers();
-        createCalls();
-        createAssignments();
+            DateTime maxTime = s_dal.Config.Clock;
+
+            // Call functions to create the entities
+            createVolunteers();
+            createCalls();
+            createAssignments();
+        }catch (Exception ex) {
+            Console.WriteLine($"Error in the initialization process: {ex.Message}");
+
+        }
+
     }
 }

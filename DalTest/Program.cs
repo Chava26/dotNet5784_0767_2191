@@ -109,7 +109,7 @@ namespace DalTest
         /// <returns>A new assignment object</returns>
         private static Assignment CreateAssignment(bool ForUpdate=false)
         {
-            Console.WriteLine("Enter your details for ");
+            //Console.WriteLine("Enter your details for  ");
             Console.Write("Enter Call ID: ");
             if (!int.TryParse(Console.ReadLine(), out int CallId)) throw new InvalidFormatException("call Id is invalid!");
             Console.Write("Enter Volunteer ID: ");

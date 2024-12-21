@@ -3,8 +3,12 @@
 using DO;
 
 namespace DalApi;
+/// <summary>
+/// This interface defines basic CRUD (Create, Read, Update, Delete) operations 
+/// for working with entities in the Data Access Layer (DAL).
+/// </summary>
 
-    public interface ICrud<T> where T : class
+public interface ICrud<T> where T : class
     {
         public void Create(T item); //Creates new entity object in DAL
         T? Read(int id); //Reads entity object by its ID 
