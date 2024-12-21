@@ -119,7 +119,7 @@ static class XMLTools
 
         TimeSpan ts = root.ToTimeSpanNullable(elemName) ?? throw new FormatException($"can't convert: {xmlFileName}, {elemName}");
 
-        return ts;
+        //string xmlValue = root.Element("RiskRange")?.Value;
 
     }
 
