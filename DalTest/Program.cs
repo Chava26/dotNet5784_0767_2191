@@ -12,7 +12,9 @@ namespace DalTest
 
         // Static initialization of the DAL instance (Stage 2 implementation)
         //static readonly IDal s_dal = new DalList();//stage 2
-        static readonly IDal s_dal = new DalXml(); //stage 3
+        //static readonly IDal s_dal = new DalXml(); //stage 3
+        static readonly IDal s_dal = Factory.Get; //stage 4
+
 
 
         /// <summary>
@@ -511,7 +513,7 @@ namespace DalTest
                             EntityMenu("Call", s_dal.Call);
                             break;
                         case MainMenu.InitializeData:
-                            Initialization.Do(s_dal); // Initialize data.
+                            Initialization.Do(); // Initialize data.
                             break;
                         case MainMenu.DisplayAllData:
                             ReadAllEntity("VolunteerSubmenu");

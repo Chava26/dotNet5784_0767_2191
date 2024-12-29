@@ -14,6 +14,5 @@ public interface IDal
     ICall Call { get; }
     IVolunteer Volunteer {  get; }
     IConfig Config {  get; }
-    void ResetDB();
-
+    void ResetDB();    /// Resets the entire database to its initial state.
 }

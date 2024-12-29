@@ -133,7 +133,7 @@ public static class Initialization
         {
 
             CallType _callType = (CallType)s_rand.Next(0, Enum.GetValues(typeof(CallType)).Length); // Random call type
-            DateTime TimeOfOpen = new DateTime(s_dal!.Config.Clock.Hour - 2, 1, 1); // Call open time
+            DateTime TimeOfOpen = s_dal!.Config.Clock.AddHours(1); // Call open time
             DateTime MaxTimeToFinish = TimeOfOpen.AddDays(s_rand.Next((s_dal!.Config.Clock - TimeOfOpen).Days)); // Maximum finish time
 
             // Define call data
@@ -170,11 +170,16 @@ public static class Initialization
     }
 
     // Main function to start the initialization process
-    public static void Do(IDal dal)
+    public static void Do()
     {
         try
-        {         // Check if the DAL object is null
-            s_dal = dal ?? throw new NullReferenceException("DAL object cannot be null!");
+        {
+            // Check if the DAL object is null
+            //s_dal = dal ?? throw new NullReferenceException("DAL object cannot be null!");///stage3
+
+
+            //s_dal = dal ?? throw new NullReferenceException("DAL object can not be null!"); //stage 2
+            s_dal = DalApi.Factory.Get; //stage 4
 
             Console.WriteLine("Reset Configuration values and List values...");
             s_dal.ResetDB(); // Reset the database

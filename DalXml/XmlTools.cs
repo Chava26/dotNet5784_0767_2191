@@ -121,6 +121,11 @@ static class XMLTools
 
         //string xmlValue = root.Element("RiskRange")?.Value;
 
+        //TimeSpan? ts = TimeSpan.Parse(xmlValue);
+
+        //return ts ?? throw new FormatException($"can't convert: {xmlFileName}, {elemName}");
+
+        return ts; 
     }
 
     public static void SetConfigTimeSpanVal(string xmlFileName, string elemName, TimeSpan elemVal)
@@ -158,6 +163,9 @@ static class XMLTools
         double.TryParse((string?)element.Element(name), out var result) ? (double?)result : null;
     public static int? ToIntNullable(this XElement element, string name) =>
         int.TryParse((string?)element.Element(name), out var result) ? (int?)result : null;
+    public static TimeSpan? ToTimeSpanNullable(this XElement element, string name) =>
+
+   TimeSpan.TryParse((string?)element.Element(name), out var result) ? (TimeSpan?)result : null;
     #endregion
 
 }

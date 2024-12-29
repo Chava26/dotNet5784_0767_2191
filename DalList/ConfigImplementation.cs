@@ -7,8 +7,7 @@ namespace Dal;
 /// like Clock and RiskRange, and also includes a method to reset the configuration to default values.
 /// </summary>
 internal class ConfigImplementation : IConfig
-
-     /// <summary>
+{     /// <summary>
      /// Gets or sets the current clock (DateTime) from the configuration.
      /// </summary>
     public DateTime Clock
