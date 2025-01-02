@@ -1,5 +1,4 @@
-﻿using Helpers;
-namespace BO;
+﻿namespace BO;
 
 /// <summary>
 /// Represents a Volunteer with relevant attributes and behaviors.
@@ -93,37 +92,33 @@ public class Volunteer
     /// </summary>
     public int TotalExpiredTasks { get; private set; }
 
+    ///// <summary>
+    ///// The current task in progress for the Volunteer.
+    ///// FALSE if no task is in progress.
+    ///// </summary>
+    // public bool IsActive  { get; set; }
+
     /// <summary>
     /// The current task in progress for the Volunteer.
     /// Null if no task is in progress.
     /// </summary>
-    public CallInProgress? CurrentTask { get; set; }
+    public CallInAction? CurrentTask { get; set; }
+    public override string ToString()
+    {
+        return $"Id: {Id}, FullName: {FullName}, Email: {Email}, Role: {Role}";
+    }
+    public Volunteer(int id, string fullName, string phoneNumber, string email, Role role, DistanceType distanceType)
+    {
+        Id = id;
+        FullName = fullName;
+        PhoneNumber = phoneNumber;
+        Email = email;
+        Role = role;
+        DistanceType = distanceType;
+        IsActive = true; 
+    }
 }
 
-/// <summary>
-/// Represents the role of a Volunteer.
-/// </summary>
-public enum Role
-{
-    Manager,
-    Volunteer
-}
 
-/// <summary>
-/// Represents the type of distance calculation.
-/// </summary>
-public enum DistanceType
-{
-    AirDistance,
-    WalkingDistance,
-    DrivingDistance
-}
 
-/// <summary>
-/// Represents a call currently in progress for a Volunteer.
-/// </summary>
-public class CallInProgress
-{
-    // Define properties related to the call in progress.
-}
 

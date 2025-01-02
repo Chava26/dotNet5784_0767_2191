@@ -8,7 +8,13 @@ namespace DO;
 
         public enum Role { volunteer, manager };
         public enum DistanceType { airDistance, walkingDistance, drivingDistance };
-        public enum CallType { necessary , noNecessary};
+        public enum CallType { necessary, 
+          None,
+            Regular, 
+            General,             
+          FollowUp,
+           noNecessary
+        };
         public enum EndOfTreatment { treated, selfCancel, administratorCancel,expired };
 
 

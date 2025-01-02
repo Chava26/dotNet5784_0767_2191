@@ -1,5 +1,83 @@
 ﻿
 
+using System.Net.NetworkInformation;
+
 namespace BO;
-public enum Role { volunteer, manager };
-public enum DistanceType { airDistance, walkingDistance, drivingDistance }; 
+/// <summary>
+/// Represents the role of a Volunteer.
+/// </summary>
+public enum Role
+{
+    Manager,
+    Volunteer
+}
+
+/// <summary>
+/// Represents the type of distance calculation.
+/// </summary>
+public enum DistanceType
+{
+    AirDistance,
+    WalkingDistance,
+    DrivingDistance
+}
+/// <summary>
+/// Enum representing the type of the call.
+/// </summary>
+public enum CallType
+{
+    necessary,
+    None,
+    Regular,
+    General,             // General calls.Follow-up calls
+    FollowUp,
+    noNecessary
+}
+
+/// <summary>
+/// Enum representing the status of the call.
+/// </summary>
+
+public enum CallStatus
+{
+    Open,              // The call is not being handled by any volunteer.
+    InProgress,        // The call is currently being handled by a volunteer.
+    Closed,            // The call has been handled and completed by a volunteer.
+    Expired,           // The call was not selected for handling or was not completed in time.
+    OpenRisk,          // The open call is approaching the required closing time.
+    InProgressRisk     // The call in progress is approaching the required closing time.
+}
+
+/// <summary>
+/// Represents a call currently in progress for a Volunteer.
+/// </summary>
+public class CallInAction
+{
+    // Define properties related to the call in progress.
+}
+/// <summary>
+/// Represents the type of completion for a call.
+/// </summary>
+public enum CompletionType
+{
+    Resolved,
+    Canceled,
+    Expired
+}
+// Enum for Treatment Completion Status(End treatment status)
+public enum EndOfTreatment {
+
+    Completed,
+    treated, 
+    selfCancel,
+    administratorCancel, 
+    expired 
+};
+
+//public enum 
+//{
+//    Completed,          // Treatment has been completed successfully.
+//    Canceled,           // Treatment was canceled before completion.
+//    Expired             // Treatment was not completed in time.
+//}
+
