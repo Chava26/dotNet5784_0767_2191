@@ -73,6 +73,52 @@ public enum EndOfTreatment {
     administratorCancel, 
     expired 
 };
+// Enum for volunteer sort
+public enum VolunteerSortField
+{
+    Id,
+    Name,
+    Email,
+     Phone,
+    role,
+    IsActive,
+        SumOfExpiredCalls,
+    SumOfCancellation,
+    SumOfCalls
+    //double? MaximumDistance = null,
+    //string? Password = null,
+    //string? Adress = null,
+    //double? Longitude = null,
+
+    //double? Latitude = null,
+    //DistanceType DistanceType = DistanceType.airDistance
+}
+/// <summary>
+/// Enum representing the fields by which calls can be filtered or sorted.
+/// </summary>
+public enum CallField
+{
+   
+    CallId,
+    CallType,
+    OpenTime,
+    TimeRemaining,
+    LastVolunteerName,
+    TreatmentCompletionTime,
+    Status,
+    AssignmentsCount
+}
+/// <summary>
+/// Enum representing time units for advancing the system clock.
+/// </summary>
+public enum TimeUnit
+{
+    Minute,
+    Hour,
+    Day,
+    Month,
+    Year
+}
 
 //public enum 
 //{

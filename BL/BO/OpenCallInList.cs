@@ -56,19 +56,22 @@ namespace BO;
             FullAddress = fullAddress;
             OpenTime = openTime;
         }
-        /// <summary>
-        /// Override of ToString method for debugging purposes using Reflection to display the property values.
-        /// </summary>
-        public override string ToString()
-        {
-            var properties = this.GetType().GetProperties();
-            var result = "";
 
-            foreach (var property in properties)
-            {
-                result += $"{property.Name}: {property.GetValue(this)}\n";
-            }
+    //public override string ToString() => this.ToStringProperty();
 
-            return result;
-        }
-    }
+    ///// <summary>
+    ///// Override of ToString method for debugging purposes using Reflection to display the property values.
+    ///// </summary>
+    //public override string ToString()
+    //{
+    //    var properties = this.GetType().GetProperties();
+    //    var result = "";
+
+    //    foreach (var property in properties)
+    //    {
+    //        result += $"{property.Name}: {property.GetValue(this)}\n";
+    //    }
+
+    //    return result;
+    //}
+}

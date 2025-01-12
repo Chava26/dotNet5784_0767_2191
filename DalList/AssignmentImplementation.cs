@@ -41,9 +41,9 @@ internal class AssignmentImplementation : IAssignment
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public Assignment? Read(int id)
+    public Assignment? Read(int volunteerId)
     {
-        return DataSource.Assignments.FirstOrDefault(Assignment => Assignment.Id == id);
+        return DataSource.Assignments.FirstOrDefault(Assignment => Assignment.VolunteerId == volunteerId);
     }
     /// <summary>
     /// The function read all the Assignment in IEnumerable type

@@ -51,22 +51,23 @@ public class CallAssignInList
             TreatmentEndTime = treatmentEndTime;
              TypeOfEndTreatment = treatmentType;
         }
+    //public override string ToString() => this.ToStringProperty();
 
-        /// <summary>
-        /// Override of ToString method for debugging purposes, using Reflection to display the property values.
-        /// </summary>
-        public override string ToString()
-        {
-            var properties = this.GetType().GetProperties();
-            var result = "";
+    ///// <summary>
+    ///// Override of ToString method for debugging purposes, using Reflection to display the property values.
+    ///// </summary>
+    //public override string ToString()
+    //{
+    //    var properties = this.GetType().GetProperties();
+    //    var result = "";
 
-            foreach (var property in properties)
-            {
-                result += $"{property.Name}: {property.GetValue(this)}\n";
-            }
+    //    foreach (var property in properties)
+    //    {
+    //        result += $"{property.Name}: {property.GetValue(this)}\n";
+    //    }
 
-            return result;
-        }
-    }
+    //    return result;
+    //}
+}
 
 

@@ -41,33 +41,34 @@ public class ClosedCallInList
         /// Type of call completion, if applicable.
         /// </summary>
         public EndOfTreatment? CompletionType { get; set; }
+         //public override string ToString() => this.ToStringProperty();
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ClosedCallInList"/> class.
-        /// </summary>
-        /// <param name="id">Unique identifier for the closed call.</param>
-        /// <param name="callType">Type of the call.</param>
-        /// <param name="fullAddress">Full address of the call.</param>
-        /// <param name="openTime">Opening time of the call.</param>
-        /// <param name="assignmentTime">Assignment time of the call.</param>
-        /// <param name="completionTime">Actual completion time of the call, if applicable.</param>
-        /// <param name="completionType">Type of call completion, if applicable.</param>
-        public ClosedCallInList(
-            int id,
-            CallType callType,
-            string fullAddress,
-            DateTime openTime,
-            DateTime assignmentTime,
-            DateTime? completionTime,
-            EndOfTreatment? completionType)
-        {
-            Id = id;
-            CallType = callType;
-            FullAddress = fullAddress;
-            OpenTime = openTime;
-            AssignmentTime = assignmentTime;
-            CompletionTime = completionTime;
-            CompletionType = completionType;
-        }
-    }
+    ///// <summary>
+    ///// Initializes a new instance of the <see cref="ClosedCallInList"/> class.
+    ///// </summary>
+    ///// <param name="id">Unique identifier for the closed call.</param>
+    ///// <param name="callType">Type of the call.</param>
+    ///// <param name="fullAddress">Full address of the call.</param>
+    ///// <param name="openTime">Opening time of the call.</param>
+    ///// <param name="assignmentTime">Assignment time of the call.</param>
+    ///// <param name="completionTime">Actual completion time of the call, if applicable.</param>
+    ///// <param name="completionType">Type of call completion, if applicable.</param>
+    //public ClosedCallInList(
+    //    int id,
+    //    CallType callType,
+    //    string fullAddress,
+    //    DateTime openTime,
+    //    DateTime assignmentTime,
+    //    DateTime? completionTime,
+    //    EndOfTreatment? completionType)
+    //{
+    //    Id = id;
+    //    CallType = callType;
+    //    FullAddress = fullAddress;
+    //    OpenTime = openTime;
+    //    AssignmentTime = assignmentTime;
+    //    CompletionTime = completionTime;
+    //    CompletionType = completionType;
+    //}
+}
 

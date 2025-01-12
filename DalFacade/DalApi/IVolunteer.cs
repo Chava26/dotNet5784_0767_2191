@@ -1,5 +1,6 @@
 ﻿namespace DalApi;
 using DO;
+using System.Collections.Generic;
 
 public interface IVolunteer : ICrud<Volunteer>
 {
@@ -10,5 +11,5 @@ public interface IVolunteer : ICrud<Volunteer>
     //void Update(Volunteer item); //Updates entity object
     //void Delete(int id); //Deletes an object by its Id
     //void DeleteAll(); //Delete all entity objects
-
+    //IEnumerable<Volunteer> ReadAll(bool? isActive);
 }

@@ -86,30 +86,32 @@ namespace BO;
             Status= status;
         }
 
-        /// <summary>
-        /// Override of ToString method for debugging purposes, using Reflection to display the property values.
-        /// </summary>
-        public override string ToString()
-        {
-            var properties = this.GetType().GetProperties();
-            var result = "";
-
-            foreach (var property in properties)
-            {
-                result += $"{property.Name}: {property.GetValue(this)}\n";
-            }
-
-            return result;
-        }
-    }
-
     /// <summary>
-    /// Logical Data Entity "CallAssignInList" - Allocation of the Call.
-    /// This represents the assignment details for the current call.
+    /// Override of ToString method for debugging purposes, using Reflection to display the property values.
     /// </summary>
-    //public class CallAssignInList
+    //public override string ToString()
     //{
-    //    // Define properties related to the Call assignment here (e.g., volunteer, allocation time, etc.)
+    //    var properties = this.GetType().GetProperties();
+    //    var result = "";
+
+    //    foreach (var property in properties)
+    //    {
+    //        result += $"{property.Name}: {property.GetValue(this)}\n";
+    //    }
+
+    //    return result;
     //}
+    //public override string ToString() => this.ToStringProperty();
+
+}
+
+/// <summary>
+/// Logical Data Entity "CallAssignInList" - Allocation of the Call.
+/// This represents the assignment details for the current call.
+/// </summary>
+//public class CallAssignInList
+//{
+//    // Define properties related to the Call assignment here (e.g., volunteer, allocation time, etc.)
+//}
 
 

@@ -1,5 +1,5 @@
 ﻿namespace BO;
-
+using Helpers;
 /// <summary>
 /// Represents a Volunteer with relevant attributes and behaviors.
 /// </summary>
@@ -103,20 +103,23 @@ public class Volunteer
     /// Null if no task is in progress.
     /// </summary>
     public CallInAction? CurrentTask { get; set; }
-    public override string ToString()
-    {
-        return $"Id: {Id}, FullName: {FullName}, Email: {Email}, Role: {Role}";
-    }
-    public Volunteer(int id, string fullName, string phoneNumber, string email, Role role, DistanceType distanceType)
-    {
-        Id = id;
-        FullName = fullName;
-        PhoneNumber = phoneNumber;
-        Email = email;
-        Role = role;
-        DistanceType = distanceType;
-        IsActive = true; 
-    }
+    public CallInProgress? callInProgress { get; set; }
+    //public override string ToString() => this.ToStringProperty();
+
+    //public override string ToString()
+    //{
+    //    return $"Id: {Id}, FullName: {FullName}, Email: {Email}, Role: {Role}";
+    //}
+    //public Volunteer(int id, string fullName, string phoneNumber, string email, Role role, DistanceType distanceType)
+    //{
+    //    Id = id;
+    //    FullName = fullName;
+    //    PhoneNumber = phoneNumber;
+    //    Email = email;
+    //    Role = role;
+    //    DistanceType = distanceType;
+    //    IsActive = true; 
+    //}
 }
 
 

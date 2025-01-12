@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Helpers;
+
 namespace BO;
 /// <summary>
 /// Represents a Volunteer displayed in a list with essential details.
@@ -46,22 +47,28 @@ public class VolunteerInList
     /// If no call is in progress, this property is set to <see cref="CallType.None"/>.
     /// </summary>
     public CallType CurrentCallType { get; init; }
+    public override string ToString() => this.ToStringProperty();
+
+    private string ToStringProperty()
+    {
+        throw new NotImplementedException();
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="VolunteerInList"/> class.
     /// </summary>
-   
-    public VolunteerInList( int id, string fullName, bool isActive, int totalHandledCalls, int totalCanceledCalls, int totalExpiredCalls, int? currentCallId,CallType currentCallType)
-    {
-        Id = id;
-        FullName = fullName;
-        IsActive = isActive;
-        TotalHandledCalls = totalHandledCalls;
-        TotalCanceledCalls = totalCanceledCalls;
-        TotalExpiredCalls = totalExpiredCalls;
-        CurrentCallId = currentCallId;
-        CurrentCallType = currentCallType;
-    }
+
+    //public VolunteerInList( int id, string fullName, bool isActive, int totalHandledCalls, int totalCanceledCalls, int totalExpiredCalls, int? currentCallId,CallType currentCallType)
+    //{
+    //    Id = id;
+    //    FullName = fullName;
+    //    IsActive = isActive;
+    //    TotalHandledCalls = totalHandledCalls;
+    //    TotalCanceledCalls = totalCanceledCalls;
+    //    TotalExpiredCalls = totalExpiredCalls;
+    //    CurrentCallId = currentCallId;
+    //    CurrentCallType = currentCallType;
+    //}
 }
 
 

@@ -41,7 +41,7 @@ namespace BO;
 
         /// <summary>
         /// The time the call was opened.
-        /// Retrieved from Call.DO.
+        /// Retrieved from Call.DO
         /// </summary>
         public DateTime OpenTime { get; set; }
 
@@ -68,43 +68,46 @@ namespace BO;
         /// </summary>
         public CallStatus Status { get; set; }
 
-        /// <summary>
-        /// Overrides ToString for debugging purposes using reflection.
-        /// </summary>
-        public override string ToString()
-        {
-            return this.ToStringProperties();
-        }
+    /// <summary>
+    /// Overrides ToString for debugging purposes using reflection.
+    /// </summary>
+    //public override string ToString()
+    //{
+    //    return this.ToStringProperties();
+    //}
+
+    //public override string ToString() => this.ToStringProperty();
+
     /// <summary>
     /// Initializes a new instance of the CallInProgress class.
     /// </summary>
-    public CallInProgress(int id, int callId, CallType callType, string address, DateTime openingTime, DateTime entryTime, double distanceFromVolunteer, CallStatus status)
-    {
-        Id = id;
-        CallId = callId;
-        Type = callType;
-        Address = address;
-        OpenTime = openingTime;
-        EntryTime = entryTime;
-        DistanceFromVolunteer = distanceFromVolunteer;
-        Status = status;
-    }
+    //public CallInProgress(int id, int callId, CallType callType, string address, DateTime openingTime, DateTime entryTime, double distanceFromVolunteer, CallStatus status)
+    //{
+    //    Id = id;
+    //    CallId = callId;
+    //    Type = callType;
+    //    Address = address;
+    //    OpenTime = openingTime;
+    //    EntryTime = entryTime;
+    //    DistanceFromVolunteer = distanceFromVolunteer;
+    //    Status = status;
+    //}
 }
 
 
 
 
-/// <summary>
-/// Extension method for generating a string representation of the properties for debugging.
-/// </summary>
-public static class EntityExtensions
-{
-    public static string ToStringProperties(this object obj)
-    {
-        if (obj == null) return string.Empty;
-        var properties = obj.GetType().GetProperties();
-        return string.Join(", ", properties.Select(prop => $"{prop.Name}: {prop.GetValue(obj)}"));
-    }
-}
+///// <summary>
+///// Extension method for generating a string representation of the properties for debugging.
+///// </summary>
+//public static class EntityExtensions
+//{
+//    public static string ToStringProperties(this object obj)
+//    {
+//        if (obj == null) return string.Empty;
+//        var properties = obj.GetType().GetProperties();
+//        return string.Join(", ", properties.Select(prop => $"{prop.Name}: {prop.GetValue(obj)}"));
+//    }
+//}
 
 

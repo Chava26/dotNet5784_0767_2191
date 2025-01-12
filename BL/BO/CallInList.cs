@@ -57,45 +57,47 @@ using System;
         /// </summary>
         public int AssignmentsCount { get; set; }
 
-        /// <summary>
-        /// Constructor to initialize the call entity with the necessary properties.
-        /// </summary>
-        /// <param name="callId">The unique ID of the call.</param>
-        /// <param name="callType">The type of the call (using an Enum).</param>
-        /// <param name="openTime">The time when the call was opened.</param>
-        /// <param name="timeRemaining">Remaining time until the call must be completed.</param>
-        /// <param name="lastVolunteerName">The name of the last volunteer who worked on the call.</param>
-        /// <param name="treatmentCompletionTime">The time spent completing the call (only for handled calls).</param>
-        /// <param name="status">The current status of the call.</param>
-        /// <param name="assignmentsCount">The number of assignments made for this call.</param>
-        public CallInList(int callId, CallType callType, DateTime openTime, TimeSpan timeRemaining, string lastVolunteerName, TimeSpan treatmentCompletionTime, CallStatus status, int assignmentsCount)
-        {
-            CallId = callId;
-            CallType = callType;
-            OpenTime = openTime;
-            TimeRemaining = timeRemaining;
-            LastVolunteerName = lastVolunteerName;
-            TreatmentCompletionTime = treatmentCompletionTime;
-            Status = status;
-            AssignmentsCount = assignmentsCount;
-        }
+    /// <summary>
+    /// Constructor to initialize the call entity with the necessary properties.
+    /// </summary>
+    /// <param name="callId">The unique ID of the call.</param>
+    /// <param name="callType">The type of the call (using an Enum).</param>
+    /// <param name="openTime">The time when the call was opened.</param>
+    /// <param name="timeRemaining">Remaining time until the call must be completed.</param>
+    /// <param name="lastVolunteerName">The name of the last volunteer who worked on the call.</param>
+    /// <param name="treatmentCompletionTime">The time spent completing the call (only for handled calls).</param>
+    /// <param name="status">The current status of the call.</param>
+    /// <param name="assignmentsCount">The number of assignments made for this call.</param>
+    //public CallInList(int callId, CallType callType, DateTime openTime, TimeSpan timeRemaining, string lastVolunteerName, TimeSpan treatmentCompletionTime, CallStatus status, int assignmentsCount)
+    //{
+    //    CallId = callId;
+    //    CallType = callType;
+    //    OpenTime = openTime;
+    //    TimeRemaining = timeRemaining;
+    //    LastVolunteerName = lastVolunteerName;
+    //    TreatmentCompletionTime = treatmentCompletionTime;
+    //    Status = status;
+    //    AssignmentsCount = assignmentsCount;
+    //}
+      }
+    //public override string ToString() => this.ToStringProperty();
 
-        /// <summary>
-        /// Override of ToString method for debugging purposes, using Reflection to display the property values.
-        /// </summary>
-        public override string ToString()
-        {
-            var properties = this.GetType().GetProperties();
-            var result = "";
+    /// <summary>
+    /// Override of ToString method for debugging purposes, using Reflection to display the property values.
+    /// </summary>
+    //public override string ToString()
+    //{
+    //    var properties = this.GetType().GetProperties();
+    //    var result = "";
 
-            foreach (var property in properties)
-            {
-                result += $"{property.Name}: {property.GetValue(this)}\n";
-            }
+    //    foreach (var property in properties)
+    //    {
+    //        result += $"{property.Name}: {property.GetValue(this)}\n";
+    //    }
 
-            return result;
-        }
-    }
+    //    return result;
+    //}
 
-  
+
+
 
