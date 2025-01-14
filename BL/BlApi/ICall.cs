@@ -35,10 +35,10 @@ public interface ICall
     /// <summary>
     /// Updates the details of a specific call.
     /// </summary>
-    /// <param name="call">A Call object containing updated details.</param>
+    /// <param name="updatedCall">A Call object containing updated details.</param>
     /// <exception cref="ArgumentException">Thrown if the provided details are invalid.</exception>
     /// <exception cref="KeyNotFoundException">Thrown if no call with the specified ID exists.</exception>
-    void UpdateCall(BO.Call call);
+    void UpdateCallDetails(BO.Call updatedCall);
 
     /// <summary>
     /// Deletes a specific call by its identifier.

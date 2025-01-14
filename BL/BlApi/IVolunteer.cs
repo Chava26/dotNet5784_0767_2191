@@ -18,7 +18,7 @@ public interface IVolunteer
     /// <param name="isActive">Nullable boolean to filter active or inactive volunteers. If null, returns all.</param>
     /// <param name="sortField">Optional enum to specify the sorting field. Defaults to sorting by ID if null.</param>
     /// <returns>A filtered and sorted list of volunteers.</returns>
-    public IEnumerable<BO.VolunteerInList> GetVolunteersList(bool? isActive = null, BO.VolunteerSortField? sortBy = null)
+    public IEnumerable<BO.VolunteerInList> GetVolunteersList(bool? isActive = null, BO.VolunteerSortField? sortBy = null);
     /// <summary>
     /// Retrieves the details of a specific volunteer.
     /// </summary>

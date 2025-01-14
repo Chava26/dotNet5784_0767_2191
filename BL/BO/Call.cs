@@ -33,19 +33,19 @@ namespace BO;
         /// This value may be updated, and if the address is incorrect or the volunteer chooses to leave it as null,
         /// it can be set to null.
         /// </summary>
-        public string? FullAddress { get; set; }
+        public string FullAddress { get; set; }
 
         /// <summary>
         /// The latitude of the call, which is used to calculate distances between addresses.
         /// The value is updated when the address is updated.
         /// </summary>
-        public double? Latitude { get; set; }
+        public double Latitude { get; set; }
 
         /// <summary>
         /// The longitude of the call, which is used to calculate distances between addresses.
         /// The value is updated when the address is updated.
         /// </summary>
-        public double? Longitude { get; set; }
+        public double Longitude { get; set; }
 
         /// <summary>
         /// The time when the call was opened.
@@ -68,23 +68,23 @@ namespace BO;
         /// </summary>
         public List<CallAssignInList>? CallAssignments { get; set; } = new List<CallAssignInList>();
 
-        /// <summary>
-        /// Constructor to initialize the call entity with the required values.
-        /// </summary>
-        /// <param name="id">The unique identifier of the call.</param>
-        /// <param name="callType">The type of the call.</param>
-        /// <param name="description">A description of the call.</param>
-        /// <param name="fullAddress">The full address of the call.</param>
-        /// <param name="latitude">The latitude of the call location.</param>
-        /// <param name="longitude">The longitude of the call location.</param>
-        /// <param name="openTime">The time the call was opened.</param>
-        public Call(int id, CallType callType, DateTime openTime, CallStatus status)
-        {
-            Id = id;
-            CallType = callType;
-            OpenTime = openTime;
-            Status= status;
-        }
+        ///// <summary>
+        ///// Constructor to initialize the call entity with the required values.
+        ///// </summary>
+        ///// <param name="id">The unique identifier of the call.</param>
+        ///// <param name="callType">The type of the call.</param>
+        ///// <param name="description">A description of the call.</param>
+        ///// <param name="fullAddress">The full address of the call.</param>
+        ///// <param name="latitude">The latitude of the call location.</param>
+        ///// <param name="longitude">The longitude of the call location.</param>
+        ///// <param name="openTime">The time the call was opened.</param>
+        //public Call(int id, CallType callType, DateTime openTime, CallStatus status)
+        //{
+        //    Id = id;
+        //    CallType = callType;
+        //    OpenTime = openTime;
+        //    Status= status;
+        //}
 
     /// <summary>
     /// Override of ToString method for debugging purposes, using Reflection to display the property values.

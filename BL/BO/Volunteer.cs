@@ -55,7 +55,7 @@ public class Volunteer
     /// Role of the Volunteer, either "Manager" or "Volunteer".
     /// Can only be set or updated by a Manager.
     /// </summary>
-    public Role Role { get; set; }
+    public Role role { get; set; }
 
     /// <summary>
     /// Indicates whether the Volunteer is currently active.

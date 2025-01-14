@@ -35,22 +35,22 @@ public class CallAssignInList
         /// </summary>
         public EndOfTreatment? TypeOfEndTreatment { get; set; }
 
-        /// <summary>
-        /// Constructor to initialize the assignment with the required properties.
-        /// </summary>
-        /// <param name="volunteerId">The unique identifier of the volunteer assigned to the call.</param>
-        /// <param name="volunteerName">The name of the volunteer.</param>
-        /// <param name="treatmentStartTime">The time when the volunteer started handling the call.</param>
-        /// <param name="treatmentEndTime">The time when the volunteer completed the treatment of the call.</param>
-        /// <param name="treatmentStatus">The completion status of the treatment.</param>
-        public CallAssignInList(int volunteerId, string volunteerName, DateTime treatmentStartTime, DateTime treatmentEndTime, EndOfTreatment treatmentType)
-        {
-            VolunteerId = volunteerId;
-            VolunteerName = volunteerName;
-            TreatmentStartTime = treatmentStartTime;
-            TreatmentEndTime = treatmentEndTime;
-             TypeOfEndTreatment = treatmentType;
-        }
+        ///// <summary>
+        ///// Constructor to initialize the assignment with the required properties.
+        ///// </summary>
+        ///// <param name="volunteerId">The unique identifier of the volunteer assigned to the call.</param>
+        ///// <param name="volunteerName">The name of the volunteer.</param>
+        ///// <param name="treatmentStartTime">The time when the volunteer started handling the call.</param>
+        ///// <param name="treatmentEndTime">The time when the volunteer completed the treatment of the call.</param>
+        ///// <param name="treatmentStatus">The completion status of the treatment.</param>
+        //public CallAssignInList(int volunteerId, string volunteerName, DateTime treatmentStartTime, DateTime treatmentEndTime, EndOfTreatment treatmentType)
+        //{
+        //    VolunteerId = volunteerId;
+        //    VolunteerName = volunteerName;
+        //    TreatmentStartTime = treatmentStartTime;
+        //    TreatmentEndTime = treatmentEndTime;
+        //     TypeOfEndTreatment = treatmentType;
+        //}
     //public override string ToString() => this.ToStringProperty();
 
     ///// <summary>

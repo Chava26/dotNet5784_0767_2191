@@ -35,17 +35,17 @@ using System;
         /// <summary>
         /// The remaining time until the call must be completed (calculated based on the call's max end time).
         /// </summary>
-        public TimeSpan TimeRemaining { get; set; }
+        public TimeSpan? TimeRemaining { get; set; }
 
         /// <summary>
         /// The name of the last volunteer who worked on this call.
         /// </summary>
-        public string LastVolunteerName { get; set; }
+        public string? LastVolunteerName { get; set; }
 
         /// <summary>
         /// The time spent completing the call's treatment, relevant only for calls that have been handled.
         /// </summary>
-        public TimeSpan TreatmentCompletionTime { get; set; }
+        public TimeSpan? TreatmentCompletionTime { get; set; }
 
         /// <summary>
         /// The status of the call, determined by various factors like assignment status, max end time, and current time.

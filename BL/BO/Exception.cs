@@ -33,17 +33,17 @@ public class BlAlreadyExistsException : Exception
 
 
     }
-   
-    public class BlDoesNotExistException : Exception
-    {
-        public BlDoesNotExistException(string? message) : base(message) { }
-    }
+
+public class BlDoesNotExistException : Exception
+{
+    public BlDoesNotExistException(string? message) : base(message) { }
+}
 
 
 
 
-    // Custom Exception for invalid address input
-    public class InvalidAddressException : Exception
+// Custom Exception for invalid address input
+public class InvalidAddressException : Exception
     {
         public InvalidAddressException(string address)
             : base($"The address '{address}' is invalid or could not be processed.")

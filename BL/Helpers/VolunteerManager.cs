@@ -19,10 +19,10 @@ namespace Helpers
                 boVolunteer.FullName,
                 boVolunteer.Email,
                 boVolunteer.PhoneNumber,
-                boVolunteer.Role,
+               (DO.Role)boVolunteer.role,
                 boVolunteer.IsActive,
                 boVolunteer.MaxDistanceForTask,
-                boVolunteer.Password,
+               EncryptPassword(boVolunteer.Password),
                 boVolunteer.Address,
                 boVolunteer.Longitude,
                 boVolunteer.Latitude
@@ -43,13 +43,13 @@ namespace Helpers
             if (boVolunteer == null)
                 throw new ArgumentException("Volunteer object cannot be null.");
 
-            if (!Tools.IsValidEmail(boVolunteer.Email))
+            if (!System.Text.RegularExpressions.Regex.IsMatch(boVolunteer.Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
                 throw new ArgumentException("Invalid email format.");
 
-            if (!Tools.IsValidId(boVolunteer.Id))
+            if (boVolunteer.Id<0)
                 throw new ArgumentException("Invalid ID format.");
 
-            if (!Tools.IsValidPhoneNumber(boVolunteer.PhoneNumber))
+            if (!System.Text.RegularExpressions.Regex.IsMatch(boVolunteer.PhoneNumber, @"^\d{10}$"))
                 throw new ArgumentException("Invalid phone number format.");
 
             if (boVolunteer.FullName.Length < 2)
@@ -72,17 +72,11 @@ namespace Helpers
         //    boVolunteer.Longitude = coordinates.Longitude;
         //    boVolunteer.Latitude = coordinates.Latitude;
         //}
-        public static logicalChecking(int requesterId, BO.Volunteer boVolunteer)
+        public static (double? Latitude, double? Longitude) logicalChecking( BO.Volunteer boVolunteer)
         {
-            bool isSelf = requesterId == boVolunteer.Id;
-            bool isAdmin = boVolunteer.Role == Role.Manager;
-
-            if (!isAdmin && !isSelf)
-                throw new UnauthorizedAccessException("Only an admin or the volunteer themselves can perform this update.");
-
-            if (!isAdmin && boVolunteer.Role != Role.Volunteer)
-                throw new UnauthorizedAccessException("Only an admin can update the volunteer's role.");
             IsPasswordStrong(boVolunteer.Password);
+            return Tools.GetCoordinatesFromAddress(boVolunteer.Address);
+
 
         }
         /// <summary>
@@ -94,12 +88,12 @@ namespace Helpers
         public static void ValidatePermissions(int requesterId, BO.Volunteer boVolunteer)
         {
             bool isSelf = requesterId == boVolunteer.Id;
-            bool isAdmin = boVolunteer.Role == Role.Manager;
+            bool isAdmin = boVolunteer.role == Role.Manager;
 
             if (!isAdmin && !isSelf)
                 throw new UnauthorizedAccessException("Only an admin or the volunteer themselves can perform this update.");
 
-            if (!isAdmin && boVolunteer.Role != Role.Volunteer)
+            if (!isAdmin && boVolunteer.role != Role.Volunteer)
                 throw new UnauthorizedAccessException("Only an admin can update the volunteer's role.");
         }
         /// <summary>
@@ -137,77 +131,17 @@ namespace Helpers
         /// <param name="plainPassword">The plain text password to check.</param>
         /// <param name="encryptedPassword">The hashed password stored in the system.</param>
         /// <returns>True if the passwords match, otherwise false.</returns>
-        public bool VerifyPassword(string plainPassword, string encryptedPassword)
+        public static bool VerifyPassword(string plainPassword, string encryptedPassword)
         {
             var encryptedAttempt = EncryptPassword(plainPassword);
             return encryptedAttempt == encryptedPassword;
         }
 
 
-        
 
-            private static readonly string apiKey = "PK.83B935C225DF7E2F9B1ee90A6B46AD86";  
-            private static readonly string apiUrl = "https://us1.locationiq.com/v1/search.php?key={0}&q={1}&format=json";
 
-            /// <summary>
-            /// Retrieves coordinates (latitude and longitude) for a given address.
-            /// If the address is invalid or the API request fails, an appropriate exception is thrown.
-            /// </summary>
-            /// <param name="address">The address for which coordinates are requested.</param>
-            /// <returns>A tuple containing latitude and longitude of the address.</returns>
-            /// <exception cref="InvalidAddressException">Thrown when the address is invalid or cannot be processed.</exception>
-            /// <exception cref="ApiRequestException">Thrown when the API request fails.</exception>
-            /// <exception cref="GeolocationNotFoundException">Thrown when no geolocation is found for the address.</exception>
-            public static (double? Latitude, double? Longitude) GetCoordinatesFromAddress(string? address=null)
-            {
-                try
-                {
-                    if (string.IsNullOrWhiteSpace(address))
-                    {
-                    return (null, null);
 
-                }
 
-                // Create URL for the API request
-                string url = string.Format(apiUrl, apiKey, Uri.EscapeDataString(address));
-
-                    using (HttpClient client = new HttpClient())
-                    {
-                        // Make the synchronous API request
-                        HttpResponseMessage response = client.GetAsync(url).Result;
-
-                        // Check if the API request was successful
-                        if (response.IsSuccessStatusCode)
-                        {
-                            string jsonResponse = response.Content.ReadAsStringAsync().Result;
-
-                        // Parse the JSON response
-                        JArray jsonArray = JArray.Parse(jsonResponse);
-
-                            // If there are results, return the coordinates
-                            if (jsonArray.Count > 0)
-                            {
-                                var firstResult = jsonArray[0];
-                                double latitude = (double)firstResult["lat"];
-                                double longitude = (double)firstResult["lon"];
-                                return (latitude, longitude);
-                            }
-                            else
-                            {
-                                throw new GeolocationNotFoundException(address);
-                            }
-                        }
-                        else
-                        {
-                            throw new Exception(response.StatusCode.ToString());
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception("Error occurred while fetching coordinates for the address. ", ex);
-                }
-            }
-        }
     }
+}
 

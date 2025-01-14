@@ -41,9 +41,18 @@ internal class AssignmentImplementation : IAssignment
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public Assignment? Read(int volunteerId)
+    public Assignment? Read(int Id)
     {
-        return DataSource.Assignments.FirstOrDefault(Assignment => Assignment.VolunteerId == volunteerId);
+        return DataSource.Assignments.FirstOrDefault(Assignment => Assignment.Id == Id);
+    }
+    /// <summary>
+    ///    The function searches the list for a Assignment  if it finds it returns the v and if not returns NULL
+    /// </summary>
+    /// <param name="filter">filter what need to search</param>
+    /// <returns></returns>
+    public Assignment? Read(Func<Assignment, bool> filter)
+    {
+        return DataSource.Assignments.FirstOrDefault(filter);
     }
     /// <summary>
     /// The function read all the Assignment in IEnumerable type

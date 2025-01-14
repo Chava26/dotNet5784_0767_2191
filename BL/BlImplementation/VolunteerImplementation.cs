@@ -21,11 +21,14 @@ internal class VolunteerImplementation : IVolunteer
             Helpers.VolunteerManager.ValidateInputFormat(boVolunteer);
 
             // Validate logical rules for the volunteer
-            var (latitude, longitude) = VolunteerManager.GetCoordinatesFromAddress(boVolunteer.Address);
-
-            // Update the properties of the BOVolunteer instance
-            boVolunteer.Latitude = latitude;
-            boVolunteer.Longitude = longitude;
+            var (latitude, longitude) = VolunteerManager.logicalChecking(boVolunteer);
+            if(latitude != null && longitude != null)
+            {
+                // Update the properties of the BOVolunteer instance
+                boVolunteer.Latitude = latitude;
+                boVolunteer.Longitude = longitude;
+            }
+           
             // Prepare DO.Volunteer object 
             DO.Volunteer doVolunteer = VolunteerManager.CreateDoVolunteer(boVolunteer);
             _dal.Volunteer.Create(doVolunteer);
@@ -60,25 +63,25 @@ internal class VolunteerImplementation : IVolunteer
             //    throw new ArgumentException("Invalid volunteer ID format.");
 
             // Check if the volunteer can be deleted
-            DO.Assignment volunteerTasks = _dal.Assignment.Read(volunteerId);
-            if (volunteerTasks is not null)
+            IEnumerable<Assignment> assignmentsWithVolunteer = _dal.Assignment.ReadAll(a => a.VolunteerId == volunteerId);
+            if (assignmentsWithVolunteer is not null)
                 throw new InvalidOperationException("Volunteer cannot be deleted because they are or have been assigned to tasks.");
-            _dal.Assignment.Delete(volunteerId);
+            _dal.Volunteer.Delete(volunteerId);
         }
-        catch (ArgumentException ex)
-        {
-            // Handle invalid ID format
-            throw new BO.VolunteerDeletionException($"Invalid ID format for volunteer ID: {id}.", ex);
-        }
+        //catch (ArgumentException ex)
+        //{
+        //    // Handle invalid ID format
+        //    throw new BO.VolunteerDeletionException($"Invalid ID format for volunteer ID: {id}.", ex);
+        //}
         catch (InvalidOperationException ex)
         {
             // Handle logical business errors, such as tasks assigned to the volunteer
-            throw new BO.VolunteerDeletionException($"Unable to delete volunteer with ID {id} because they are assigned to tasks.", ex);
+            throw new BO.VolunteerDeletionException($"Unable to delete volunteer with ID {volunteerId} because they are assigned to tasks.", ex);
         }
         catch (DO.DalDoesNotExistException ex)
         {
             // Handle the case where the volunteer does not exist in the database
-            throw new BO.VolunteerDeletionException($"Error deleting volunteer with ID {id}. Volunteer not found.", ex);
+            throw new BO.VolunteerDeletionException($"Error deleting volunteer with ID {volunteerId}. Volunteer not found.", ex);
         }
         catch (Exception ex)
         {
@@ -146,48 +149,143 @@ internal class VolunteerImplementation : IVolunteer
         // Catch data access exceptions and rethrow as business logic exceptions
         throw new BO.GeneralDatabaseException("Error accessing data.", ex);
     }
-}
+        catch (Exception ex)
+        {
+            // Handle all other unexpected exceptions
+            throw new BO.GeneralDatabaseException("An unexpected error occurred while geting Volunteers.", ex);
+        }
+    }
 
 
 
-    
 
+
+    //public BO.Volunteer GetVolunteerDetails(int volunteerId)
+    //{
+    //    try
+    //    {
+    //        var doVolunteer = _dal.Volunteer.Read(volunteerId) ??
+    //              throw new BO.BlDoesNotExistException($"Volunteer with ID={volunteerId} does Not exist");
+    //        IEnumerable<Assignment> assignmentsWithVolunteer = _dal.Assignment.ReadAll(a => a.VolunteerId == volunteerId);
+    //        if (assignmentsWithVolunteer is not null)
+    //        {
+    //            var doCall = _dal.Call.Read(volunteerId);
+
+    //            BO.CallInProgress boCallInProgress = new BO.CallInProgress()
+    //            {
+    //                Id = doAssignment.Id,
+    //                CallId = doAssignment.CallId,
+    //                Type = doCall.MyCallType,
+    //                Address = doCall.Address,
+    //                OpenTime = doCall.OpenTime,
+    //                EntryTime = doAssignment.EntryTime,
+    //                DistanceFromVolunteer = distanceFromVolunteer,
+    //                Status = status
+    //            };
+    //        }
+    //        return new()
+    //        {
+    //            Id = volunteerId,
+    //            Email = doVolunteer.Email,
+    //            PhoneNumber = doVolunteer.Phone,
+    //            (BO.Role)role = doVolunteer.role,
+    //            IsActive = doVolunteer.IsActive,
+    //            MaxDistanceForTask = doVolunteer.MaximumDistance,
+    //            Password = doVolunteer.Password,
+    //            Address = doVolunteer.Adress,
+    //            Longitude = doVolunteer.Longitude,
+    //            Latitude = doVolunteer.Latitude,
+    //            DistanceType = doVolunteer.DistanceType,
+    //            callInProgress = boCallInProgress
+    //        };
+    //    }
+    //    catch (DO.DalDoesNotExistException ex)
+    //    {
+    //        // Catch data access exceptions and rethrow as business logic exceptions
+    //        throw new BO.GeneralDatabaseException("Error geting Volunteer details  with ID {volunteerId}. Volunteer not found.", ex);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        // Handle all other unexpected exceptions
+    //        throw new BO.GeneralDatabaseException("An unexpected error occurred while geting Volunteer details.", ex);
+    //    }
+
+    /// <summary>
+    /// Retrieves the details of a volunteer, including any active call assignment they are handling.
+    /// </summary>
+    /// <param name="volunteerId">The unique ID of the volunteer.</param>
+    /// <returns>
+    /// A <see cref="BO.Volunteer"/> object containing the volunteer's details.
+    /// If the volunteer has an active assignment, it will include a <see cref="BO.CallInProgress"/> object.
+    /// </returns>
+    /// <exception cref="BO.BlDoesNotExistException">
+    /// Thrown if the volunteer does not exist in the data layer or there is an issue accessing their data.
+    /// </exception>
+    /// <remarks>
+    /// This method queries the data layer to fetch volunteer details and their related call assignments.
+    /// If there is no active call assignment, the <see cref="BO.Volunteer.CallInProgress"/> property will be null.
+    /// </remarks>
     public BO.Volunteer GetVolunteerDetails(int volunteerId)
     {
-        var doVolunteer = _dal.Volunteer.Read(volunteerId) ??
-        throw new BO.BlDoesNotExistException($"Volunteer with ID={volunteerId} does Not exist");
-        var doAssignment = _dal.Assignment.Read(volunteerId);
-        if (doAssignment is not null)
+        try
         {
-            var doCall = _dal.Call.Read(volunteerId);
+            var doVolunteer = _dal.Volunteer.ReadAll(v => v.Id == volunteerId).FirstOrDefault() ??
+                throw new BO.BlDoesNotExistException($"Volunteer with ID={volunteerId} does not exist");
 
-            BO.CallInProgress boCallInProgress = new BO.CallInProgress() { 
-                Id = doAssignment.Id,
-            CallId = doAssignment.CallId,
-            Type = doCall.MyCallType,
-            Address = doCall.Address,
-            OpenTime = doCall.OpenTime,
-            EntryTime = doAssignment.EntryTime,
-            DistanceFromVolunteer = distanceFromVolunteer,
-            Status = status
+            var assignmentsWithVolunteer = _dal.Assignment.ReadAll(a => a.VolunteerId == volunteerId);
+
+            BO.CallInProgress? boCallInProgress = null;
+            if (assignmentsWithVolunteer.Any())
+            {
+                var activeAssignment = assignmentsWithVolunteer.FirstOrDefault(a => a.exitTime == null);
+                if (activeAssignment != null)
+                {
+                    var doCall = _dal.Call.ReadAll(c => c.Id == activeAssignment.CallId).FirstOrDefault();
+                    if (doCall != null)
+                    {
+                        boCallInProgress = new BO.CallInProgress
+                        {
+                            Id = activeAssignment.Id,
+                            CallId = activeAssignment.CallId,
+                            Type = (BO.CallType)doCall.MyCallType,
+                            Address = doCall.Address,
+                            OpenTime = doCall.OpenTime,
+                            EntryTime = activeAssignment.EntryTime,
+                            DistanceFromVolunteer = Tools.CalculateDistance(doVolunteer.Latitude, doVolunteer.Longitude, doCall.Latitude, doCall.Longitude),
+                            Status = Tools.CalculateStatus(activeAssignment, doCall, 30)
+                        };
+                    }
+                }
+            }
+
+            return new BO.Volunteer
+            {
+                Id = volunteerId,
+                Email = doVolunteer.Email,
+                PhoneNumber = doVolunteer.Phone,
+                role = (BO.Role)doVolunteer.role,
+                IsActive = doVolunteer.IsActive,
+                MaxDistanceForTask = doVolunteer.MaximumDistance,
+                Password = doVolunteer.Password,
+                Address = doVolunteer.Adress,
+                Longitude = doVolunteer.Longitude,
+                Latitude = doVolunteer.Latitude,
+                DistanceType = (BO.DistanceType)doVolunteer.DistanceType,
+                callInProgress = boCallInProgress
             };
         }
-        return new()
+        catch (DO.DalDoesNotExistException ex)
         {
-            Id = volunteerId,
-            Email= doVolunteer.Email,
-            PhoneNumber= doVolunteer.Phone,
-            Role= doVolunteer.role,
-            IsActive= doVolunteer.IsActive,
-            MaxDistanceForTask= doVolunteer.MaximumDistance,
-            Password= doVolunteer.Password,
-            Address= doVolunteer.Adress,
-            Longitude= doVolunteer.Longitude,
-            Latitude = doVolunteer.Latitude,
-            DistanceType= doVolunteer.DistanceType,
-            callInProgress= boCallInProgress
-        };
+            throw new BO.BLDoesNotExistException("Volunteer not found in data layer.", ex);
+        }
+        catch (Exception ex)
+        {
+            // Handle all other unexpected exceptions
+            throw new BO.GeneralDatabaseException("An unexpected error occurred while geting Volunteer details.", ex);
+        }
     }
+
+
 
 
     /// <summary>
@@ -203,22 +301,16 @@ internal class VolunteerImplementation : IVolunteer
         try
         {
             // Fetch the user from the data layer
-            var user = _dal.Volunteer.Read(v => v.Username == username).FirstOrDefault();
+            IEnumerable<DO.Volunteer> volunteers = _dal.Volunteer.ReadAll(v => v.Name == username);
 
-            // Check if the user exists
-            if (user == null)
+            DO.Volunteer? matchingVolunteer = volunteers.FirstOrDefault(v => Helpers.VolunteerManager.VerifyPassword(password, v.Password));
+
+            if (matchingVolunteer == null)
             {
-                throw new BO.AuthenticationException("User does not exist.");
+                throw new BO.AuthenticationException("Incorrect username or password.");
             }
 
-            // Verify the password (decrypting the stored password and comparing)
-            if (!Helpers.VolunteerManager.VerifyPassword(password, user.EncryptedPassword))
-            {
-                throw new BO.AuthenticationException("Incorrect password.");
-            }
-
-            // Return the user's role
-            return (BO.Role)user.Role;
+            return (BO.Role)matchingVolunteer.role;
         }
         catch (DO.DalDoesNotExistException ex)
         {
@@ -227,10 +319,6 @@ internal class VolunteerImplementation : IVolunteer
     }
 
 
-    public void UpdateVolunteer(int requesterId, BO.Volunteer volunteer)
-    {
-        throw new NotImplementedException();
-    }
   
     /// <summary>
     /// Updates the details of a volunteer.
@@ -249,17 +337,18 @@ internal class VolunteerImplementation : IVolunteer
        
         try
         {
-            //if (string.IsNullOrWhiteSpace(requesterId))
-            //    throw new ArgumentException("Requester ID cannot be null or empty.");
+           
             // Validate input format and basic structure
             Helpers.VolunteerManager.ValidateInputFormat( boVolunteer);
             //Helpers.VolunteerManager.logicalChecking( requesterId, boVolunteer)
           // Validate logical rules for the volunteer
-          var (latitude, longitude) = VolunteerManager.GetCoordinatesFromAddress(boVolunteer.Address);
-
-            // Update the properties of the BOVolunteer instance
-            boVolunteer.Latitude = latitude;
-            boVolunteer.Longitude = longitude;
+          var (latitude, longitude) = VolunteerManager.logicalChecking( boVolunteer);
+            if(latitude != null& longitude!=null) {
+                // Update the properties of the BOVolunteer instance
+                boVolunteer.Latitude = latitude;
+                boVolunteer.Longitude = longitude;
+            }
+ 
 
             // Ensure permissions are correct
             Helpers.VolunteerManager.ValidatePermissions(requesterId, boVolunteer);
@@ -270,7 +359,7 @@ internal class VolunteerImplementation : IVolunteer
         }
         catch (DO.DalDoesNotExistException ex)
         {
-            throw new BO.BLDoesNotExistException($"Volunteer with ID={boVolunteer.Id} already exists", ex);
+            throw new BO.BLDoesNotExistException($"Volunteer with ID={boVolunteer.Id} does not  exists", ex);
 
         }
 
