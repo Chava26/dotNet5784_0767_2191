@@ -1,8 +1,6 @@
 ﻿
 namespace BlImplementation;
 using BlApi;
-using BO;
-using DO;
 using Helpers;
 using System.Numerics;
 using System.Xml.Linq;
@@ -63,7 +61,7 @@ internal class VolunteerImplementation : IVolunteer
             //    throw new ArgumentException("Invalid volunteer ID format.");
 
             // Check if the volunteer can be deleted
-            IEnumerable<Assignment> assignmentsWithVolunteer = _dal.Assignment.ReadAll(a => a.VolunteerId == volunteerId);
+            IEnumerable<DO.Assignment> assignmentsWithVolunteer = _dal.Assignment.ReadAll(a => a.VolunteerId == volunteerId);
             if (assignmentsWithVolunteer is not null)
                 throw new InvalidOperationException("Volunteer cannot be deleted because they are or have been assigned to tasks.");
             _dal.Volunteer.Delete(volunteerId);
@@ -251,7 +249,7 @@ internal class VolunteerImplementation : IVolunteer
                             Address = doCall.Address,
                             OpenTime = doCall.OpenTime,
                             EntryTime = activeAssignment.EntryTime,
-                            DistanceFromVolunteer = Tools.CalculateDistance(doVolunteer.Latitude, doVolunteer.Longitude, doCall.Latitude, doCall.Longitude),
+                            DistanceFromVolunteer = Tools.CalculateDistance(doVolunteer.Latitude??0, doVolunteer.Longitude??0, doCall.Latitude, doCall.Longitude),
                             Status = Tools.CalculateStatus(activeAssignment, doCall, 30)
                         };
                     }
@@ -340,7 +338,7 @@ internal class VolunteerImplementation : IVolunteer
            
             // Validate input format and basic structure
             Helpers.VolunteerManager.ValidateInputFormat( boVolunteer);
-            //Helpers.VolunteerManager.logicalChecking( requesterId, boVolunteer)
+
           // Validate logical rules for the volunteer
           var (latitude, longitude) = VolunteerManager.logicalChecking( boVolunteer);
             if(latitude != null& longitude!=null) {
@@ -351,10 +349,10 @@ internal class VolunteerImplementation : IVolunteer
  
 
             // Ensure permissions are correct
-            Helpers.VolunteerManager.ValidatePermissions(requesterId, boVolunteer);
+            VolunteerManager.ValidatePermissions(requesterId, boVolunteer);
 
             // Prepare DO.Volunteer object for data layer update
-            DO.Volunteer doVolunteer = Helpers.VolunteerManager.CreateDoVolunteer(boVolunteer);
+            DO.Volunteer doVolunteer = VolunteerManager.CreateDoVolunteer(boVolunteer);
             _dal.Volunteer.Update(doVolunteer); // Attempt to update the data layer
         }
         catch (DO.DalDoesNotExistException ex)

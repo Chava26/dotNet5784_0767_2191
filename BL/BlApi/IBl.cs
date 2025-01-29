@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BlApi
+﻿namespace BlApi;
+public interface IBl
 {
-    internal class IBl
-    {
-    }
+    IVolunteer Volunteer { get; }
+    ICall Call { get; }
+    IAdmin Admin { get; }
 }

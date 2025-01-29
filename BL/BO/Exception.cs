@@ -68,4 +68,12 @@ public class InvalidAddressException : Exception
         {
         }
     }
+/// <summary>
+/// Custom exception for general application errors.
+/// </summary>
+public class GenralInitializationExcption : Exception
+{
+    public GenralInitializationExcption(string message, Exception innerException)
+        : base(message, innerException) { }
+}
 

@@ -22,34 +22,34 @@ internal class CallImplementation : BlApi.ICall
     {
         try
         {
+           
             // Validate call details
             Helpers.CallManager.ValidateCallDetails(call);
+            // Calculate latitude and longitude based on the address
+            var (latitude, longitude) = Helpers.CallManager.logicalChecking(call);
+            if (latitude is null || longitude is null)
+            {
+                throw new ArgumentException("The address must be valid and resolvable to latitude and longitude.");
+            }
 
-        // Calculate latitude and longitude based on the address
-        var (latitude, longitude) = Helpers.CallManager.logicalChecking(call);
-        if (latitude is null || longitude is null)
-        {
-            throw new ArgumentException("The address must be valid and resolvable to latitude and longitude.");
-        }
+            // Assign calculated latitude and longitude to the call
+            call.Latitude = latitude.Value;
+            call.Longitude = longitude.Value;
 
-        // Assign calculated latitude and longitude to the call
-        call.Latitude = latitude.Value;
-        call.Longitude = longitude.Value;
+            // Map BO.Call to DO.Call
+            var dataCall = new DO.Call
+            {
+                MyCallType = (DO.CallType)call.CallType,
+                Description = call.Description,
+                Address = call.FullAddress,
+                Latitude = call.Latitude,
+                Longitude = call.Longitude,
+                OpenTime = call.OpenTime,
+                MaxFinishTime = call.MaxEndTime
+            };
 
-        // Map BO.Call to DO.Call
-        var dataCall = new DO.Call
-        {
-            MyCallType = (DO.CallType)call.CallType,
-            Description = call.Description,
-            Address = call.FullAddress,
-            Latitude = call.Latitude,
-            Longitude = call.Longitude,
-            OpenTime = call.OpenTime,
-            MaxFinishTime = call.MaxEndTime
-        };
+            // Attempt to add the call to the data layer
 
-        // Attempt to add the call to the data layer
-       
             _dal.Call.Create(dataCall);
         }
         catch (DO.DalAlreadyExistsException ex)
@@ -62,7 +62,7 @@ internal class CallImplementation : BlApi.ICall
             // Catch the data layer exception and rethrow a custom exception to the UI layer
             throw new BO.GeneralDatabaseException("An unexpected error occurred while add.", ex);
         }
-       
+
     }
 
     public void AssignCallToVolunteer(int volunteerId, int callId)
@@ -151,7 +151,7 @@ internal class CallImplementation : BlApi.ICall
                                                   VolunteerName = _dal.Volunteer.Read(a.VolunteerId)?.Name, // Assuming Volunteer entity is already loaded
                                                   TreatmentStartTime = a.EntryTime,
                                                   TreatmentEndTime = a.exitTime,
-                                                  TypeOfEndTreatment = (BO.EndOfTreatment)a.TypeOfEndTime
+                                                  TypeOfEndTreatment = (BO.EndOfTreatment?)a.TypeOfEndTime
                                               })
                                               .ToList();
 
@@ -237,7 +237,7 @@ internal class CallImplementation : BlApi.ICall
                 OpenTime = call.OpenTime,
                 TimeRemaining = call.MaxFinishTime.HasValue ? call.MaxFinishTime.Value - DateTime.Now : null,
                 LastVolunteerName = latestAssignment != null
-                    ? _dal.Volunteer.Read(latestAssignment.VolunteerId)?.Name: null,
+                    ? _dal.Volunteer.Read(latestAssignment.VolunteerId)?.Name : null,
                 TreatmentCompletionTime = latestAssignment?.exitTime.HasValue == true
                     ? latestAssignment.exitTime.Value - call.OpenTime
                     : null,
@@ -310,19 +310,19 @@ internal class CallImplementation : BlApi.ICall
 
             // Convert BO.Call to DO.Call for data layer update
             DO.Call callToUpdate = new DO.Call
-        {
-            Id = updatedCall.Id,
-            MyCallType = (DO.CallType)updatedCall.CallType,
-            Description = updatedCall.Description,
-            Address = updatedCall.FullAddress,
-            Latitude = updatedCall.Latitude,
-            Longitude = updatedCall.Longitude,
-            OpenTime = updatedCall.OpenTime,
-            MaxFinishTime = updatedCall.MaxEndTime
-        };
+            {
+                Id = updatedCall.Id,
+                MyCallType = (DO.CallType)updatedCall.CallType,
+                Description = updatedCall.Description,
+                Address = updatedCall.FullAddress,
+                Latitude = updatedCall.Latitude,
+                Longitude = updatedCall.Longitude,
+                OpenTime = updatedCall.OpenTime,
+                MaxFinishTime = updatedCall.MaxEndTime
+            };
 
-        // Attempt to update the call in the data layer
-       
+            // Attempt to update the call in the data layer
+
             _dal.Call.Update(callToUpdate);
         }
         catch (DO.DalDoesNotExistException ex)

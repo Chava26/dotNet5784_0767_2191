@@ -41,15 +41,4 @@ namespace BlApi
         void InitializeDatabase();
     }
 
-    /// <summary>
-    /// Enum representing time units for advancing the system clock.
-    /// </summary>
-    public enum TimeUnit
-    {
-        Minute,
-        Hour,
-        Day,
-        Month,
-        Year
-    }
 }

@@ -35,6 +35,17 @@ public enum CallType
 }
 
 /// <summary>
+/// Enum representing time units for advancing the system clock.
+/// </summary>
+public enum TimeUnit
+{
+    Minute,
+    Hour,
+    Day,
+    Month,
+    Year
+}
+/// <summary>
 /// Enum representing the status of the call.
 /// </summary>
 
@@ -108,17 +119,17 @@ public enum CallField
     Status,
     AssignmentsCount
 }
-/// <summary>
-/// Enum representing time units for advancing the system clock.
-/// </summary>
-public enum TimeUnit
-{
-    Minute,
-    Hour,
-    Day,
-    Month,
-    Year
-}
+///// <summary>
+///// Enum representing time units for advancing the system clock.
+///// </summary>
+//public enum TimeUnit
+//{
+//    Minute,
+//    Hour,
+//    Day,
+//    Month,
+//    Year
+//}
 
 //public enum 
 //{
