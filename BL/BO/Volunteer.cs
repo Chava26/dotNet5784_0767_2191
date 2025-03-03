@@ -31,7 +31,7 @@ public class Volunteer
     /// Initially set by an administrator, and can be updated by the Volunteer.
     /// The password must be strong and securely encrypted.
     /// </summary>
-    public string? Password { get; set; }
+    public string Password { get; set; }
 
     /// <summary>
     /// Current full address of the Volunteer.
@@ -72,7 +72,7 @@ public class Volunteer
     /// <summary>
     /// Type of distance calculation (e.g., Air Distance, Walking Distance, Driving Distance).
     /// </summary>
-    public DistanceType DistanceType { get; set; }
+    public DistanceType DistanceType { get; set; } = DistanceType.AirDistance;
 
     /// <summary>
     /// Total number of tasks the Volunteer has completed.
@@ -104,7 +104,10 @@ public class Volunteer
     /// </summary>
     public CallInAction? CurrentTask { get; set; }
     public CallInProgress? callInProgress { get; set; }
-    //public override string ToString() => this.ToStringProperty();
+    /// <summary>
+    /// Overrides ToString for debugging purposes using reflection.
+    /// </summary>
+    public override string ToString() => this.ToStringProperty();
 
     //public override string ToString()
     //{

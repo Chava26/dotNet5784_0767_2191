@@ -1,9 +1,23 @@
-﻿using BO;
+﻿//using BO;
+//using Newtonsoft.Json.Linq;
+//using System;
+//using System.Collections;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Reflection;
+//using System.Text;
+//using System.Threading.Tasks;
+//using System;
+using System;
+using System.Collections;
+using System.Reflection;
+using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using BO;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Helpers
@@ -17,62 +31,45 @@ namespace Helpers
         /// <typeparam name="T">The type of the object to reflect upon.</typeparam>
         /// <param name="t">The object instance to analyze.</param>
         /// <returns>A string containing the names and values of all properties of the object, including elements of collections.</returns>
-        //public static string ToStringProperty<T>(this T t)
-        //{
-        //    if (t == null)
-        //    {
-        //        throw new ArgumentNullException(nameof(t), "The object instance cannot be null.");
-        //    }
-
-        //    var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
-        //    var propertyValues = properties
-        //        .Select(property =>
-        //        {
-        //            var value = property.GetValue(t, null);
-
-        //            if (value is IEnumerable enumerable && !(value is string))
-        //            {
-        //                var elements = enumerable.Cast<object>().Select(e => e?.ToString() ?? "null");
-        //                return $"{property.Name}: [{string.Join(", ", elements)}]";
-        //            }
-
-        //            return $"{property.Name}: {(value != null ? value.ToString() : "null")}";
-        //        });
-
-        //    return string.Join(", ", propertyValues);
-        //}
-        //public (double Longitude, double Latitude)? GetCoordinatesFromAddress(string address)
-        //{
-        //    // Mock function to simulate address resolution
-        //    return new Random().Next(0, 2) == 0 ? null : (Longitude: 34.7818, Latitude: 32.0853);
-        //}
-        public static bool IsValidPhoneNumber(string phoneNumber)
+        public static string ToStringProperty<T>(this T t)
         {
-            return System.Text.RegularExpressions.Regex.IsMatch(phoneNumber, @"^\d{10}$");
-        }
-        //public static bool IsValidId(string id)
-        //{
-        //    if (!long.TryParse(id, out _)) return false;
-        //    return id.Length == 9 && IsValidChecksum(id);
-        //}
-
-        public static bool IsValidChecksum(string id)
-        {
-            int sum = 0;
-            for (int i = 0; i < id.Length; i++)
+            if (t == null)
             {
-                int digit = int.Parse(id[i].ToString());
-                if (i % 2 == 1) digit *= 2;
-                if (digit > 9) digit -= 9;
-                sum += digit;
+                throw new ArgumentNullException(nameof(t), "The object instance cannot be null.");
             }
-            return sum % 10 == 0;
+
+            var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            var propertyValues = properties
+                .Select(property =>
+                {
+                    var value = property.GetValue(t, null);
+
+                    if (value is IEnumerable enumerable && !(value is string))
+                    {
+                        var elements = enumerable.Cast<object>().Select(e => e?.ToString() ?? "null");
+                        return $"{property.Name}: [{string.Join(", ", elements)}]";
+                    }
+
+                    return $"{property.Name}: {(value != null ? value.ToString() : "null")}";
+                });
+
+            return string.Join(", ", propertyValues);
         }
-        //private static bool IsValidEmail(string email)
+
+        //public static bool IsValidChecksum(string id)
         //{
-        //    return System.Text.RegularExpressions.Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+        //    int sum = 0;
+        //    for (int i = 0; i < id.Length; i++)
+        //    {
+        //        int digit = int.Parse(id[i].ToString());
+        //        if (i % 2 == 1) digit *= 2;
+        //        if (digit > 9) digit -= 9;
+        //        sum += digit;
+        //    }
+        //    return sum % 10 == 0;
         //}
+       
         /// <summary>
         /// Calculates the status of a call based on its current progress and remaining time until the maximum finish time.
         /// </summary>
@@ -108,7 +105,6 @@ namespace Helpers
                 }
             }
 
-            // If the assignment has an exit time, it means the call is already closed
             return CallStatus.Closed;
         }
 
@@ -137,13 +133,12 @@ namespace Helpers
         /// <exception cref="GeolocationNotFoundException">Thrown when no geolocation is found for the address.</exception>
         public static (double? Latitude, double? Longitude) GetCoordinatesFromAddress(string? address = null)
         {
+            if (string.IsNullOrWhiteSpace(address))
+            {
+                throw new BlInvalidFormatException(address);
+            }
             try
             {
-                if (string.IsNullOrWhiteSpace(address))
-                {
-                    return (null, null);
-
-                }
 
                 // Create URL for the API request
                 string url = string.Format(apiUrl, apiKey, Uri.EscapeDataString(address));
@@ -176,17 +171,49 @@ namespace Helpers
                     }
                     else
                     {
-                        throw new Exception(response.StatusCode.ToString());
+                        throw new BlApiRequestException($"API request failed with status code: {response.StatusCode}"); 
                     }
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception("Error occurred while fetching coordinates for the address. ", ex);
+                throw new BlApiRequestException($"Error occurred while fetching coordinates for the address. {ex.Message}");
+
             }
 
         }
     }
+    //public static string ToStringProperty<T>(this T t)
+    //{
+    //    if (t == null)
+    //        return "null";
 
+    //    var result = new StringBuilder();
+
+    //    var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+    //    foreach (var property in properties)
+    //    {
+    //        var value = property.GetValue(t);
+
+    //        if (value is IEnumerable enumerable && !(value is string))
+    //        {
+    //            result.Append($"{property.Name}: [");
+
+    //            foreach (var item in enumerable)
+    //            {
+    //                result.Append($"{item}, ");
+    //            }
+
+    //            result.Append("], ");
+    //        }
+    //        else
+    //        {
+    //            result.Append($"{property.Name}: {value}, ");
+    //        }
+    //    }
+
+    //    return result.ToString().TrimEnd(',', ' ');
+    //}
 }
     

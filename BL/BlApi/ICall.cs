@@ -96,5 +96,5 @@ public interface ICall
     /// <param name="volunteerId">The identifier of the volunteer.</param>
     /// <param name="callId">The identifier of the call to assign.</param>
     /// <exception cref="InvalidOperationException">Thrown if the call cannot be assigned.</exception>
-    void AssignCallToVolunteer(int volunteerId, int callId);
+    void SelectCallForTreatment(int volunteerId, int callId);
 }

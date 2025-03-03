@@ -47,12 +47,12 @@ public class VolunteerInList
     /// If no call is in progress, this property is set to <see cref="CallType.None"/>.
     /// </summary>
     public CallType CurrentCallType { get; init; }
+    /// <summary>
+    /// Overrides ToString for debugging purposes using reflection.
+    /// </summary>
     public override string ToString() => this.ToStringProperty();
 
-    private string ToStringProperty()
-    {
-        throw new NotImplementedException();
-    }
+    
 
     /// <summary>
     /// Initializes a new instance of the <see cref="VolunteerInList"/> class.

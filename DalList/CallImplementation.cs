@@ -46,6 +46,11 @@ internal class CallImplementation : ICall
     {
         return DataSource.Calls.FirstOrDefault(Call => Call.Id == id);
     }
+    /// <summary>Reads the first Call that matches a filter.</summary>
+    public Call? Read(Func<Call, bool> filter)
+    {
+        return DataSource.Calls.FirstOrDefault(filter);
+    }
     /// <summary>
     /// The function returns to the entire IEnumerable of Calls
     /// </summary>

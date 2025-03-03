@@ -16,7 +16,7 @@ public record Assignment
     
     int CallId,
     int VolunteerId,
-    EndOfTreatment? TypeOfEndTime,
+    EndOfTreatment TypeOfEndTime? ,
     DateTime EntryTime,
     DateTime? exitTime = null,
     int Id=0

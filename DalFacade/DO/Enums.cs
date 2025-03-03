@@ -6,7 +6,7 @@ namespace DO;
 /// </summary>
 
 
-public enum Role { volunteer, manager };
+public enum Role { volunteer, Manager };
 public enum DistanceType { airDistance, walkingDistance, drivingDistance };
 public enum CallType
 {

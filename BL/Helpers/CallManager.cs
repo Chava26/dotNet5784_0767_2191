@@ -5,13 +5,14 @@ using DO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Helpers;
 internal class CallManager
 {
-    private static IDal s_dal = Factory.Get; //stage 4
+    private static IDal s_dal = DalApi.Factory.Get; //stage 4
     /// <summary>
     /// Calculates the status of a call based on its properties and the latest assignment.
     /// </summary>
@@ -19,7 +20,7 @@ internal class CallManager
     /// <param name="latestAssignment">The latest assignment for the call, if any.</param>
     /// <param name="riskThreshold">The time span considered as a risk threshold.</param>
     /// <returns>The calculated <see cref="CallStatus"/>.</returns>
-    public static CallStatus CalculateCallStatus(DO.Call call, DO.Assignment? latestAssignment, TimeSpan? riskThreshold=null)
+    public static CallStatus CalculateCallStatus(DO.Call call, DO.Assignment? latestAssignment, TimeSpan? riskThreshold = null)
     {
         // If no assignment exists, determine if the call is open or expired
         if (latestAssignment == null)
@@ -41,7 +42,7 @@ internal class CallManager
             return CallStatus.Open;
         }
 
-        // If an assignment exists but has an exit time, the call is closed
+        //If an assignment exists but has an exit time, the call is closed
         if (latestAssignment.exitTime.HasValue)
         {
             return CallStatus.Closed;
@@ -110,7 +111,21 @@ internal class CallManager
 
 
     }
+    public static CallStatus GetCallStatus(int callId, IDal dal)
+    {
+        var call = dal.Call.Read(callId);
 
+        if (call == null)
+            throw new KeyNotFoundException($"Call with ID {callId} not found.");
+
+        if (call.MaxFinishTime.HasValue && call.MaxFinishTime.Value < DateTime.Now)
+            return CallStatus.Expired;
+
+        if ((DateTime.Now - call.OpenTime).TotalHours > 1)
+            return CallStatus.OpenRisk;
+
+        return CallStatus.InProgress;
+    }
 }
 
 

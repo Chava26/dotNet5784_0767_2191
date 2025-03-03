@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Helpers;
+using System;
 using System.Collections.Generic;
 namespace BO;
 
@@ -44,18 +45,23 @@ namespace BO;
         /// This value will not be calculated in the logical layer, but is used in the display of open calls.
         /// </summary>
         public double DistanceFromVolunteer { get; set; }
+    /// <summary>
+    /// Overrides ToString for debugging purposes using reflection.
+    /// </summary>
+    public override string ToString() => this.ToStringProperty();
 
-        /// <summary>
-        /// Constructor to initialize the properties of the OpenCallInList entity.
-        /// </summary>
-        
-        public OpenCallInList(int id, CallType callType, string fullAddress, DateTime openTime)
-        {
-            Id = id;
-            CallType = callType;
-            FullAddress = fullAddress;
-            OpenTime = openTime;
-        }
+
+    /// <summary>
+    /// Constructor to initialize the properties of the OpenCallInList entity.
+    /// </summary>
+
+    //public OpenCallInList(int id, CallType callType, string fullAddress, DateTime openTime)
+    //{
+    //    Id = id;
+    //    CallType = callType;
+    //    FullAddress = fullAddress;
+    //    OpenTime = openTime;
+    //}
 
     //public override string ToString() => this.ToStringProperty();
 

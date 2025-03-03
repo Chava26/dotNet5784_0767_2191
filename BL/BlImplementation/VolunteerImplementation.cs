@@ -2,6 +2,7 @@
 namespace BlImplementation;
 using BlApi;
 using Helpers;
+using System;
 using System.Numerics;
 using System.Xml.Linq;
 
@@ -63,7 +64,7 @@ internal class VolunteerImplementation : IVolunteer
             // Check if the volunteer can be deleted
             IEnumerable<DO.Assignment> assignmentsWithVolunteer = _dal.Assignment.ReadAll(a => a.VolunteerId == volunteerId);
             if (assignmentsWithVolunteer is not null)
-                throw new InvalidOperationException("Volunteer cannot be deleted because they are or have been assigned to tasks.");
+                throw new BO.BlInvalidFormatException("Volunteer cannot be deleted because they are or have been assigned to tasks.");
             _dal.Volunteer.Delete(volunteerId);
         }
         //catch (ArgumentException ex)
@@ -227,33 +228,28 @@ internal class VolunteerImplementation : IVolunteer
     {
         try
         {
-            var doVolunteer = _dal.Volunteer.ReadAll(v => v.Id == volunteerId).FirstOrDefault() ??
-                throw new BO.BlDoesNotExistException($"Volunteer with ID={volunteerId} does not exist");
+            var doVolunteer = _dal.Volunteer.Read(volunteerId) ??
+               throw new BO.BlDoesNotExistException($"Volunteer with ID={volunteerId} does not exist");
 
-            var assignmentsWithVolunteer = _dal.Assignment.ReadAll(a => a.VolunteerId == volunteerId);
-
+            var activeAssignment = _dal.Assignment.Read(a => a.VolunteerId == volunteerId && a.exitTime is null);
             BO.CallInProgress? boCallInProgress = null;
-            if (assignmentsWithVolunteer.Any())
+            if (activeAssignment is not null)
             {
-                var activeAssignment = assignmentsWithVolunteer.FirstOrDefault(a => a.exitTime == null);
-                if (activeAssignment != null)
-                {
-                    var doCall = _dal.Call.ReadAll(c => c.Id == activeAssignment.CallId).FirstOrDefault();
-                    if (doCall != null)
+                    var callDetails = _dal.Call.Read(activeAssignment.CallId);
+                    if (callDetails is not null)
                     {
                         boCallInProgress = new BO.CallInProgress
                         {
                             Id = activeAssignment.Id,
                             CallId = activeAssignment.CallId,
-                            Type = (BO.CallType)doCall.MyCallType,
-                            Address = doCall.Address,
-                            OpenTime = doCall.OpenTime,
+                            Type = (BO.CallType)callDetails.MyCallType,
+                            Address = callDetails.Address,
+                            OpenTime = callDetails.OpenTime,
                             EntryTime = activeAssignment.EntryTime,
-                            DistanceFromVolunteer = Tools.CalculateDistance(doVolunteer.Latitude??0, doVolunteer.Longitude??0, doCall.Latitude, doCall.Longitude),
-                            Status = Tools.CalculateStatus(activeAssignment, doCall, 30)
+                            DistanceFromVolunteer = Tools.CalculateDistance(doVolunteer.Latitude??0, doVolunteer.Longitude??0, callDetails.Latitude, callDetails.Longitude),
+                            Status = Tools.CalculateStatus(activeAssignment, callDetails, 30)
                         };
                     }
-                }
             }
 
             return new BO.Volunteer
@@ -264,7 +260,7 @@ internal class VolunteerImplementation : IVolunteer
                 role = (BO.Role)doVolunteer.role,
                 IsActive = doVolunteer.IsActive,
                 MaxDistanceForTask = doVolunteer.MaximumDistance,
-                Password = doVolunteer.Password,
+                Password = doVolunteer.Password!,
                 Address = doVolunteer.Adress,
                 Longitude = doVolunteer.Longitude,
                 Latitude = doVolunteer.Latitude,
@@ -301,12 +297,7 @@ internal class VolunteerImplementation : IVolunteer
             // Fetch the user from the data layer
             IEnumerable<DO.Volunteer> volunteers = _dal.Volunteer.ReadAll(v => v.Name == username);
 
-            DO.Volunteer? matchingVolunteer = volunteers.FirstOrDefault(v => Helpers.VolunteerManager.VerifyPassword(password, v.Password));
-
-            if (matchingVolunteer == null)
-            {
-                throw new BO.AuthenticationException("Incorrect username or password.");
-            }
+            DO.Volunteer? matchingVolunteer = volunteers.FirstOrDefault(v => VolunteerManager.VerifyPassword(password, v.Password!)) ?? throw new BO.BlDoesNotExistException("Incorrect username or password."); 
 
             return (BO.Role)matchingVolunteer.role;
         }
@@ -328,36 +319,37 @@ internal class VolunteerImplementation : IVolunteer
     /// <exception cref="UnauthorizedAccessException">Thrown when the requester lacks permissions.</exception>
     /// <exception cref="KeyNotFoundException">Thrown when the volunteer does not exist.</exception>
     /// <exception cref="ApplicationException">Thrown when an error occurs in the data layer.</exception>
-    public void UpdateVolunteer(int requesterId, BO.Volunteer boVolunteer)
+    public void UpdateVolunteer(int requesterId, BO.Volunteer VolunteerForUpdate)
     {
        
 
        
         try
         {
-           
-            // Validate input format and basic structure
-            Helpers.VolunteerManager.ValidateInputFormat( boVolunteer);
+            DO.Volunteer requester = _dal.Volunteer.Read(requesterId) ?? throw new BO.BlDoesNotExistException($"Volunteer with ID={requesterId} does not  exists and can not update other Volunteer");
 
-          // Validate logical rules for the volunteer
-          var (latitude, longitude) = VolunteerManager.logicalChecking( boVolunteer);
-            if(latitude != null& longitude!=null) {
-                // Update the properties of the BOVolunteer instance
-                boVolunteer.Latitude = latitude;
-                boVolunteer.Longitude = longitude;
-            }
- 
 
             // Ensure permissions are correct
-            VolunteerManager.ValidatePermissions(requesterId, boVolunteer);
+            VolunteerManager.ValidatePermissions(requester, VolunteerForUpdate);
+
+            // Validate input format and basic structure
+            VolunteerManager.ValidateInputFormat( VolunteerForUpdate);
+
+          // Validate logical rules for the volunteer
+          (VolunteerForUpdate.Latitude, VolunteerForUpdate.Longitude) = VolunteerManager.logicalChecking( VolunteerForUpdate);
+
+             DO.Volunteer  originalVolunteer = _dal.Volunteer.Read(VolunteerForUpdate.Id)!;
+            var changedFields = VolunteerManager.GetChangedFields(originalVolunteer, VolunteerForUpdate);
+            VolunteerManager.CanUpdateFields(requester.role, changedFields, VolunteerForUpdate);
 
             // Prepare DO.Volunteer object for data layer update
-            DO.Volunteer doVolunteer = VolunteerManager.CreateDoVolunteer(boVolunteer);
+            DO.Volunteer doVolunteer = VolunteerManager.CreateDoVolunteer(VolunteerForUpdate);
+
             _dal.Volunteer.Update(doVolunteer); // Attempt to update the data layer
         }
         catch (DO.DalDoesNotExistException ex)
         {
-            throw new BO.BLDoesNotExistException($"Volunteer with ID={boVolunteer.Id} does not  exists", ex);
+            throw new BO.BLDoesNotExistException($"Volunteer with ID={VolunteerForUpdate.Id} does not  exists", ex);
 
         }
 

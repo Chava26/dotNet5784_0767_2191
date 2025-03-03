@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Helpers;
+using System;
 using System.Collections.Generic;
 
 namespace BO;
@@ -67,24 +68,28 @@ namespace BO;
         /// A list of allocations for the current call (past and present).
         /// </summary>
         public List<CallAssignInList>? CallAssignments { get; set; } = new List<CallAssignInList>();
+    /// <summary>
+    /// Overrides ToString for debugging purposes using reflection.
+    /// </summary>
+    public override string ToString() => this.ToStringProperty();
 
-        ///// <summary>
-        ///// Constructor to initialize the call entity with the required values.
-        ///// </summary>
-        ///// <param name="id">The unique identifier of the call.</param>
-        ///// <param name="callType">The type of the call.</param>
-        ///// <param name="description">A description of the call.</param>
-        ///// <param name="fullAddress">The full address of the call.</param>
-        ///// <param name="latitude">The latitude of the call location.</param>
-        ///// <param name="longitude">The longitude of the call location.</param>
-        ///// <param name="openTime">The time the call was opened.</param>
-        //public Call(int id, CallType callType, DateTime openTime, CallStatus status)
-        //{
-        //    Id = id;
-        //    CallType = callType;
-        //    OpenTime = openTime;
-        //    Status= status;
-        //}
+    ///// <summary>
+    ///// Constructor to initialize the call entity with the required values.
+    ///// </summary>
+    ///// <param name="id">The unique identifier of the call.</param>
+    ///// <param name="callType">The type of the call.</param>
+    ///// <param name="description">A description of the call.</param>
+    ///// <param name="fullAddress">The full address of the call.</param>
+    ///// <param name="latitude">The latitude of the call location.</param>
+    ///// <param name="longitude">The longitude of the call location.</param>
+    ///// <param name="openTime">The time the call was opened.</param>
+    //public Call(int id, CallType callType, DateTime openTime, CallStatus status)
+    //{
+    //    Id = id;
+    //    CallType = callType;
+    //    OpenTime = openTime;
+    //    Status= status;
+    //}
 
     /// <summary>
     /// Override of ToString method for debugging purposes, using Reflection to display the property values.

@@ -54,6 +54,7 @@ internal class AssignmentImplementation : IAssignment
     {
         return DataSource.Assignments.FirstOrDefault(filter);
     }
+
     /// <summary>
     /// The function read all the Assignment in IEnumerable type
     /// </summary>

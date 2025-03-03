@@ -1,5 +1,8 @@
 ﻿
 namespace BO;
+using Helpers;
+using System;
+
 
 /// <summary>
 /// Represents a closed call in a list view.
@@ -30,7 +33,7 @@ public class ClosedCallInList
         /// <summary>
         /// Time when the call was assigned for handling.
         /// </summary>
-        public DateTime AssignmentTime { get; set; }
+        public DateTime TreatmentStartTime { get; set; }
 
         /// <summary>
         /// Actual completion time of the call, if applicable.
@@ -41,7 +44,11 @@ public class ClosedCallInList
         /// Type of call completion, if applicable.
         /// </summary>
         public EndOfTreatment? CompletionType { get; set; }
-         //public override string ToString() => this.ToStringProperty();
+
+    /// <summary>
+    /// Overrides ToString for debugging purposes using reflection.
+    /// </summary>
+    public override string ToString() => this.ToStringProperty();
 
     ///// <summary>
     ///// Initializes a new instance of the <see cref="ClosedCallInList"/> class.

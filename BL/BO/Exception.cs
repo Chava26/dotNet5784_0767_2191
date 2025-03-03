@@ -38,8 +38,15 @@ public class BlDoesNotExistException : Exception
 {
     public BlDoesNotExistException(string? message) : base(message) { }
 }
+public class BlDeletionException : Exception
+{
+    public BlDeletionException(string? message) : base(message) { }
+}
 
-
+public class BlUnauthorizedAccessException : Exception
+{
+    public BlUnauthorizedAccessException(string? message) : base(message) { }
+}
 
 
 // Custom Exception for invalid address input
@@ -76,4 +83,16 @@ public class GenralInitializationExcption : Exception
     public GenralInitializationExcption(string message, Exception innerException)
         : base(message, innerException) { }
 }
+public class BlInvalidFormatException : Exception
+{
+    public BlInvalidFormatException(string? message) : base(message) { }
+}
+public class BlApiRequestException : Exception
+{
+    public BlApiRequestException(string? message) : base(message) { }
+}
+//public class BlGeolocationNotFoundException : Exception
+//{
+//    public BlGeolocationNotFoundException(string? message) : base(message) { }
+//}
 

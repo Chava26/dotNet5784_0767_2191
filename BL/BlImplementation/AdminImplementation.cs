@@ -39,13 +39,12 @@ namespace BlImplementation
 
         public void InitializeDatabase()
         {
-            ResetDatabase();
-            //_dal.Initialization();
+            DalTest.Initialization.DO();
+            ClockManager.UpdateClock(ClockManager.Now);
         }
 
         public void ResetDatabase()
         {
-            //_dal.Config.ResetToDefaults();
             _dal.ResetDB();
         }
 

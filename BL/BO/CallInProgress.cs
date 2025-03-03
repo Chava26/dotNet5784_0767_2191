@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Helpers;
+using System;
 
 namespace BO;
 
@@ -71,10 +72,8 @@ namespace BO;
     /// <summary>
     /// Overrides ToString for debugging purposes using reflection.
     /// </summary>
-    //public override string ToString()
-    //{
-    //    return this.ToStringProperties();
-    //}
+    public override string ToString() => this.ToStringProperty();
+
 
     //public override string ToString() => this.ToStringProperty();
 

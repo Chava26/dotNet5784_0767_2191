@@ -1,5 +1,6 @@
 ﻿using BO;
 using DalApi;
+using DO;
 using Newtonsoft.Json.Linq;
 namespace Helpers
 {
@@ -41,22 +42,43 @@ namespace Helpers
            
 
             if (boVolunteer == null)
-                throw new ArgumentException("Volunteer object cannot be null.");
+                throw new BO.BlDoesNotExistException("Volunteer object cannot be null.");
 
             if (!System.Text.RegularExpressions.Regex.IsMatch(boVolunteer.Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
-                throw new ArgumentException("Invalid email format.");
+                throw new BO.BlInvalidFormatException("Invalid email format.");
 
-            if (boVolunteer.Id<0)
-                throw new ArgumentException("Invalid ID format.");
+            if (boVolunteer.Id<0 )
+                throw new BO.BlInvalidFormatException("Invalid ID format.");
 
             if (!System.Text.RegularExpressions.Regex.IsMatch(boVolunteer.PhoneNumber, @"^\d{10}$"))
-                throw new ArgumentException("Invalid phone number format.");
+                throw new BO.BlInvalidFormatException("Invalid phone number format. Phone number must have 10 digits.");
 
             if (boVolunteer.FullName.Length < 2)
-                throw new ArgumentException("Volunteer name is too short.");
+                throw new BO.BlInvalidFormatException("Volunteer name is too short. Name must have at least 2 characters.");
 
             if (boVolunteer.Password.Length < 6)
-                throw new ArgumentException("Password is too short.");
+                throw new BO.BlInvalidFormatException("Password is too short");
+        }
+        internal static bool IsValidId(int id)
+        {
+            string idStr = id.ToString().PadLeft(9, '0');
+            if (idStr.Length != 9 || !int.TryParse(idStr, out _))
+                return false;
+
+            int sum = 0;
+
+            for (int i = 0; i < 9; i++)
+            {
+                int digit = idStr[i] - '0';
+                digit *= (i % 2 == 0) ? 1 : 2;
+
+                if (digit > 9)
+                    digit -= 9;
+
+                sum += digit;
+            }
+
+            return sum % 10 == 0;
         }
         ///// <summary>
         ///// Validates logical constraints of the volunteer object.
@@ -74,7 +96,10 @@ namespace Helpers
         //}
         public static (double? Latitude, double? Longitude) logicalChecking( BO.Volunteer boVolunteer)
         {
-            IsPasswordStrong(boVolunteer.Password);
+            if (!IsValidId(boVolunteer.Id))
+                throw new BO.BlInvalidFormatException("Invalid ID format. ID must be a valid number with a correct checksum.");
+            if (!IsPasswordStrong(boVolunteer.Password))
+                throw new BO.BlInvalidFormatException("Password is too weak. It must have at least 6 characters, including uppercase, lowercase, and numbers.");
             return Tools.GetCoordinatesFromAddress(boVolunteer.Address);
 
 
@@ -85,16 +110,17 @@ namespace Helpers
         /// <param name="requesterId">The ID of the requester.</param>
         /// <param name="boVolunteer">The BO.Volunteer object being updated.</param>
         /// <exception cref="UnauthorizedAccessException">Thrown when the requester lacks permissions.</exception>
-        public static void ValidatePermissions(int requesterId, BO.Volunteer boVolunteer)
+        public static void ValidatePermissions(DO.Volunteer requester, BO.Volunteer VolunteerForUpdate)
         {
-            bool isSelf = requesterId == boVolunteer.Id;
-            bool isAdmin = boVolunteer.role == Role.Manager;
+            bool isSelf = requester.Id == VolunteerForUpdate.Id;
+
+            bool isAdmin = requester.role == DO.Role.Manager;
 
             if (!isAdmin && !isSelf)
                 throw new UnauthorizedAccessException("Only an admin or the volunteer themselves can perform this update.");
 
-            if (!isAdmin && boVolunteer.role != Role.Volunteer)
-                throw new UnauthorizedAccessException("Only an admin can update the volunteer's role.");
+            //if (!isAdmin && VolunteerForUpdate.role != Role.Volunteer)
+            //    throw new UnauthorizedAccessException("Only an admin can update the volunteer's role.");
         }
         /// <summary>
         /// Validates the strength of a password.
@@ -138,7 +164,31 @@ namespace Helpers
         }
 
 
+        internal static List<string> GetChangedFields(DO.Volunteer original, BO.Volunteer updated)
+        {
+            var changedFields = new List<string>();
 
+            if (original.Name != updated.FullName) changedFields.Add("Name");
+            if (original.Email != updated.Email) changedFields.Add("Email");
+            if (original.Phone != updated.PhoneNumber) changedFields.Add("Phone");
+            if (original.role != (DO.Role)updated.role) changedFields.Add("Role");
+            if (original.Adress != updated.Address) changedFields.Add("Address");
+
+            return changedFields;
+        }
+
+        internal static void CanUpdateFields(DO.Role requesterRole, List<string> changedFields, BO.Volunteer boVolunteer)
+        {
+            if (changedFields.Contains("Role"))
+            {
+                //bool isAdmin = boVolunteer.role == BO.Role.Manager;
+
+                if (requesterRole != DO.Role.Manager)
+                    throw new BO.BlUnauthorizedAccessException("You do not have permission to update the Role field.");
+
+            }
+
+        }
 
 
 

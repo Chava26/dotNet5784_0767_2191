@@ -1,6 +1,6 @@
 ﻿namespace DalApi;
 using DO;
-
+using System;
 
 public interface IAssignment : ICrud<Assignment>
 {

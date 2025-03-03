@@ -46,6 +46,11 @@ internal class VolunteerImplementation : IVolunteer
     {
           return DataSource.Volunteers.FirstOrDefault(volunteer => volunteer.Id == id);
     }
+    public Volunteer? Read(Func<Volunteer, bool> filter)
+    {
+        return DataSource.Volunteers.FirstOrDefault(filter);
+    }
+
     /// <summary>
     /// The function returns to the entire IEnumerable of Volunteers
     /// </summary>
