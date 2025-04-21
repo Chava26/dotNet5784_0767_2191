@@ -16,8 +16,9 @@ public record Assignment
     
     int CallId,
     int VolunteerId,
-    EndOfTreatment TypeOfEndTime? ,
     DateTime EntryTime,
+    EndOfTreatment? TypeOfEndTime = null,
+
     DateTime? exitTime = null,
     int Id=0
 )
@@ -26,7 +27,7 @@ public record Assignment
     /// <summary>
     ///  Default constructor
     /// </summary>
-    public Assignment() : this(0,0, EndOfTreatment.treated, DateTime.Now) { }
+    public Assignment() : this(0,0, DateTime.Now, EndOfTreatment.treated) { }
 }
 
 //namespace DO;

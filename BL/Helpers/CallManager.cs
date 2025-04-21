@@ -12,16 +12,20 @@ using System.Threading.Tasks;
 namespace Helpers;
 internal class CallManager
 {
-    private static IDal s_dal = DalApi.Factory.Get; //stage 4
+    private static IDal s_dal = DalApi.Factory.Get;//stage 4
     /// <summary>
-    /// Calculates the status of a call based on its properties and the latest assignment.
+     /// Calculates the status of a call based on its properties and the latest assignment
     /// </summary>
-    /// <param name="call">The call entity from the data layer.</param>
-    /// <param name="latestAssignment">The latest assignment for the call, if any.</param>
-    /// <param name="riskThreshold">The time span considered as a risk threshold.</param>
+     /// <param name="call">The call entity from the data layer.</param>
+     /// <param name="latestAssignment">The latest assignment for the call, if any.</param>
+     /// <param name="riskThreshold">The time span considered as a risk threshold.</param>
     /// <returns>The calculated <see cref="CallStatus"/>.</returns>
-    public static CallStatus CalculateCallStatus(DO.Call call, DO.Assignment? latestAssignment, TimeSpan? riskThreshold = null)
+    public static CallStatus CalculateCallStatus(DO.Call call, DO.Assignment? latestAssignment = null)
     {
+        if (latestAssignment is null) latestAssignment = s_dal.Assignment.ReadAll().FirstOrDefault(a => a.CallId == call.Id);
+
+        TimeSpan riskThreshold = TimeSpan.FromMinutes(30); // Risk threshold configuration
+
         // If no assignment exists, determine if the call is open or expired
         if (latestAssignment == null)
         {
@@ -68,37 +72,48 @@ internal class CallManager
     internal static void ValidateCallDetails(BO.Call call)
     {
 
-        
+
         // Validate that the address is a valid address with latitude and longitude
         if (string.IsNullOrWhiteSpace(call.FullAddress) ||
             !(call.Latitude >= -90 && call.Latitude <= 90 &&
               call.Longitude >= -180 && call.Longitude <= 180))
         {
-            throw new ArgumentException("The address must be valid with latitude and longitude.");
+            throw new BlInvalidFormatException("The address must be valid with latitude and longitude.");
         }
 
         // Validate the call type is valid
         if (!Enum.IsDefined(typeof(BO.CallType), call.CallType))
         {
-            throw new ArgumentException("Invalid call type.");
+            throw new BlInvalidFormatException("Invalid call type.");
         }
 
         // Validate the description length
         if (!string.IsNullOrEmpty(call.Description) && call.Description.Length > 500)
         {
-            throw new ArgumentException("Description is too long (maximum 500 characters).");
+            throw new BlInvalidFormatException("Description is too long (maximum 500 characters).");
         }
 
         // Validate that there are no assignments in the past
         if (call.CallAssignments != null && call.CallAssignments.Any(a => a.TreatmentStartTime < call.OpenTime))
         {
-            throw new ArgumentException("Assignments cannot start before the call's open time.");
+            throw new BlInvalidFormatException("Assignments cannot start before the call's open time.");
+        }
+        //Validate that the open time is not in the future
+        if (call.OpenTime > DateTime.Now)
+        {
+            throw new BlInvalidFormatException("The open time cannot be in the future.");
+        }
+        //Validate that the endTime is past the openTime
+        if (call.MaxEndTime.HasValue && call.MaxEndTime.Value <= call.OpenTime)
+        {
+            throw new BO.BlInvalidOperationException("The MaxEndTime must be greater than the OpenTime.");
         }
     }
 
-    internal static (double? Latitude, double? Longitude) logicalChecking(BO.Call boCall)
+    internal static void logicalChecking(BO.Call boCall)
     {
-        if (boCall.MaxEndTime.HasValue && boCall.MaxEndTime.Value <= boCall.OpenTime) { 
+        if (boCall.MaxEndTime.HasValue && boCall.MaxEndTime.Value <= boCall.OpenTime)
+        {
             throw new InvalidOperationException("The MaxEndTime must be greater than the OpenTime.");
         }
         // Validate that the open time is not in the future
@@ -106,26 +121,78 @@ internal class CallManager
         {
             throw new ArgumentException("The open time cannot be in the future.");
         }
-
-        return Tools.GetCoordinatesFromAddress(boCall.FullAddress);
+       
 
 
     }
-    public static CallStatus GetCallStatus(int callId, IDal dal)
+
+
+    //internal static (double? Latitude, double? Longitude) logicalChecking(BO.Call boCall)
+    //{
+    //    if (boCall.MaxEndTime.HasValue && boCall.MaxEndTime.Value <= boCall.OpenTime)
+    //    {
+    //        throw new InvalidOperationException("The MaxEndTime must be greater than the OpenTime.");
+    //    }
+    //    // Validate that the open time is not in the future
+    //    if (boCall.OpenTime > DateTime.Now)
+    //    {
+    //        throw new ArgumentException("The open time cannot be in the future.");
+    //    }
+    //    var (latitude, longitude) = Tools.GetCoordinatesFromAddress(boCall.FullAddress);
+
+    //    return (latitude, longitude);
+
+
+    //}
+    //public static CallStatus GetCallStatus(int callId)
+    //{
+    //    var call = s_dal.Call.Read(callId) ?? throw new BO.BlDoesNotExistException($"Call with ID {callId} not found.");
+    //    var assignment = s_dal.Assignment.Read(a => a.CallId == callId);
+    //    TimeSpan? timeLeft = call.MaxFinishTime - ClockManager.Now;
+
+    //    if (call.MaxFinishTime.HasValue && timeLeft < TimeSpan.Zero)
+    //        return CallStatus.Expired;
+    //    if (assignment != null && timeLeft <= s_dal.Config.RiskRange)
+    //        return CallStatus.InProgressAtRisk;
+    //    if (assignment != null)
+    //        return CallStatus.InProgress;
+    //    if (timeLeft <= s_dal.Config.RiskRange)
+    //        return CallStatus.OpenRisk;
+    //    if (assignment.exitTime.HasValue)
+    //    {
+    //        return CallStatus.Closed;
+    //    }
+
+    //    return Status.Opened;
+    //}
+    internal static DO.Call CreateDoCall(BO.Call call)
     {
-        var call = dal.Call.Read(callId);
-
-        if (call == null)
-            throw new KeyNotFoundException($"Call with ID {callId} not found.");
-
-        if (call.MaxFinishTime.HasValue && call.MaxFinishTime.Value < DateTime.Now)
-            return CallStatus.Expired;
-
-        if ((DateTime.Now - call.OpenTime).TotalHours > 1)
-            return CallStatus.OpenRisk;
-
-        return CallStatus.InProgress;
+        return new DO.Call
+        {
+            MyCallType = (DO.CallType)call.CallType,
+            Description = call.Description,
+            Address = call.FullAddress,
+            Latitude = call.Latitude,
+            Longitude = call.Longitude,
+            OpenTime = call.OpenTime,
+            MaxFinishTime = call.MaxEndTime
+        };
     }
+   internal static BO.Call CreateBoCall(DO.Call call, List<CallAssignInList> callAssignments)
+    {
+    return   new BO.Call{
+        Id = call.Id,
+            CallType = (BO.CallType) call.MyCallType,
+            Description = call.Description,
+            FullAddress = call.Address,
+            Latitude = call.Latitude,
+            Longitude = call.Longitude,
+            OpenTime = call.OpenTime,
+            MaxEndTime = call.MaxFinishTime,
+             Status = CalculateCallStatus(call),
+           CallAssignments = callAssignments
+        };
+}
 }
 
 

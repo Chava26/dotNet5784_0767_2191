@@ -60,12 +60,22 @@ public static class Initialization
             do
                 id = s_rand.Next(100000000, 999999999); // Generate a random unique ID
             while (s_dal!.Volunteer.Read(id) != null); // Ensure the ID is unique
+           // Function to encrypt password
+            string EncryptPassword(string password)
+            {
+                using (var sha256 = System.Security.Cryptography.SHA256.Create())
+                {
+                    var bytes = System.Text.Encoding.UTF8.GetBytes(password);
+                    var hash = sha256.ComputeHash(bytes);
+                    return Convert.ToBase64String(hash);
+                }
+            }
 
             // Define volunteer data
             string name = names[i];
             string email = emails[i];
             string phone = phones[i];
-            string password = passwords[i];
+            string password = EncryptPassword(passwords[i]); // Call the function;
             double Latitude = coordinates[i].Latitude;
             double Longitude = coordinates[i].Longitude;
             double MaximumDistance = s_rand.Next(5, 50); // Random maximum distance
@@ -164,8 +174,8 @@ public static class Initialization
             DateTime randomTime = minTime.AddMinutes(s_rand.Next(validDifference));
 
             // Create the assignment
-            s_dal!.Assignment.Create(new Assignment(calls.ElementAt(s_rand.Next(calls.Count() - 15)).Id, volunteers.ElementAt(s_rand.Next(volunteers.Count())).Id, (EndOfTreatment)
-                s_rand.Next(Enum.GetValues(typeof(EndOfTreatment)).Length - 1), randomTime.AddHours(2), randomTime));
+            s_dal!.Assignment.Create(new Assignment(calls.ElementAt(s_rand.Next(calls.Count() - 15)).Id, volunteers.ElementAt(s_rand.Next(volunteers.Count())).Id, randomTime , (EndOfTreatment)
+                s_rand.Next(Enum.GetValues(typeof(EndOfTreatment)).Length - 1), randomTime.AddHours(2)));
         }
     }
 

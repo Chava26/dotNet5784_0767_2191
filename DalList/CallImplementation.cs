@@ -51,6 +51,7 @@ internal class CallImplementation : ICall
     {
         return DataSource.Calls.FirstOrDefault(filter);
     }
+    
     /// <summary>
     /// The function returns to the entire IEnumerable of Calls
     /// </summary>

@@ -17,27 +17,7 @@ namespace DalTest
 
 
 
-        /// <summary>
-        /// Main menu options for user interaction
-        /// </summary>
-        public enum MainMenu
-        {  ExitMainMenu,  AssignmentSubmenu,  VolunteerSubmenu,  CallSubmenu,  InitializeData,  DisplayAllData,  ConfigSubmenu,  ResetDatabase
-        }
-        /// <summary>
-        /// Submenu options for CRUD operations
-        /// </summary>
-        public enum SubMenu
-        {
-            Exit, Create, Read, ReadAll, UpDate, Delete, DeleteAll
-        }
-
-        /// <summary>
-        /// Options specific to the Config submenu
-        /// </summary>
-        private enum ConfigSubmenu
-        {
-            Exit,AdvanceClockByMinute,AdvanceClockByHour,AdvanceClockByDay,AdvanceClockByMonth,AdvanceClockByYear,DisplayClock,ChangeClockOrRiskRange,DisplayConfigVar,   Reset
-        }
+        
         /// <summary>
         /// Function to create a new volunteer
         /// </summary>
@@ -127,11 +107,11 @@ namespace DalTest
             {
                 Console.Write("Enter Assignment ID for update: ");
                 if (!int.TryParse(Console.ReadLine(), out int AssignmentId)) throw new InvalidFormatException("Assignment Id is invalid!");
-                return new Assignment(CallId, volunteerId, typeOfEndTime, EntryTime, exitTime,AssignmentId);
+                return new Assignment(CallId, volunteerId,EntryTime, typeOfEndTime, exitTime,AssignmentId);
             }
             else
             {
-                return new Assignment(CallId, volunteerId, typeOfEndTime, EntryTime, exitTime);
+                return new Assignment(CallId, volunteerId,  EntryTime, typeOfEndTime, exitTime);
 
             }
 
@@ -253,15 +233,15 @@ namespace DalTest
             {
                 switch (choice)
                 {
-                    case "Volunteer":
+                    case "VolunteerSubmenu":
                         foreach (var item in s_dal!.Volunteer.ReadAll())
                             Console.WriteLine(item);
                         break;
-                    case "Call":
+                    case "CallSubmenu":
                         foreach (var item in s_dal!.Call.ReadAll())
                             Console.WriteLine(item);
                         break;
-                    case "Assignment":
+                    case "AssignmentSubmenu":
                         foreach (var item in s_dal.Assignment.ReadAll())
                             Console.WriteLine(item);
                         break;
@@ -300,7 +280,6 @@ namespace DalTest
                         s_dal.Assignment.Delete(yourId);
                         break;
                 }
-                Console.WriteLine("Enter ID: ");
 
             }
             catch (Exception ex) {
@@ -443,10 +422,10 @@ namespace DalTest
                         case ConfigSubmenu.DisplayClock:
                             Console.WriteLine(s_dal!.Config.Clock);
                             break;
-                        case ConfigSubmenu.ChangeClockOrRiskRange:
+                        case ConfigSubmenu.DisplayConfigVar:
                             Console.WriteLine($"RiskRange: {s_dal.Config!.RiskRange}");
                             break;
-                        case ConfigSubmenu.DisplayConfigVar:
+                        case ConfigSubmenu.ChangeClockOrRiskRange:
                             Console.Write("Write new format for RiskRange (e.g., seconds, minutes, hours): ");
                             string riskRangeInput = Console.ReadLine()!;
                             if (TimeSpan.TryParse(riskRangeInput, out TimeSpan newRiskRange))
@@ -457,6 +436,29 @@ namespace DalTest
                             else
                             {
                                 Console.WriteLine("Invalid format.");
+                            }
+                            break;
+                        case ConfigSubmenu.ChangeClock:
+                            Console.Write("Enter a new value for the system clock in format YY MM DD HH MM SS: ");
+                            string times = Console.ReadLine()!;
+                            string[] timesArray = times.Split(' ');
+                            try
+                            {
+                                int year = int.Parse(timesArray[0]);
+                                int month = int.Parse(timesArray[1]);
+                                int day = int.Parse(timesArray[2]);
+                                int hour = int.Parse(timesArray[3]);
+                                int minute = int.Parse(timesArray[4]);
+                                int second = int.Parse(timesArray[5]);
+                                s_dal.Config.Clock = new DateTime(year, month, day, hour, minute, second);
+                            }
+                            catch (FormatException ex)
+                            {
+                                Console.WriteLine("Error: Invalid date format. Please ensure you enter the values correctly (YY MM DD HH MM SS).");
+                            }
+                            catch (ArgumentOutOfRangeException ex)
+                            {
+                                Console.WriteLine("Error: One or more values are out of range. Please check the values you entered.");
                             }
                             break;
                         case ConfigSubmenu.Reset:
@@ -504,13 +506,13 @@ namespace DalTest
                     switch (userInput)
                     {
                         case MainMenu.AssignmentSubmenu:
-                            EntityMenu("Assignment", s_dal.Assignment);
+                            EntityMenu("AssignmentSubmenu", s_dal.Assignment);
                             break;
                         case MainMenu.VolunteerSubmenu:
-                            EntityMenu("Volunteer", s_dal.Volunteer);
+                            EntityMenu("VolunteerSubmenu", s_dal.Volunteer);
                             break;
                         case MainMenu.CallSubmenu:
-                            EntityMenu("Call", s_dal.Call);
+                            EntityMenu("CallSubmenu", s_dal.Call);
                             break;
                         case MainMenu.InitializeData:
                             Initialization.Do(); // Initialize data.

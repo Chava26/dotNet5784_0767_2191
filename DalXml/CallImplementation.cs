@@ -30,6 +30,12 @@ internal class CallImplementation : ICall
         List<Call> Calls = XMLTools.LoadListFromXMLSerializer<Call>(Config.s_calls_xml);
         return Calls.FirstOrDefault(Call => Call.Id == id);
     }
+    /// Reads a Call by a filter from the XML data source.
+    public Call? Read(Func<Call, bool> filter)
+    {
+        List<Call> calls = XMLTools.LoadListFromXMLSerializer<Call>(Config.s_calls_xml);
+        return calls.FirstOrDefault(filter);
+    }
     /// <summary>
     /// Reads all calls from the XML data source, with an optional filter for selection.
     /// </summary>

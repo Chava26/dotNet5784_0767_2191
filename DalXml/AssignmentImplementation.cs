@@ -30,6 +30,13 @@ internal class AssignmentImplementation : IAssignment
         List<Assignment> Assignments = XMLTools.LoadListFromXMLSerializer<Assignment>(Config.s_assignments_xml);
             return Assignments.FirstOrDefault(Assignment => Assignment.Id == id);
     }
+    /// Reads an Assignment by a filter from the XML data source.
+    public Assignment? Read(Func<Assignment, bool> filter)
+    {
+        List<Assignment> assignments = XMLTools.LoadListFromXMLSerializer<Assignment>(Config.s_assignments_xml);
+        return assignments.FirstOrDefault(filter);
+    }
+
     /// <summary>
     /// Reads all assignments from the XML data source, with an optional filter for selection.
     /// </summary>

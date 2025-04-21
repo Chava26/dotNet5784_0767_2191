@@ -10,7 +10,10 @@ public class AuthenticationException : Exception
 {
     public AuthenticationException(string message) : base(message) { }
 }
-
+public class BlGeneralDatabaseException : Exception
+{
+    public BlGeneralDatabaseException(string? message, Exception? innerException) : base(message) { }
+}
 public class BlAlreadyExistsException : Exception
     {
         public BlAlreadyExistsException(string? message, Exception ex) : base(message) { }
@@ -27,12 +30,7 @@ public class BlAlreadyExistsException : Exception
 
 
     }
-    public class GeneralDatabaseException : Exception
-    {
-        public GeneralDatabaseException(string? message, Exception ex) : base(message) { }
-
-
-    }
+ 
 
 public class BlDoesNotExistException : Exception
 {
@@ -95,4 +93,10 @@ public class BlApiRequestException : Exception
 //{
 //    public BlGeolocationNotFoundException(string? message) : base(message) { }
 //}
+public class BlInvalidOperationException : Exception
+{
+    public BlInvalidOperationException(string? message) : base(message) { }
 
+    public BlInvalidOperationException(string? message, Exception? innerException)
+        : base(message, innerException) { }
+}

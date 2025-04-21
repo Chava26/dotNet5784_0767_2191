@@ -78,19 +78,19 @@ public class Volunteer
     /// Total number of tasks the Volunteer has completed.
     /// Read-only property.
     /// </summary>
-    public int TotalCompletedTasks { get; private set; }
+    public int TotalHandledCalls { get; init; }
 
     /// <summary>
     /// Total number of tasks the Volunteer has canceled.
     /// Read-only property.
     /// </summary>
-    public int TotalCanceledTasks { get; private set; }
+    public int TotalCanceledCalls { get; init; }
 
     /// <summary>
     /// Total number of tasks the Volunteer accepted but expired.
     /// Read-only property.
     /// </summary>
-    public int TotalExpiredTasks { get; private set; }
+    public int TotalExpiredCalls { get;init; }
 
     ///// <summary>
     ///// The current task in progress for the Volunteer.
@@ -99,10 +99,9 @@ public class Volunteer
     // public bool IsActive  { get; set; }
 
     /// <summary>
-    /// The current task in progress for the Volunteer.
+    /// The current progress in progress for the Volunteer.
     /// Null if no task is in progress.
     /// </summary>
-    public CallInAction? CurrentTask { get; set; }
     public CallInProgress? callInProgress { get; set; }
     /// <summary>
     /// Overrides ToString for debugging purposes using reflection.

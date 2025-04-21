@@ -1,4 +1,6 @@
 ﻿namespace DalApi;
+
+using DO;
 using System.Xml.Linq;
 
 static class DalConfig
@@ -34,9 +36,4 @@ static class DalConfig
     }
 }
 
-[Serializable]
-public class DalConfigException : Exception
-{
-    public DalConfigException(string msg) : base(msg) { }
-    public DalConfigException(string msg, Exception ex) : base(msg, ex) { }
-}
+

@@ -26,8 +26,8 @@ public enum DistanceType
 /// </summary>
 public enum CallType
 {
-    necessary,
     None,
+    necessary,
     Regular,
     General,             // General calls.Follow-up calls
     FollowUp,
@@ -89,21 +89,16 @@ public enum VolunteerSortField
 {
     Id,
     Name,
-    Email,
-     Phone,
-    role,
-    IsActive,
+       IsActive,
         SumOfExpiredCalls,
     SumOfCancellation,
-    SumOfCalls
-    //double? MaximumDistance = null,
-    //string? Password = null,
-    //string? Adress = null,
-    //double? Longitude = null,
+    TotalHandledCalls,
+    TotalCanceledCalls,
+    TotalExpiredCalls
 
-    //double? Latitude = null,
-    //DistanceType DistanceType = DistanceType.airDistance
 }
+                     
+
 /// <summary>
 /// Enum representing the fields by which calls can be filtered or sorted.
 /// </summary>
@@ -119,6 +114,8 @@ public enum CallField
     Status,
     AssignmentsCount
 }
+
+
 ///// <summary>
 ///// Enum representing time units for advancing the system clock.
 ///// </summary>

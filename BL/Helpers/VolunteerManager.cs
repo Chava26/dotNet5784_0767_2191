@@ -29,7 +29,31 @@ namespace Helpers
                 boVolunteer.Latitude
             );
         }
+        /// <summary>
+        /// Creates a BO.Volunteer object from a DO.Volunteer object.
+        /// </summary>
+        /// <param name="boVolunteer">The DO.Volunteer object.</param>
+        /// <returns>A BO.Volunteer object.</returns>
+        //internal static BO.Volunteer CreateDoVolunteer(DO.Volunteer doVolunteer, boCallInProgress)
+        //{
+        //    return new BO.Volunteer { 
+        //        Id = doVolunteer.Id,
+        //        FullName = doVolunteer.Name,
+        //        Email = doVolunteer.Email,
+        //        PhoneNumber = doVolunteer.Phone,
+        //        role = (BO.Role)doVolunteer.role,
+        //        IsActive = doVolunteer.IsActive,
+        //        MaxDistanceForTask = doVolunteer.MaximumDistance,
+        //        Password = doVolunteer.Password!,
+        //        Address = doVolunteer.Adress,
+        //        Longitude = doVolunteer.Longitude,
+        //        Latitude = doVolunteer.Latitude,
+        //        DistanceType = (BO.DistanceType)doVolunteer.DistanceType,
+        //        callInProgress = boCallInProgress
+        //    };
+        //}
 
+        
 
         /// <summary>
         /// Validates the basic format of the input values.
@@ -85,15 +109,7 @@ namespace Helpers
         ///// </summary>
         ///// <param name="boVolunteer">The BO.Volunteer object to validate.</param>
         ///// <exception cref="ArgumentException">Thrown when any logical constraint is violated.</exception>
-        //public void ValidateLogicalConstraints(BO.Volunteer boVolunteer)
-        //{
-        //    var coordinates = GetCoordinatesFromAddress(boVolunteer.Address);
-        //    if (coordinates == null)
-        //        throw new ArgumentException("Address is invalid or cannot be resolved to coordinates.");
-
-        //    boVolunteer.Longitude = coordinates.Longitude;
-        //    boVolunteer.Latitude = coordinates.Latitude;
-        //}
+        
         public static (double? Latitude, double? Longitude) logicalChecking( BO.Volunteer boVolunteer)
         {
             if (!IsValidId(boVolunteer.Id))
@@ -118,9 +134,6 @@ namespace Helpers
 
             if (!isAdmin && !isSelf)
                 throw new UnauthorizedAccessException("Only an admin or the volunteer themselves can perform this update.");
-
-            //if (!isAdmin && VolunteerForUpdate.role != Role.Volunteer)
-            //    throw new UnauthorizedAccessException("Only an admin can update the volunteer's role.");
         }
         /// <summary>
         /// Validates the strength of a password.

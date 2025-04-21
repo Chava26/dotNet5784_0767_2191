@@ -39,7 +39,7 @@ internal class VolunteerImplementation : IVolunteer
         catch (Exception ex)
         {
             // Handle all other unexpected exceptions
-            throw new BO.GeneralDatabaseException("An unexpected error occurred while adding the volunteer.", ex);
+            throw new BO.BlGeneralDatabaseException("An unexpected error occurred while adding the volunteer.", ex);
         }
 
     }
@@ -57,21 +57,14 @@ internal class VolunteerImplementation : IVolunteer
     {
         try
         {
-            // Validate input ID format
-            //if (!Helpers.Tools.IsValidId(id))
-            //    throw new ArgumentException("Invalid volunteer ID format.");
-
+          
             // Check if the volunteer can be deleted
             IEnumerable<DO.Assignment> assignmentsWithVolunteer = _dal.Assignment.ReadAll(a => a.VolunteerId == volunteerId);
             if (assignmentsWithVolunteer is not null)
                 throw new BO.BlInvalidFormatException("Volunteer cannot be deleted because they are or have been assigned to tasks.");
             _dal.Volunteer.Delete(volunteerId);
         }
-        //catch (ArgumentException ex)
-        //{
-        //    // Handle invalid ID format
-        //    throw new BO.VolunteerDeletionException($"Invalid ID format for volunteer ID: {id}.", ex);
-        //}
+       
         catch (InvalidOperationException ex)
         {
             // Handle logical business errors, such as tasks assigned to the volunteer
@@ -85,7 +78,7 @@ internal class VolunteerImplementation : IVolunteer
         catch (Exception ex)
         {
             // Handle all other unexpected exceptions
-            throw new BO.GeneralDatabaseException("An unexpected error occurred while deleting the volunteer.", ex);
+            throw new BO.BlGeneralDatabaseException("An unexpected error occurred while deleting the volunteer.", ex);
         }
     }
 
@@ -137,7 +130,12 @@ internal class VolunteerImplementation : IVolunteer
         // Sort the volunteer list based on the provided sorting criterion
         return sortBy switch
         {
-            BO.VolunteerSortField.SumOfCalls => volunteerList.OrderBy(v => v.TotalHandledCalls),
+            BO.VolunteerSortField.Name => volunteerList.OrderBy(v => v.FullName),
+
+            BO.VolunteerSortField.TotalHandledCalls => volunteerList.OrderByDescending(v => v.TotalHandledCalls),
+            BO.VolunteerSortField.TotalCanceledCalls => volunteerList.OrderByDescending(v => v.TotalCanceledCalls),
+            BO.VolunteerSortField.TotalExpiredCalls => volunteerList.OrderByDescending(v => v.TotalExpiredCalls),
+            //BO.VolunteerSortField.SumOfCalls => volunteerList.OrderBy(v => v.TotalHandledCalls),
             BO.VolunteerSortField.SumOfCancellation => volunteerList.OrderBy(v => v.TotalCanceledCalls),
             BO.VolunteerSortField.SumOfExpiredCalls => volunteerList.OrderBy(v => v.TotalExpiredCalls),
             _ => volunteerList.OrderBy(v => v.Id) // Default: Sort by volunteer ID
@@ -146,68 +144,15 @@ internal class VolunteerImplementation : IVolunteer
     catch (DO.DalDoesNotExistException ex)
     {
         // Catch data access exceptions and rethrow as business logic exceptions
-        throw new BO.GeneralDatabaseException("Error accessing data.", ex);
+        throw new BO.BlGeneralDatabaseException("Error accessing data.", ex);
     }
         catch (Exception ex)
         {
             // Handle all other unexpected exceptions
-            throw new BO.GeneralDatabaseException("An unexpected error occurred while geting Volunteers.", ex);
+            throw new BO.BlGeneralDatabaseException("An unexpected error occurred while geting Volunteers.", ex);
         }
     }
 
-
-
-
-
-    //public BO.Volunteer GetVolunteerDetails(int volunteerId)
-    //{
-    //    try
-    //    {
-    //        var doVolunteer = _dal.Volunteer.Read(volunteerId) ??
-    //              throw new BO.BlDoesNotExistException($"Volunteer with ID={volunteerId} does Not exist");
-    //        IEnumerable<Assignment> assignmentsWithVolunteer = _dal.Assignment.ReadAll(a => a.VolunteerId == volunteerId);
-    //        if (assignmentsWithVolunteer is not null)
-    //        {
-    //            var doCall = _dal.Call.Read(volunteerId);
-
-    //            BO.CallInProgress boCallInProgress = new BO.CallInProgress()
-    //            {
-    //                Id = doAssignment.Id,
-    //                CallId = doAssignment.CallId,
-    //                Type = doCall.MyCallType,
-    //                Address = doCall.Address,
-    //                OpenTime = doCall.OpenTime,
-    //                EntryTime = doAssignment.EntryTime,
-    //                DistanceFromVolunteer = distanceFromVolunteer,
-    //                Status = status
-    //            };
-    //        }
-    //        return new()
-    //        {
-    //            Id = volunteerId,
-    //            Email = doVolunteer.Email,
-    //            PhoneNumber = doVolunteer.Phone,
-    //            (BO.Role)role = doVolunteer.role,
-    //            IsActive = doVolunteer.IsActive,
-    //            MaxDistanceForTask = doVolunteer.MaximumDistance,
-    //            Password = doVolunteer.Password,
-    //            Address = doVolunteer.Adress,
-    //            Longitude = doVolunteer.Longitude,
-    //            Latitude = doVolunteer.Latitude,
-    //            DistanceType = doVolunteer.DistanceType,
-    //            callInProgress = boCallInProgress
-    //        };
-    //    }
-    //    catch (DO.DalDoesNotExistException ex)
-    //    {
-    //        // Catch data access exceptions and rethrow as business logic exceptions
-    //        throw new BO.GeneralDatabaseException("Error geting Volunteer details  with ID {volunteerId}. Volunteer not found.", ex);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        // Handle all other unexpected exceptions
-    //        throw new BO.GeneralDatabaseException("An unexpected error occurred while geting Volunteer details.", ex);
-    //    }
 
     /// <summary>
     /// Retrieves the details of a volunteer, including any active call assignment they are handling.
@@ -230,8 +175,8 @@ internal class VolunteerImplementation : IVolunteer
         {
             var doVolunteer = _dal.Volunteer.Read(volunteerId) ??
                throw new BO.BlDoesNotExistException($"Volunteer with ID={volunteerId} does not exist");
-
-            var activeAssignment = _dal.Assignment.Read(a => a.VolunteerId == volunteerId && a.exitTime is null);
+            var assigments = _dal.Assignment.ReadAll(a => a.VolunteerId == volunteerId);
+            var activeAssignment = assigments.FirstOrDefault(a => a.exitTime == null);
             BO.CallInProgress? boCallInProgress = null;
             if (activeAssignment is not null)
             {
@@ -255,16 +200,20 @@ internal class VolunteerImplementation : IVolunteer
             return new BO.Volunteer
             {
                 Id = volunteerId,
+                 FullName= doVolunteer.Name,
                 Email = doVolunteer.Email,
                 PhoneNumber = doVolunteer.Phone,
                 role = (BO.Role)doVolunteer.role,
                 IsActive = doVolunteer.IsActive,
                 MaxDistanceForTask = doVolunteer.MaximumDistance,
-                Password = doVolunteer.Password!,
+                //Password = doVolunteer.Password!,
                 Address = doVolunteer.Adress,
                 Longitude = doVolunteer.Longitude,
                 Latitude = doVolunteer.Latitude,
                 DistanceType = (BO.DistanceType)doVolunteer.DistanceType,
+                TotalHandledCalls = assigments.Count(a => a.TypeOfEndTime == DO.EndOfTreatment.treated),
+                TotalCanceledCalls = assigments.Count(a => a.TypeOfEndTime == DO.EndOfTreatment.administratorCancel || a.TypeOfEndTime == DO.EndOfTreatment.selfCancel),
+                TotalExpiredCalls = assigments.Count(a => a.TypeOfEndTime == DO.EndOfTreatment.expired),
                 callInProgress = boCallInProgress
             };
         }
@@ -275,7 +224,7 @@ internal class VolunteerImplementation : IVolunteer
         catch (Exception ex)
         {
             // Handle all other unexpected exceptions
-            throw new BO.GeneralDatabaseException("An unexpected error occurred while geting Volunteer details.", ex);
+            throw new BO.BlGeneralDatabaseException("An unexpected error occurred while geting Volunteer details.", ex);
         }
     }
 
@@ -301,9 +250,13 @@ internal class VolunteerImplementation : IVolunteer
 
             return (BO.Role)matchingVolunteer.role;
         }
-        catch (DO.DalDoesNotExistException ex)
+        catch (BO.BlDoesNotExistException ex)
         {
-            throw new BO.BLDoesNotExistException("Error accessing data.", ex);
+            throw ;
+        }
+        catch (Exception ex)
+        {
+            throw new BO.BlGeneralDatabaseException("An unexpected error occurred while login.", ex);
         }
     }
 
@@ -322,13 +275,9 @@ internal class VolunteerImplementation : IVolunteer
     public void UpdateVolunteer(int requesterId, BO.Volunteer VolunteerForUpdate)
     {
        
-
-       
         try
         {
             DO.Volunteer requester = _dal.Volunteer.Read(requesterId) ?? throw new BO.BlDoesNotExistException($"Volunteer with ID={requesterId} does not  exists and can not update other Volunteer");
-
-
             // Ensure permissions are correct
             VolunteerManager.ValidatePermissions(requester, VolunteerForUpdate);
 
@@ -356,7 +305,7 @@ internal class VolunteerImplementation : IVolunteer
         catch (Exception ex)
         {
             // Handle all other unexpected exceptions
-            throw new BO.GeneralDatabaseException("An unexpected error occurred while update.", ex);
+            throw new BO.BlGeneralDatabaseException("An unexpected error occurred while update.", ex);
         }
     }
 

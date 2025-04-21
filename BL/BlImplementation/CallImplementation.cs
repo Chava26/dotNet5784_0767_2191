@@ -6,10 +6,12 @@ using DO;
 using Helpers;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.Metrics;
 
 internal class CallImplementation : BlApi.ICall
 {
     private readonly DalApi.IDal _dal = DalApi.Factory.Get;
+
     /// <summary>
     /// Adds a new call to the system.
     /// Validates the call details, calculates required fields, and stores the call in the data layer.
@@ -25,15 +27,16 @@ internal class CallImplementation : BlApi.ICall
             // Validate call details
             Helpers.CallManager.ValidateCallDetails(call);
             // Calculate latitude and longitude based on the address
-            var (latitude, longitude) = Helpers.CallManager.logicalChecking(call);
-            if (latitude is null || longitude is null)
+            var coordinates = Helpers.Tools.GetCoordinatesFromAddress(call.FullAddress);
+            Helpers.CallManager.logicalChecking(call);
+            if (!coordinates.Latitude.HasValue || !coordinates.Longitude.HasValue)
             {
                 throw new BO.BlInvalidFormatException("The address must be valid and resolvable to latitude and longitude.");
             }
 
             // Assign calculated latitude and longitude to the call
-            call.Latitude = latitude.Value;
-            call.Longitude = longitude.Value;
+            call.Latitude = coordinates.Latitude.Value;
+            call.Longitude = coordinates.Longitude.Value;
 
             // Map BO.Call to DO.Call
             var dataCall = new DO.Call
@@ -63,7 +66,7 @@ internal class CallImplementation : BlApi.ICall
         catch (Exception ex)
         {
             // Catch the data layer exception and rethrow a custom exception to the UI layer
-            throw new BO.GeneralDatabaseException("An unexpected error occurred while add.", ex);
+            throw new BO.BlGeneralDatabaseException("An unexpected error occurred while add.", ex);
         }
 
     }
@@ -73,9 +76,9 @@ internal class CallImplementation : BlApi.ICall
         try
         {
             var call = _dal.Call.Read(callId) ?? throw new BO.BlInvalidOperationException($"Call with ID {callId} not found.");
-            var status = CallManager.GetCallStatus(callId);
+            var status = CallManager.CalculateCallStatus(call);
 
-            if (status == Status.Expired || status == Status.Closed || (status == Status.InProgress && _dal.Assignment.Read(callId) != null))
+            if (status == CallStatus.Expired || status == CallStatus.Closed || (status == CallStatus.InProgress && _dal.Assignment.Read(callId) != null))
             {
                 throw new BO.BlInvalidOperationException($"Cannot select this call for treatment, since the call's status is: {status}");
             }
@@ -84,9 +87,9 @@ internal class CallImplementation : BlApi.ICall
                 Id: 0,
                 CallId: callId,
                 VolunteerId: volunteerId,
-                EntranceTime: ClockManager.Now,
-                ExitTime: null,
-                FinishCallType: null
+                EntryTime: ClockManager.Now,
+                exitTime: null,
+                TypeOfEndTime: null
             );
             _dal.Assignment.Create(newAssignment);
         }
@@ -99,7 +102,7 @@ internal class CallImplementation : BlApi.ICall
             throw new BO.BlInvalidOperationException("An error occurred while selecting the call for treatment.", ex);
         }
     }
-}
+
 
 /// <summary>
 /// Cancels an assignment for a volunteer, updating its status and end time.
@@ -116,15 +119,15 @@ public void CancelAssignment(int requesterId, int assignmentId)
         {
             var assignment = _dal.Assignment.Read(assignmentId) ?? throw new KeyNotFoundException($"Assignment with ID {assignmentId} not found.");
 
-            var volunteer = _dal.Volunteer.Read(volunteerId) ?? throw new KeyNotFoundException($"Volunteer with ID {volunteerId} not found.");
-            if (volunteer.role != DO.Role.Manager || assignment.VolunteerId != volunteerId)
+            var volunteer = _dal.Volunteer.Read(requesterId) ?? throw new KeyNotFoundException($"Volunteer with ID {requesterId} not found.");
+            if (volunteer.role != DO.Role.Manager || assignment.VolunteerId != requesterId)
             {
                 throw new BO.BlUnauthorizedAccessException("You do not have permission to cancel this assignment.");
             }
+            var call = _dal.Call.Read(assignment.CallId) ?? throw new KeyNotFoundException($"Call with ID {assignment.CallId} not found.");
+            CallStatus status = CallManager.CalculateCallStatus(call,assignment);
 
-            CallStatus status = CallManager.CalculateCallStatus(assignment.CallId);
-
-            if (status == Status.Expired || status == Status.Closed)
+            if (status == CallStatus.Expired || status == CallStatus.Closed)
             {
                 throw new BO.BlInvalidOperationException($"Cannot cancel an assignment that is {status}.");
             }
@@ -132,8 +135,7 @@ public void CancelAssignment(int requesterId, int assignmentId)
             assignment = assignment with
             {
                 exitTime = ClockManager.Now, 
-                TypeOfEndTime = (assignment.VolunteerId == volunteerId) ? DO.EndOfTreatment.selfCancel,
-             : DO.EndOfTreatment.administratorCancel
+                TypeOfEndTime = (assignment.VolunteerId == requesterId) ? DO.EndOfTreatment.selfCancel: DO.EndOfTreatment.administratorCancel
             };
 
             _dal.Assignment.Update(assignment);
@@ -179,7 +181,7 @@ public void CancelAssignment(int requesterId, int assignmentId)
 
             var updatedAssignment = assignment with
             {
-                TypeOfEndTime = DO.EndOfTreatment.treated, // ערך הסיום
+                TypeOfEndTime = DO.EndOfTreatment.treated,
                 exitTime = ClockManager.Now
             };
 
@@ -203,9 +205,9 @@ public void CancelAssignment(int requesterId, int assignmentId)
     /// </exception>
     public void DeleteCall(int callId)
     {
-       
-        var call = _dal.Call.Read(callId) ?? throw new BO.BlDoesNotExistException($"The call with the  ID={callId}does not exist.");
         // Fetch the call details
+
+        var call = _dal.Call.Read(callId) ?? throw new BO.BlDoesNotExistException($"The call with the  ID={callId}does not exist.");
 
 
         // Step 2: Fetch the latest assignment for the call
@@ -215,7 +217,7 @@ public void CancelAssignment(int requesterId, int assignmentId)
             .FirstOrDefault(); // May return null if no assignments exist
 
         // Step 3: Calculate the status using the helper method
-        CallStatus status = CallManager.GetCallStatus(call.Id, _dal);
+        CallStatus status = CallManager.CalculateCallStatus(call);
         // Step 4: Check if the call can be deleted
         if (status != CallStatus.Open)
         {
@@ -270,7 +272,7 @@ public void CancelAssignment(int requesterId, int assignmentId)
             Longitude = call.Longitude,
             OpenTime = call.OpenTime,
             MaxEndTime = call.MaxFinishTime,
-              Status = CallManager.GetCallStatus(callId, _dal),
+              Status = CallManager.CalculateCallStatus(call),
            CallAssignments = callAssignments
         };
         }catch (DO.DalDoesNotExistException ex)
@@ -280,7 +282,7 @@ public void CancelAssignment(int requesterId, int assignmentId)
         catch (Exception ex)
         {
             // Handle all other unexpected exceptions
-            throw new BO.GeneralDatabaseException("An unexpected error occurred while geting call details.", ex);
+            throw new BO.BlGeneralDatabaseException("An unexpected error occurred while geting call details.", ex);
         }
     }
     /// <summary>
@@ -293,21 +295,16 @@ public void CancelAssignment(int requesterId, int assignmentId)
 
     public IEnumerable<BO.CallInList> GetCalls(BO.CallField? filterField, object? filterValue, BO.CallField? sortField)
     {
-        TimeSpan riskThreshold = TimeSpan.FromMinutes(30); // Risk threshold configuration
-
+       try {
         // Explicit type for the calls and assignments
         IEnumerable<DO.Call> allCalls = _dal.Call.ReadAll().ToList();
-        IEnumerable<DO.Assignment> allAssignments = _dal.Assignment.ReadAll().ToList();
-
         // Map calls to BO.CallInList objects
         IEnumerable<BO.CallInList> callList = allCalls.Select(call =>
         {
-            var latestAssignment = allAssignments
-                .Where(a => a.CallId == call.Id)
-                .OrderByDescending(a => a.EntryTime)
-                .FirstOrDefault();
+            var assignments = _dal.Assignment.ReadAll(a => a.CallId == call.Id);
+            var latestAssignment = assignments.OrderByDescending(a => a.EntryTime).FirstOrDefault();
 
-            CallStatus status = CallManager.CalculateCallStatus(call, latestAssignment, riskThreshold);
+            CallStatus status = CallManager.CalculateCallStatus(call, latestAssignment);
 
             return new BO.CallInList
             {
@@ -322,7 +319,7 @@ public void CancelAssignment(int requesterId, int assignmentId)
                     ? latestAssignment.exitTime.Value - call.OpenTime
                     : null,
                 Status = status,
-                AssignmentsCount = allAssignments.Count(a => a.CallId == call.Id)
+                AssignmentsCount = assignments.Count(a => a.CallId == call.Id)
             };
         });
 
@@ -333,16 +330,14 @@ public void CancelAssignment(int requesterId, int assignmentId)
         }
 
         // Apply sorting
-        if (sortField != null)
-        {
-            callList = callList.OrderBy(c => c.GetType().GetProperty(sortField.ToString()!)?.GetValue(c));
-        }
-        else
-        {
-            callList = callList.OrderBy(c => c.CallId); // Default sort by CallId
-        }
 
-        return callList;
+        return sortField.HasValue
+            ? callList.OrderBy(c => typeof(BO.CallInList).GetProperty(sortField.ToString())?.GetValue(c))
+            : callList.OrderBy(c => c.CallId);
+        }catch (Exception ex)
+        {
+            throw new BO.BlGeneralDatabaseException("Failed to retrieve calls list", ex);
+        }
     }
 
     public IEnumerable<BO.ClosedCallInList> GetClosedCallsByVolunteer(int volunteerId, BO.CallType? callType, BO.CallField? sortField)
@@ -372,34 +367,13 @@ public void CancelAssignment(int requesterId, int assignmentId)
         }
         catch (Exception ex)
         {
-            throw new BO.GeneralDatabaseException("An error occurred while retrieving the closed calls list.", ex);
+            throw new BO.BlGeneralDatabaseException("An error occurred while retrieving the closed calls list.", ex);
         }
     }
 
     public IEnumerable<BO.OpenCallInList> GetOpenCallsForVolunteer(int volunteerId, BO.CallType? callType, BO.CallField? sortField)
     {
-        //    var assignments = _dal.Assignment.ReadAll(a => a.VolunteerId == volunteerId && a.exitTime != null)
-        //          .Where(a => callType == null || (BO.CallType)_dal.Call.Read(a.CallId).MyCallType == callType)
-        //          .Select(a =>
-        //          {
-        //              var volunteer = _dal.Volunteer.Read(VolunteerId);
-        //              var call = _dal.Call.Read(a.CallId);
-        //              return new BO.OpenCallInList
-        //              {
-        //                  Id = call.Id, // ת.ז של המתנדב
-        //                  CallType = (BO.CallType)call.MyCallType, // סוג הקריאה
-        //                  Description = call.Description, // תיאור מילולי
-        //                  FullAddress = call.Address, // כתובת הקריאה
-        //                  OpenTime = call.OpenTime, // זמן פתיחת הקריאה
-        //                  MaxEndTime = call.MaxFinishTime, // זמן סיום משוער
-        //                  DistanceFromVolunteer = Tools.CalculateDistance(volunteer.Latitude, volunteer.Longitude, c.Latitude, c.Longitude)
-        //              };
-        //          });
-
-        //    // אם נבחר שדה למיון, מיון לפי השדה הנבחר
-        //    return sortField.HasValue
-        //        ? assignments.OrderBy(a => a.GetType().GetProperty(sortField.ToString())?.GetValue(a))
-        //        : assignments.OrderBy(a => a.Id);
+       
         try
         {
             var volunteer = _dal.Volunteer.Read(volunteerId) ?? throw new BO.BlDoesNotExistException($"Volunteer with ID={volunteerId} does not exist.");
@@ -408,7 +382,7 @@ public void CancelAssignment(int requesterId, int assignmentId)
                 volunteer.Longitude ?? throw new BO.BlInvalidFormatException($"Cannot calculate distance: Volunteer with ID {volunteerId} is missing longitude.")
             ); var openCalls = _dal.Call.ReadAll()
                 .Where(c =>
-                (CallManager.GetCallStatus(c.Id, _dal) == BO.CallStatus.Open || CallManager.GetCallStatus(c.Id, _dal) == BO.CallStatus.OpenRisk)) // הפשטת הבדיקה
+                (CallManager.CalculateCallStatus(c) == BO.CallStatus.Open || CallManager.CalculateCallStatus(c) == BO.CallStatus.OpenRisk)) // הפשטת הבדיקה
                 .Select(c => new BO.OpenCallInList
                 {
                     Id = c.Id, 
@@ -427,54 +401,24 @@ public void CancelAssignment(int requesterId, int assignmentId)
         }
         catch (Exception ex)
         {
-            throw new BO.GeneralDatabaseException("An error occurred while retrieving the open calls list.", ex);
+            throw new BO.BlGeneralDatabaseException("An error occurred while retrieving the open calls list.", ex);
         }
     }
-
+    /// <summary>
+    /// Retrieves the number of calls grouped by their status.
+    /// Ensures that all possible statuses are included in the output, even if their count is zero.
+    /// </summary>
+    /// <returns>An array where each index corresponds to a call status and contains the count of calls with that status.</returns>
     public IEnumerable<int> GetCallQuantitiesByStatus()
     {
-        var calls = _dal.Call.ReadAll();
-        return calls.GroupBy(call => CallManager.GetCallStatus(call.Id, _dal))
-                    .OrderBy(g => g.Key)
-                    .Select(g => g.Count())
-                    .ToArray();
+        var counts = new int[Enum.GetValues(typeof(BO.CallStatus)).Length];
+        _dal.Call.ReadAll()
+                    .GroupBy(call => CallManager.CalculateCallStatus(call))
+                    .ToList()
+                    .ForEach(g => counts[(int)g.Key] = g.Count());
+        return counts;
+      
     }
-
-
-
-    /// <summary>
-    /// Retrieves the quantities of calls grouped by their status.
-    /// </summary>
-    /// <returns>An array where each index corresponds to the count of calls with a specific status.</returns>
-   
-    //// Risk threshold configuration
-    //TimeSpan riskThreshold = TimeSpan.FromMinutes(30);
-
-    //// Get all calls and assignments from the DAL
-    //IEnumerable<DO.Call> allCalls = _dal.Call.ReadAll().ToList();
-    //IEnumerable<DO.Assignment> allAssignments = _dal.Assignment.ReadAll().ToList();
-
-    //// Group calls by their calculated status
-    //var groupedCalls = allCalls.GroupBy(call =>
-    //{
-    //    var latestAssignment = allAssignments
-    //        .Where(a => a.CallId == call.Id)
-    //        .OrderByDescending(a => a.EntryTime)
-    //        .FirstOrDefault();
-
-    //    return Helpers.CallManager.CalculateCallStatus(call, latestAssignment, riskThreshold);
-    //});
-
-    //// Return the count of calls for each status
-    //return Enum.GetValues(typeof(CallStatus))
-    //    .Cast<CallStatus>()
-    //    .Select(status => groupedCalls.FirstOrDefault(g => g.Key == status)?.Count() ?? 0);
-
-
-   
-  
-
-  
 
 
     /// <summary>
@@ -490,8 +434,8 @@ public void CancelAssignment(int requesterId, int assignmentId)
         {
             // Validate the input data (check for format and logical consistency)
             Helpers.CallManager.ValidateCallDetails(updatedCall);
-            var (latitude, longitude) = Helpers.CallManager.logicalChecking(updatedCall);
-
+           Helpers.CallManager.logicalChecking(updatedCall);
+            var (latitude, longitude) = Tools.GetCoordinatesFromAddress(updatedCall.FullAddress);
             // Check if either latitude or longitude is null
             if (latitude is null || longitude is null)
             {
@@ -527,9 +471,9 @@ public void CancelAssignment(int requesterId, int assignmentId)
         catch (Exception ex)
         {
             // Catch the data layer exception and rethrow a custom exception to the UI layer
-            throw new BO.GeneralDatabaseException("An unexpected error occurred while update.", ex);
+            throw new BO.BlGeneralDatabaseException("An unexpected error occurred while update.", ex);
         }
-}
+     }
 
- } 
+}
 
