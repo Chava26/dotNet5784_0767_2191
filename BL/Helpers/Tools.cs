@@ -5,11 +5,14 @@ using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using BO;
 using Newtonsoft.Json.Linq;
-using System;
+using System.Text.Json;
+namespace Helpers;
+using System.Net;
+using System.Net.Mail;
 
 
-namespace Helpers
-{
+
+
     internal static class Tools
     {
         /// <summary>
@@ -107,8 +110,7 @@ namespace Helpers
             var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
             return r * c;
         }
-        private static readonly string apiKey = "PK.83B935C225DF7E2F9B1ee90A6B46AD86";
-        private static readonly string apiUrl = "https://us1.locationiq.com/v1/search.php?key={0}&q={1}&format=json";
+
 
         /// <summary>
         /// Retrieves coordinates (latitude and longitude) for a given address.
@@ -121,87 +123,119 @@ namespace Helpers
         /// <exception cref="GeolocationNotFoundException">Thrown when no geolocation is found for the address.</exception>
         public static (double? Latitude, double? Longitude) GetCoordinatesFromAddress(string? address = null)
         {
-            if (string.IsNullOrWhiteSpace(address))
-            {
-                throw new BlInvalidFormatException(address);
-            }
-            try
-            {
+            string apiKey = "PK.83B935C225DF7E2F9B1ee90A6B46AD86";
+            using var client = new HttpClient();
+            string url = $"https://us1.locationiq.com/v1/search.php?key={apiKey}&q={Uri.EscapeDataString(address)}&format=json";
 
-                // Create URL for the API request
-                string url = string.Format(apiUrl, apiKey, Uri.EscapeDataString(address));
+            var response = client.GetAsync(url).GetAwaiter().GetResult();
+            if (!response.IsSuccessStatusCode)
+                throw new Exception("Invalid address or API error.");
 
-                using (HttpClient client = new HttpClient())
-                {
-                    // Make the synchronous API request
-                    HttpResponseMessage response = client.GetAsync(url).Result;
+            var json = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            using var doc = JsonDocument.Parse(json);
 
-                    // Check if the API request was successful
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string jsonResponse = response.Content.ReadAsStringAsync().Result;
+            if (doc.RootElement.ValueKind != JsonValueKind.Array || doc.RootElement.GetArrayLength() == 0)
+                throw new Exception("Address not found.");
 
-                        // Parse the JSON response
-                        JArray jsonArray = JArray.Parse(jsonResponse);
+            var root = doc.RootElement[0];
 
-                        // If there are results, return the coordinates
-                        if (jsonArray.Count > 0)
-                        {
-                            var firstResult = jsonArray[0];
-                            double latitude = (double)firstResult["lat"];
-                            double longitude = (double)firstResult["lon"];
-                            return (latitude, longitude);
-                        }
-                        else
-                        {
-                            throw new GeolocationNotFoundException(address);
-                        }
-                    }
-                    else
-                    {
-                        throw new BlApiRequestException($"API request failed with status code: {response.StatusCode}"); 
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new BlApiRequestException($"Error occurred while fetching coordinates for the address. {ex.Message}");
+            double latitude = double.Parse(root.GetProperty("lat").GetString());
+            double longitude = double.Parse(root.GetProperty("lon").GetString());
 
-            }
-
+            return (latitude, longitude);
         }
-    }
-    //public static string ToStringProperty<T>(this T t)
-    //{
-    //    if (t == null)
-    //        return "null";
 
-    //    var result = new StringBuilder();
 
-    //    var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
-    //    foreach (var property in properties)
-    //    {
-    //        var value = property.GetValue(t);
 
-    //        if (value is IEnumerable enumerable && !(value is string))
-    //        {
-    //            result.Append($"{property.Name}: [");
 
-    //            foreach (var item in enumerable)
-    //            {
-    //                result.Append($"{item}, ");
-    //            }
 
-    //            result.Append("], ");
-    //        }
-    //        else
-    //        {
-    //            result.Append($"{property.Name}: {value}, ");
-    //        }
-    //    }
 
-    //    return result.ToString().TrimEnd(',', ' ');
-    //}
-}
+
+
+            ////  private static readonly string apiKey = "PK.83B935C225DF7E2F9B1ee90A6B46AD86";
+            ////private static readonly string apiUrl = $"https://us1.locationiq.com/v1/search.php?key={apiKey}&q={Uri.EscapeDataString(address)}&format=json"
+            //// //"{1}&format=json";
+            ////  using var client = new HttpClient();
+            //// if (string.IsNullOrWhiteSpace(address))
+            //// {
+            ////     throw new BlInvalidFormatException(address);
+            //// }
+            //// try
+            //// {
+
+            ////     // Create URL for the API request
+            ////     string url = string.Format(apiUrl, apiKey, Uri.EscapeDataString(address));
+
+            ////     using (HttpClient client = new HttpClient())
+            ////     {
+            ////         // Make the synchronous API request
+            ////         HttpResponseMessage response = client.GetAsync(url).Result;
+
+            ////         // Check if the API request was successful
+            ////         if (response.IsSuccessStatusCode)
+            ////         {
+            ////             string jsonResponse = response.Content.ReadAsStringAsync().Result;
+
+            ////             // Parse the JSON response
+            ////             JArray jsonArray = JArray.Parse(jsonResponse);
+
+            ////             // If there are results, return the coordinates
+            ////             if (jsonArray.Count > 0)
+            ////             {
+            ////                 var firstResult = jsonArray[0];
+            ////                 double latitude = (double)firstResult["lat"];
+            ////                 double longitude = (double)firstResult["lon"];
+            ////                 return (latitude, longitude);
+            ////             }
+            ////             else
+            ////             {
+            ////                 throw new GeolocationNotFoundException(address);
+            ////             }
+            ////         }
+            ////         else
+            ////         {
+            ////             throw new BlApiRequestException($"API request failed with status code: {response.StatusCode}"); 
+            ////         }
+            ////     }
+            //// }
+            //// catch (Exception ex)
+            //// {
+            ////     throw new BlApiRequestException($"Error occurred while fetching coordinates for the address. {ex.Message}");
+
+            //// }
+            ///    /// <summary>
+            /// Sends an email using an SMTP server.
+            /// </summary>
+            /// <param name="toEmail">The recipient's email address.</param>
+            /// <param name="subject">The subject of the email.</param>
+            /// <param name="body">The body of the email.</param>
+            /// <exception cref="Exception">Thrown when the email cannot be sent.</exception>
+        public static void SendEmail(string toEmail, string subject, string body)
+        {
+            var fromAddress = new MailAddress("yedidimorganization@gmail.com", "Yedidim");
+            var toAddress = new MailAddress(toEmail);
+
+            var smtpClient = new SmtpClient("smtp.gmail.com")
+            {
+                Port = 587,
+                Credentials = new NetworkCredential("yedidimorganization@gmail.com", "vtrduiakh1"),
+                EnableSsl = true,
+            };
+
+            using (var message = new MailMessage(fromAddress, toAddress)
+            {
+                Subject = subject,
+                Body = body,
+            })
+            {
+                smtpClient.Send(message);
+            }
+        }
+
+     }
+    
+   
+
+
     

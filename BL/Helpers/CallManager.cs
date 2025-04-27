@@ -13,12 +13,13 @@ namespace Helpers;
 internal class CallManager
 {
     private static IDal s_dal = DalApi.Factory.Get;//stage 4
+    
     /// <summary>
-     /// Calculates the status of a call based on its properties and the latest assignment
+    /// Calculates the status of a call based on its properties and the latest assignment
     /// </summary>
-     /// <param name="call">The call entity from the data layer.</param>
-     /// <param name="latestAssignment">The latest assignment for the call, if any.</param>
-     /// <param name="riskThreshold">The time span considered as a risk threshold.</param>
+    /// <param name="call">The call entity from the data layer.</param>
+    /// <param name="latestAssignment">The latest assignment for the call, if any.</param>
+    /// <param name="riskThreshold">The time span considered as a risk threshold.</param>
     /// <returns>The calculated <see cref="CallStatus"/>.</returns>
     public static CallStatus CalculateCallStatus(DO.Call call, DO.Assignment? latestAssignment = null)
     {
@@ -165,6 +166,73 @@ internal class CallManager
 
     //    return Status.Opened;
     //}
+
+    /// <summary>
+    /// Sends an email notification to all volunteers within the specified distance from a new call.
+    /// </summary>
+    /// <param name="call">The call object that was opened.</param>
+    internal static void SendEmailWhenCalOpened(BO.Call call)
+    {
+       var volunteer = s_dal.Volunteer.ReadAll();
+        if(volunteer is not null){
+        foreach (var item in volunteer)
+        {
+
+            if (item.MaximumDistance >= Tools.CalculateDistance((double)item.Latitude!, (double)item.Longitude!, call.Latitude, call.Longitude))
+            {
+                string subject = "Openning call";
+                string body = $@"
+      Hello {item.Name},
+
+     A new call has been opened in your area.
+      Call Details:
+      - Call ID: {call.Id}
+      - Call Type: {call.CallType}
+      - Call Address: {call.FullAddress}
+      - Opening Time: {call.OpenTime}
+      - Description: {call.Description}
+      - Entry Time for Treatment: {call.MaxEndTime}
+      -call Status:{call.Status}
+
+      If you wish to handle this call, please log into the system.
+
+      Best regards,  
+     Call Management System";
+
+                Tools.SendEmail(item.Email, subject, body);
+            }
+        }
+        }
+    }
+
+    /// <summary>
+    /// Sends an email notification to the volunteer when their assignment is canceled.
+    /// </summary>
+    /// <param name="volunteer">The volunteer to notify.</param>
+    /// <param name="assignment">The assignment that was canceled.</param>
+    internal static void SendEmailToVolunteer(DO.Volunteer volunteer, DO.Assignment assignment)
+    {
+        DO.Call call = s_dal.Call.Read(assignment.CallId)!;
+
+        string subject = "Assignment Canceled";
+        string body = $@"
+      Hello {volunteer.Name},
+
+      Your assignment for handling call {assignment.Id} has been canceled by the administrator.
+
+      Call Details:
+      - Call ID: {assignment.CallId}
+      - Call Type: {call.MyCallType}
+      - Call Address: {call.Address}
+      - Opening Time: {call.OpenTime}
+      - Description: {call.Description}
+      - Entry Time for Treatment: {assignment.EntryTime}
+
+      Best regards,  
+      Call Management System";
+
+        Tools.SendEmail(volunteer.Email, subject, body);
+    }
     internal static DO.Call CreateDoCall(BO.Call call)
     {
         return new DO.Call

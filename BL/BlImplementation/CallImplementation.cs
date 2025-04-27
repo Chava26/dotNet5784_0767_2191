@@ -11,7 +11,7 @@ using System.Diagnostics.Metrics;
 internal class CallImplementation : BlApi.ICall
 {
     private readonly DalApi.IDal _dal = DalApi.Factory.Get;
-
+   
     /// <summary>
     /// Adds a new call to the system.
     /// Validates the call details, calculates required fields, and stores the call in the data layer.
@@ -53,6 +53,8 @@ internal class CallImplementation : BlApi.ICall
             // Attempt to add the call to the data layer
 
             _dal.Call.Create(dataCall);
+            CallManager.SendEmailWhenCalOpened(call);
+
         }
         //catch (BO.BlInvalidFormatException)
         //{

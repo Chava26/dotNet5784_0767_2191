@@ -7,6 +7,7 @@ using BlApi;
 using BO;
 using DalApi;
 using DO;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace BlTest
 {

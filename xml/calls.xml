@@ -500,4 +500,34 @@
     <Description>Dashboard lights flickering</Description>
     <Id>1049</Id>
   </Call>
+  <Call>
+    <MyCallType>None</MyCallType>
+    <Address>Druck St., Jerusalem ,Israel</Address>
+    <Latitude>31.720833</Latitude>
+    <Longitude>35.204513</Longitude>
+    <OpenTime>2025-04-27T02:16:35.8536432+03:00</OpenTime>
+    <MaxFinishTime xsi:nil="true" />
+    <Description>ddd</Description>
+    <Id>1050</Id>
+  </Call>
+  <Call>
+    <MyCallType>None</MyCallType>
+    <Address>Druck St., Jerusalem, Israel</Address>
+    <Latitude>31.720833</Latitude>
+    <Longitude>35.204513</Longitude>
+    <OpenTime>2025-04-28T00:16:13.8041357+03:00</OpenTime>
+    <MaxFinishTime xsi:nil="true" />
+    <Description>hhh</Description>
+    <Id>1051</Id>
+  </Call>
+  <Call>
+    <MyCallType>None</MyCallType>
+    <Address>Druck St., Jerusalem, Israel</Address>
+    <Latitude>31.720833</Latitude>
+    <Longitude>35.204513</Longitude>
+    <OpenTime>2025-04-28T00:17:23.9688783+03:00</OpenTime>
+    <MaxFinishTime xsi:nil="true" />
+    <Description>hhh</Description>
+    <Id>1052</Id>
+  </Call>
 </ArrayOfCall>
