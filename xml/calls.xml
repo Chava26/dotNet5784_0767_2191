@@ -530,4 +530,44 @@
     <Description>hhh</Description>
     <Id>1052</Id>
   </Call>
+  <Call>
+    <MyCallType>None</MyCallType>
+    <Address>Tel Aviv, Rothschild Blvd.</Address>
+    <Latitude>32.0661246</Latitude>
+    <Longitude>34.777667</Longitude>
+    <OpenTime>2025-04-29T12:05:41.0406384+03:00</OpenTime>
+    <MaxFinishTime xsi:nil="true" />
+    <Description>jjj</Description>
+    <Id>1053</Id>
+  </Call>
+  <Call>
+    <MyCallType>None</MyCallType>
+    <Address>Tel Aviv, Rothschild Blvd.</Address>
+    <Latitude>32.0661246</Latitude>
+    <Longitude>34.777667</Longitude>
+    <OpenTime>2025-04-29T12:06:27.9582378+03:00</OpenTime>
+    <MaxFinishTime xsi:nil="true" />
+    <Description>ff</Description>
+    <Id>1054</Id>
+  </Call>
+  <Call>
+    <MyCallType>None</MyCallType>
+    <Address>Netanya, Herzl St.</Address>
+    <Latitude>32.289866</Latitude>
+    <Longitude>34.86214</Longitude>
+    <OpenTime>2025-04-29T13:52:45.3313763+03:00</OpenTime>
+    <MaxFinishTime xsi:nil="true" />
+    <Description>ככ</Description>
+    <Id>1055</Id>
+  </Call>
+  <Call>
+    <MyCallType>None</MyCallType>
+    <Address>Netanya, Herzl St.</Address>
+    <Latitude>32.289866</Latitude>
+    <Longitude>34.86214</Longitude>
+    <OpenTime>2025-04-29T14:04:51.9855658+03:00</OpenTime>
+    <MaxFinishTime xsi:nil="true" />
+    <Description>dd</Description>
+    <Id>1056</Id>
+  </Call>
 </ArrayOfCall>

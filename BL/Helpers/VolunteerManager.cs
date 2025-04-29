@@ -34,26 +34,32 @@ namespace Helpers
         /// </summary>
         /// <param name="boVolunteer">The DO.Volunteer object.</param>
         /// <returns>A BO.Volunteer object.</returns>
-        //internal static BO.Volunteer CreateDoVolunteer(DO.Volunteer doVolunteer, boCallInProgress)
-        //{
-        //    return new BO.Volunteer { 
-        //        Id = doVolunteer.Id,
-        //        FullName = doVolunteer.Name,
-        //        Email = doVolunteer.Email,
-        //        PhoneNumber = doVolunteer.Phone,
-        //        role = (BO.Role)doVolunteer.role,
-        //        IsActive = doVolunteer.IsActive,
-        //        MaxDistanceForTask = doVolunteer.MaximumDistance,
-        //        Password = doVolunteer.Password!,
-        //        Address = doVolunteer.Adress,
-        //        Longitude = doVolunteer.Longitude,
-        //        Latitude = doVolunteer.Latitude,
-        //        DistanceType = (BO.DistanceType)doVolunteer.DistanceType,
-        //        callInProgress = boCallInProgress
-        //    };
-        //}
+        internal static BO.Volunteer CreateBoVolunteer(DO.Volunteer doVolunteer, BO.CallInProgress? boCallInProgress)
+        {
+            var assigments = s_dal.Assignment.ReadAll(a => a.VolunteerId == doVolunteer.Id);
 
-        
+            return new BO.Volunteer
+            {
+                Id = doVolunteer.Id,
+                FullName = doVolunteer.Name,
+                Email = doVolunteer.Email,
+                PhoneNumber = doVolunteer.Phone,
+                role = (BO.Role)doVolunteer.role,
+                IsActive = doVolunteer.IsActive,
+                MaxDistanceForTask = doVolunteer.MaximumDistance,
+                Password = doVolunteer.Password!,
+                Address = doVolunteer.Adress,
+                Longitude = doVolunteer.Longitude,
+                Latitude = doVolunteer.Latitude,
+                DistanceType = (BO.DistanceType)doVolunteer.DistanceType,
+                callInProgress = boCallInProgress,
+                TotalHandledCalls = assigments.Count(a => a.TypeOfEndTime == DO.EndOfTreatment.treated),
+                TotalCanceledCalls = assigments.Count(a => a.TypeOfEndTime == DO.EndOfTreatment.administratorCancel || a.TypeOfEndTime == DO.EndOfTreatment.selfCancel),
+                TotalExpiredCalls = assigments.Count(a => a.TypeOfEndTime == DO.EndOfTreatment.expired),
+            };
+        }
+
+
 
         /// <summary>
         /// Validates the basic format of the input values.
@@ -175,8 +181,6 @@ namespace Helpers
             var encryptedAttempt = EncryptPassword(plainPassword);
             return encryptedAttempt == encryptedPassword;
         }
-
-
         internal static List<string> GetChangedFields(DO.Volunteer original, BO.Volunteer updated)
         {
             var changedFields = new List<string>();
@@ -202,9 +206,6 @@ namespace Helpers
             }
 
         }
-
-
-
     }
 }
 

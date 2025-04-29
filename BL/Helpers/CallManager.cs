@@ -127,46 +127,6 @@ internal class CallManager
 
     }
 
-
-    //internal static (double? Latitude, double? Longitude) logicalChecking(BO.Call boCall)
-    //{
-    //    if (boCall.MaxEndTime.HasValue && boCall.MaxEndTime.Value <= boCall.OpenTime)
-    //    {
-    //        throw new InvalidOperationException("The MaxEndTime must be greater than the OpenTime.");
-    //    }
-    //    // Validate that the open time is not in the future
-    //    if (boCall.OpenTime > DateTime.Now)
-    //    {
-    //        throw new ArgumentException("The open time cannot be in the future.");
-    //    }
-    //    var (latitude, longitude) = Tools.GetCoordinatesFromAddress(boCall.FullAddress);
-
-    //    return (latitude, longitude);
-
-
-    //}
-    //public static CallStatus GetCallStatus(int callId)
-    //{
-    //    var call = s_dal.Call.Read(callId) ?? throw new BO.BlDoesNotExistException($"Call with ID {callId} not found.");
-    //    var assignment = s_dal.Assignment.Read(a => a.CallId == callId);
-    //    TimeSpan? timeLeft = call.MaxFinishTime - ClockManager.Now;
-
-    //    if (call.MaxFinishTime.HasValue && timeLeft < TimeSpan.Zero)
-    //        return CallStatus.Expired;
-    //    if (assignment != null && timeLeft <= s_dal.Config.RiskRange)
-    //        return CallStatus.InProgressAtRisk;
-    //    if (assignment != null)
-    //        return CallStatus.InProgress;
-    //    if (timeLeft <= s_dal.Config.RiskRange)
-    //        return CallStatus.OpenRisk;
-    //    if (assignment.exitTime.HasValue)
-    //    {
-    //        return CallStatus.Closed;
-    //    }
-
-    //    return Status.Opened;
-    //}
-
     /// <summary>
     /// Sends an email notification to all volunteers within the specified distance from a new call.
     /// </summary>

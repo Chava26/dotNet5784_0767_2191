@@ -12,13 +12,10 @@ internal class VolunteerImplementation : IVolunteer
 
     public void AddVolunteer(BO.Volunteer boVolunteer)
     {
-        
-
         try
         {
             // Validate input format and basic structure
             Helpers.VolunteerManager.ValidateInputFormat(boVolunteer);
-
             // Validate logical rules for the volunteer
             var (latitude, longitude) = VolunteerManager.logicalChecking(boVolunteer);
             if(latitude != null && longitude != null)
@@ -27,7 +24,6 @@ internal class VolunteerImplementation : IVolunteer
                 boVolunteer.Latitude = latitude;
                 boVolunteer.Longitude = longitude;
             }
-           
             // Prepare DO.Volunteer object 
             DO.Volunteer doVolunteer = VolunteerManager.CreateDoVolunteer(boVolunteer);
             _dal.Volunteer.Create(doVolunteer);
@@ -57,7 +53,7 @@ internal class VolunteerImplementation : IVolunteer
     {
         try
         {
-          
+
             // Check if the volunteer can be deleted
             IEnumerable<DO.Assignment> assignmentsWithVolunteer = _dal.Assignment.ReadAll(a => a.VolunteerId == volunteerId);
             if (assignmentsWithVolunteer is not null)
@@ -196,26 +192,7 @@ internal class VolunteerImplementation : IVolunteer
                         };
                     }
             }
-
-            return new BO.Volunteer
-            {
-                Id = volunteerId,
-                 FullName= doVolunteer.Name,
-                Email = doVolunteer.Email,
-                PhoneNumber = doVolunteer.Phone,
-                role = (BO.Role)doVolunteer.role,
-                IsActive = doVolunteer.IsActive,
-                MaxDistanceForTask = doVolunteer.MaximumDistance,
-                //Password = doVolunteer.Password!,
-                Address = doVolunteer.Adress,
-                Longitude = doVolunteer.Longitude,
-                Latitude = doVolunteer.Latitude,
-                DistanceType = (BO.DistanceType)doVolunteer.DistanceType,
-                TotalHandledCalls = assigments.Count(a => a.TypeOfEndTime == DO.EndOfTreatment.treated),
-                TotalCanceledCalls = assigments.Count(a => a.TypeOfEndTime == DO.EndOfTreatment.administratorCancel || a.TypeOfEndTime == DO.EndOfTreatment.selfCancel),
-                TotalExpiredCalls = assigments.Count(a => a.TypeOfEndTime == DO.EndOfTreatment.expired),
-                callInProgress = boCallInProgress
-            };
+            return VolunteerManager.CreateBoVolunteer(doVolunteer, boCallInProgress);
         }
         catch (DO.DalDoesNotExistException ex)
         {

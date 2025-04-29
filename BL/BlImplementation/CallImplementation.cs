@@ -37,29 +37,10 @@ internal class CallImplementation : BlApi.ICall
             // Assign calculated latitude and longitude to the call
             call.Latitude = coordinates.Latitude.Value;
             call.Longitude = coordinates.Longitude.Value;
-
-            // Map BO.Call to DO.Call
-            var dataCall = new DO.Call
-            {
-                MyCallType = (DO.CallType)call.CallType,
-                Description = call.Description,
-                Address = call.FullAddress,
-                Latitude = call.Latitude,
-                Longitude = call.Longitude,
-                OpenTime = call.OpenTime,
-                MaxFinishTime = call.MaxEndTime
-            };
-
-            // Attempt to add the call to the data layer
-
-            _dal.Call.Create(dataCall);
+            DO.Call doCall= CallManager.CreateDoCall(call); // Map BO.Call to DO.Call
+            _dal.Call.Create(doCall);            // Attempt to add the call to the data layer
             CallManager.SendEmailWhenCalOpened(call);
-
         }
-        //catch (BO.BlInvalidFormatException)
-        //{
-        //    throw new Exception();
-        //}
         catch (DO.DalAlreadyExistsException ex)
         {
             // Handle specific exceptions from the data layer and rethrow if necessary
@@ -263,21 +244,9 @@ public void CancelAssignment(int requesterId, int assignmentId)
                                               })
                                               .ToList();
 
-        // Create the BO.Call object with the necessary details
-       return  new BO.Call
-        {
-            Id = call.Id,
-            CallType = (BO.CallType)call.MyCallType,
-            Description = call.Description,
-            FullAddress = call.Address,
-            Latitude = call.Latitude,
-            Longitude = call.Longitude,
-            OpenTime = call.OpenTime,
-            MaxEndTime = call.MaxFinishTime,
-              Status = CallManager.CalculateCallStatus(call),
-           CallAssignments = callAssignments
-        };
-        }catch (DO.DalDoesNotExistException ex)
+        return CallManager.CreateBoCall(call, callAssignments);     // Create the BO.Call object with the necessary details
+        }
+        catch (DO.DalDoesNotExistException ex)
         {
             throw new BO.BLDoesNotExistException("Volunteer not found in data layer.", ex);
         }
@@ -384,7 +353,7 @@ public void CancelAssignment(int requesterId, int assignmentId)
                 volunteer.Longitude ?? throw new BO.BlInvalidFormatException($"Cannot calculate distance: Volunteer with ID {volunteerId} is missing longitude.")
             ); var openCalls = _dal.Call.ReadAll()
                 .Where(c =>
-                (CallManager.CalculateCallStatus(c) == BO.CallStatus.Open || CallManager.CalculateCallStatus(c) == BO.CallStatus.OpenRisk)) // הפשטת הבדיקה
+                (CallManager.CalculateCallStatus(c) == BO.CallStatus.Open || CallManager.CalculateCallStatus(c) == BO.CallStatus.OpenRisk)) 
                 .Select(c => new BO.OpenCallInList
                 {
                     Id = c.Id, 

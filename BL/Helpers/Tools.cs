@@ -48,18 +48,6 @@ using System.Net.Mail;
             return string.Join(", ", propertyValues);
         }
 
-        //public static bool IsValidChecksum(string id)
-        //{
-        //    int sum = 0;
-        //    for (int i = 0; i < id.Length; i++)
-        //    {
-        //        int digit = int.Parse(id[i].ToString());
-        //        if (i % 2 == 1) digit *= 2;
-        //        if (digit > 9) digit -= 9;
-        //        sum += digit;
-        //    }
-        //    return sum % 10 == 0;
-        //}
        
         /// <summary>
         /// Calculates the status of a call based on its current progress and remaining time until the maximum finish time.
@@ -98,8 +86,16 @@ using System.Net.Mail;
 
             return CallStatus.Closed;
         }
-
-        public static double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
+    /// <summary>
+    /// Calculates the great-circle distance between two geographic coordinates 
+    /// using the Haversine formula.
+    /// </summary>
+    /// <param name="lat1">Latitude of the first point in decimal degrees.</param>
+    /// <param name="lon1">Longitude of the first point in decimal degrees.</param>
+    /// <param name="lat2">Latitude of the second point in decimal degrees.</param>
+    /// <param name="lon2">Longitude of the second point in decimal degrees.</param>
+    /// <returns>The distance between the two points in kilometers.</returns>
+    public static double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
         {
             var r = 6371; 
             var dLat = (lat2 - lat1) * Math.PI / 180;
@@ -146,71 +142,14 @@ using System.Net.Mail;
         }
 
 
-
-
-
-
-
-
-
-            ////  private static readonly string apiKey = "PK.83B935C225DF7E2F9B1ee90A6B46AD86";
-            ////private static readonly string apiUrl = $"https://us1.locationiq.com/v1/search.php?key={apiKey}&q={Uri.EscapeDataString(address)}&format=json"
-            //// //"{1}&format=json";
-            ////  using var client = new HttpClient();
-            //// if (string.IsNullOrWhiteSpace(address))
-            //// {
-            ////     throw new BlInvalidFormatException(address);
-            //// }
-            //// try
-            //// {
-
-            ////     // Create URL for the API request
-            ////     string url = string.Format(apiUrl, apiKey, Uri.EscapeDataString(address));
-
-            ////     using (HttpClient client = new HttpClient())
-            ////     {
-            ////         // Make the synchronous API request
-            ////         HttpResponseMessage response = client.GetAsync(url).Result;
-
-            ////         // Check if the API request was successful
-            ////         if (response.IsSuccessStatusCode)
-            ////         {
-            ////             string jsonResponse = response.Content.ReadAsStringAsync().Result;
-
-            ////             // Parse the JSON response
-            ////             JArray jsonArray = JArray.Parse(jsonResponse);
-
-            ////             // If there are results, return the coordinates
-            ////             if (jsonArray.Count > 0)
-            ////             {
-            ////                 var firstResult = jsonArray[0];
-            ////                 double latitude = (double)firstResult["lat"];
-            ////                 double longitude = (double)firstResult["lon"];
-            ////                 return (latitude, longitude);
-            ////             }
-            ////             else
-            ////             {
-            ////                 throw new GeolocationNotFoundException(address);
-            ////             }
-            ////         }
-            ////         else
-            ////         {
-            ////             throw new BlApiRequestException($"API request failed with status code: {response.StatusCode}"); 
-            ////         }
-            ////     }
-            //// }
-            //// catch (Exception ex)
-            //// {
-            ////     throw new BlApiRequestException($"Error occurred while fetching coordinates for the address. {ex.Message}");
-
-            //// }
-            ///    /// <summary>
-            /// Sends an email using an SMTP server.
-            /// </summary>
-            /// <param name="toEmail">The recipient's email address.</param>
-            /// <param name="subject">The subject of the email.</param>
-            /// <param name="body">The body of the email.</param>
-            /// <exception cref="Exception">Thrown when the email cannot be sent.</exception>
+            
+        /// <summary>
+        /// Sends an email using an SMTP server.
+        /// </summary>
+        /// <param name="toEmail">The recipient's email address.</param>
+        /// <param name="subject">The subject of the email.</param>
+        /// <param name="body">The body of the email.</param>
+        /// <exception cref="Exception">Thrown when the email cannot be sent.</exception>
         public static void SendEmail(string toEmail, string subject, string body)
         {
             var fromAddress = new MailAddress("yedidimorganization@gmail.com", "Yedidim");
@@ -219,7 +158,7 @@ using System.Net.Mail;
             var smtpClient = new SmtpClient("smtp.gmail.com")
             {
                 Port = 587,
-                Credentials = new NetworkCredential("yedidimorganization@gmail.com", "vtrduiakh1"),
+                Credentials = new NetworkCredential("yedidimorganization@gmail.com", "wrhm bdep vaqb nisb"),
                 EnableSsl = true,
             };
 
