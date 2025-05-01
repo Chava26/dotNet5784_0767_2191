@@ -220,7 +220,36 @@ internal class CallManager
              Status = CalculateCallStatus(call),
            CallAssignments = callAssignments
         };
-}
+    }
+    /// <summary>
+    /// Periodically updates the calls based on the current clock and checks for expired assignments.
+    /// </summary>
+    /// <param name="oldClock">The previous clock time.</param>
+    /// <param name="newClock">The new clock time.</param>
+    public static void PeriodicCallsUpdates(DateTime oldClock, DateTime newClock)
+    {
+            s_dal.Call.ReadAll(c => c.MaxFinishTime > ClockManager.Now).ToList().ForEach(call =>
+            {
+                List<DO.Assignment> allAssignmentsCall = s_dal.Assignment.ReadAll(a => a.CallId == call.Id && a.TypeOfEndTime == null).ToList();
+
+                //if (!allAssignmentsCall.Any())
+                //{
+                //    DO.Assignment newAssignment = new DO.Assignment(0, call.Id, ClockManager.Now, DO.EndOfTreatment.expired, ClockManager.Now);
+                //    s_dal.Assignment.Create(newAssignment);
+                //}
+                //allAssignmentsCall.ForEach(ass =>
+                //{
+                //    if 
+                //} )
+                //else
+                //{
+                //    DO.Assignment updatedAssignment = allAssignmentsCall.FirstOrDefault(a => a.exitTime == null);
+                //    s_dal.Assignment.Update(updatedAssignment with { exitTime = ClockManager.Now, TypeOfEndTime = DO.EndOfTreatment.expired });
+                //}
+            });      
+    }
+
+
 }
 
 

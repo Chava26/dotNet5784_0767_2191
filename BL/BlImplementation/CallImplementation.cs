@@ -122,6 +122,8 @@ public void CancelAssignment(int requesterId, int assignmentId)
             };
 
             _dal.Assignment.Update(assignment);
+            CallManager.SendEmailToVolunteer(volunteer!, assignment);
+
         }
         catch (KeyNotFoundException ex)
         {
