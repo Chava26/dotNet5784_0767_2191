@@ -226,27 +226,42 @@ internal class CallManager
     /// </summary>
     /// <param name="oldClock">The previous clock time.</param>
     /// <param name="newClock">The new clock time.</param>
-    public static void PeriodicCallsUpdates(DateTime oldClock, DateTime newClock)
+  
+    internal static void PeriodicCallsUpdates(DateTime oldClock, DateTime newClock)
     {
-            s_dal.Call.ReadAll(c => c.MaxFinishTime > ClockManager.Now).ToList().ForEach(call =>
-            {
-                List<DO.Assignment> allAssignmentsCall = s_dal.Assignment.ReadAll(a => a.CallId == call.Id && a.TypeOfEndTime == null).ToList();
+        List<DO.Call> expiredCalls = s_dal.Call.ReadAll(c => c.MaxFinishTime < newClock).ToList();
+        expiredCalls.ForEach(call =>
+        {
+            List<DO.Assignment> assignments = s_dal.Assignment.ReadAll(a => a.CallId == call.Id).ToList();
 
-                //if (!allAssignmentsCall.Any())
-                //{
-                //    DO.Assignment newAssignment = new DO.Assignment(0, call.Id, ClockManager.Now, DO.EndOfTreatment.expired, ClockManager.Now);
-                //    s_dal.Assignment.Create(newAssignment);
-                //}
-                //allAssignmentsCall.ForEach(ass =>
-                //{
-                //    if 
-                //} )
-                //else
-                //{
-                //    DO.Assignment updatedAssignment = allAssignmentsCall.FirstOrDefault(a => a.exitTime == null);
-                //    s_dal.Assignment.Update(updatedAssignment with { exitTime = ClockManager.Now, TypeOfEndTime = DO.EndOfTreatment.expired });
-                //}
-            });      
+            if (!assignments.Any())
+            {
+                s_dal.Assignment.Create(new DO.Assignment(
+                    CallId: call.Id,
+                    VolunteerId: 0,
+                    EntryTime: ClockManager.Now,
+                    exitTime: ClockManager.Now,
+                    TypeOfEndTime: (DO.EndOfTreatment)BO.EndOfTreatment.expired
+                ));
+            }
+
+            List<DO.Assignment> assignmentsWithNull = s_dal.Assignment.ReadAll(a => a.CallId == call.Id && a.TypeOfEndTime is null).ToList();
+
+            if (assignmentsWithNull.Any())
+            {
+                assignments.ForEach(assignment => {
+                    s_dal.Assignment.Update(assignment with
+                    {
+                        exitTime = ClockManager.Now,
+                        TypeOfEndTime = (DO.EndOfTreatment)BO.EndOfTreatment.expired
+                    });
+                    DO.Volunteer volunteer = s_dal.Volunteer.Read(a => a.Id == assignment.VolunteerId)!;
+                    SendEmailToVolunteer(volunteer, assignment);
+
+                }
+                    );
+            }
+        });
     }
 
 
