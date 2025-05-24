@@ -13,7 +13,12 @@ namespace Helpers;
 internal class CallManager
 {
     private static IDal s_dal = DalApi.Factory.Get;//stage 4
-    
+
+
+
+
+    internal static ObserverManager Observers = new(); //stage 5
+
     /// <summary>
     /// Calculates the status of a call based on its properties and the latest assignment
     /// </summary>
@@ -228,13 +233,13 @@ internal class CallManager
     /// <param name="newClock">The new clock time.</param>
     public static void PeriodicCallsUpdates(DateTime oldClock, DateTime newClock)
     {
-            s_dal.Call.ReadAll(c => c.MaxFinishTime > ClockManager.Now).ToList().ForEach(call =>
+            s_dal.Call.ReadAll(c => c.MaxFinishTime > AdminManager.Now).ToList().ForEach(call =>
             {
                 List<DO.Assignment> allAssignmentsCall = s_dal.Assignment.ReadAll(a => a.CallId == call.Id && a.TypeOfEndTime == null).ToList();
 
                 //if (!allAssignmentsCall.Any())
                 //{
-                //    DO.Assignment newAssignment = new DO.Assignment(0, call.Id, ClockManager.Now, DO.EndOfTreatment.expired, ClockManager.Now);
+                //    DO.Assignment newAssignment = new DO.Assignment(0, call.Id, AdminManager.Now, DO.EndOfTreatment.expired, AdminManager.Now);
                 //    s_dal.Assignment.Create(newAssignment);
                 //}
                 //allAssignmentsCall.ForEach(ass =>
@@ -244,7 +249,7 @@ internal class CallManager
                 //else
                 //{
                 //    DO.Assignment updatedAssignment = allAssignmentsCall.FirstOrDefault(a => a.exitTime == null);
-                //    s_dal.Assignment.Update(updatedAssignment with { exitTime = ClockManager.Now, TypeOfEndTime = DO.EndOfTreatment.expired });
+                //    s_dal.Assignment.Update(updatedAssignment with { exitTime = AdminManager.Now, TypeOfEndTime = DO.EndOfTreatment.expired });
                 //}
             });      
     }

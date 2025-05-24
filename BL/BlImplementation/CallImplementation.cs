@@ -11,7 +11,7 @@ using System.Diagnostics.Metrics;
 internal class CallImplementation : BlApi.ICall
 {
     private readonly DalApi.IDal _dal = DalApi.Factory.Get;
-   
+
     /// <summary>
     /// Adds a new call to the system.
     /// Validates the call details, calculates required fields, and stores the call in the data layer.
@@ -23,7 +23,7 @@ internal class CallImplementation : BlApi.ICall
     {
         try
         {
-           
+
             // Validate call details
             Helpers.CallManager.ValidateCallDetails(call);
             // Calculate latitude and longitude based on the address
@@ -37,8 +37,10 @@ internal class CallImplementation : BlApi.ICall
             // Assign calculated latitude and longitude to the call
             call.Latitude = coordinates.Latitude.Value;
             call.Longitude = coordinates.Longitude.Value;
-            DO.Call doCall= CallManager.CreateDoCall(call); // Map BO.Call to DO.Call
+            DO.Call doCall = CallManager.CreateDoCall(call); // Map BO.Call to DO.Call
             _dal.Call.Create(doCall);            // Attempt to add the call to the data layer
+            CallManager.Observers.NotifyListUpdated(); //stage 5
+
             CallManager.SendEmailWhenCalOpened(call);
         }
         catch (DO.DalAlreadyExistsException ex)
@@ -70,7 +72,7 @@ internal class CallImplementation : BlApi.ICall
                 Id: 0,
                 CallId: callId,
                 VolunteerId: volunteerId,
-                EntryTime: ClockManager.Now,
+                EntryTime: AdminManager.Now,
                 exitTime: null,
                 TypeOfEndTime: null
             );
@@ -87,16 +89,16 @@ internal class CallImplementation : BlApi.ICall
     }
 
 
-/// <summary>
-/// Cancels an assignment for a volunteer, updating its status and end time.
-/// </summary>
-/// <param name="requesterId">The ID of the requester (usually the volunteer or manager).</param>
-/// <param name="assignmentId">The ID of the assignment to cancel.</param>
-/// <exception cref="ArgumentException">Thrown if the assignment or volunteer is not found.</exception>
-/// <exception cref="BO.BlUnauthorizedAccessException">Thrown if the requester does not have permission to cancel the assignment.</exception>
-/// <exception cref="BO.BlInvalidOperationException">Thrown if the assignment cannot be canceled due to its status (e.g., Expired or Closed).</exception>
-/// <exception cref="BO.BlInvalidOperationException">Thrown for other errors during the cancellation process.</exception>
-public void CancelAssignment(int requesterId, int assignmentId)
+    /// <summary>
+    /// Cancels an assignment for a volunteer, updating its status and end time.
+    /// </summary>
+    /// <param name="requesterId">The ID of the requester (usually the volunteer or manager).</param>
+    /// <param name="assignmentId">The ID of the assignment to cancel.</param>
+    /// <exception cref="ArgumentException">Thrown if the assignment or volunteer is not found.</exception>
+    /// <exception cref="BO.BlUnauthorizedAccessException">Thrown if the requester does not have permission to cancel the assignment.</exception>
+    /// <exception cref="BO.BlInvalidOperationException">Thrown if the assignment cannot be canceled due to its status (e.g., Expired or Closed).</exception>
+    /// <exception cref="BO.BlInvalidOperationException">Thrown for other errors during the cancellation process.</exception>
+    public void CancelAssignment(int requesterId, int assignmentId)
     {
         try
         {
@@ -108,7 +110,7 @@ public void CancelAssignment(int requesterId, int assignmentId)
                 throw new BO.BlUnauthorizedAccessException("You do not have permission to cancel this assignment.");
             }
             var call = _dal.Call.Read(assignment.CallId) ?? throw new KeyNotFoundException($"Call with ID {assignment.CallId} not found.");
-            CallStatus status = CallManager.CalculateCallStatus(call,assignment);
+            CallStatus status = CallManager.CalculateCallStatus(call, assignment);
 
             if (status == CallStatus.Expired || status == CallStatus.Closed)
             {
@@ -117,8 +119,8 @@ public void CancelAssignment(int requesterId, int assignmentId)
 
             assignment = assignment with
             {
-                exitTime = ClockManager.Now, 
-                TypeOfEndTime = (assignment.VolunteerId == requesterId) ? DO.EndOfTreatment.selfCancel: DO.EndOfTreatment.administratorCancel
+                exitTime = AdminManager.Now,
+                TypeOfEndTime = (assignment.VolunteerId == requesterId) ? DO.EndOfTreatment.selfCancel : DO.EndOfTreatment.administratorCancel
             };
 
             _dal.Assignment.Update(assignment);
@@ -167,7 +169,7 @@ public void CancelAssignment(int requesterId, int assignmentId)
             var updatedAssignment = assignment with
             {
                 TypeOfEndTime = DO.EndOfTreatment.treated,
-                exitTime = ClockManager.Now
+                exitTime = AdminManager.Now
             };
 
             _dal.Assignment.Update(updatedAssignment);
@@ -216,7 +218,8 @@ public void CancelAssignment(int requesterId, int assignmentId)
 
         // Step 5: Attempt to delete the call
         _dal.Call.Delete(callId); // Call the data layer's Delete method
-        
+        CallManager.Observers.NotifyListUpdated(); //stage 5
+
     }
 
 
@@ -229,24 +232,25 @@ public void CancelAssignment(int requesterId, int assignmentId)
     /// <exception cref="Exception">Thrown if no call with the given ID exists in the data layer.</exception>
     public BO.Call GetCallDetails(int callId)
     {
-        try {
-        // Fetch the call by its ID from the data layer
-        DO.Call? call = _dal.Call.Read(callId) ?? throw new BO.BlDoesNotExistException($"Call with ID {callId} was not found.");
+        try
+        {
+            // Fetch the call by its ID from the data layer
+            DO.Call? call = _dal.Call.Read(callId) ?? throw new BO.BlDoesNotExistException($"Call with ID {callId} was not found.");
 
 
-        // Fetch the list of assignments for the call (if any)
-        var callAssignments = _dal.Assignment.ReadAll(a => a.CallId == callId)
-                                              .Select(a => new BO.CallAssignInList
-                                              {
-                                                  VolunteerId = a.VolunteerId,
-                                                  VolunteerName = _dal.Volunteer.Read(a.VolunteerId)?.Name, // Assuming Volunteer entity is already loaded
-                                                  TreatmentStartTime = a.EntryTime,
-                                                  TreatmentEndTime = a.exitTime,
-                                                  TypeOfEndTreatment = (BO.EndOfTreatment?)a.TypeOfEndTime
-                                              })
-                                              .ToList();
+            // Fetch the list of assignments for the call (if any)
+            var callAssignments = _dal.Assignment.ReadAll(a => a.CallId == callId)
+                                                  .Select(a => new BO.CallAssignInList
+                                                  {
+                                                      VolunteerId = a.VolunteerId,
+                                                      VolunteerName = _dal.Volunteer.Read(a.VolunteerId)?.Name, // Assuming Volunteer entity is already loaded
+                                                      TreatmentStartTime = a.EntryTime,
+                                                      TreatmentEndTime = a.exitTime,
+                                                      TypeOfEndTreatment = (BO.EndOfTreatment?)a.TypeOfEndTime
+                                                  })
+                                                  .ToList();
 
-        return CallManager.CreateBoCall(call, callAssignments);     // Create the BO.Call object with the necessary details
+            return CallManager.CreateBoCall(call, callAssignments);     // Create the BO.Call object with the necessary details
         }
         catch (DO.DalDoesNotExistException ex)
         {
@@ -268,46 +272,48 @@ public void CancelAssignment(int requesterId, int assignmentId)
 
     public IEnumerable<BO.CallInList> GetCalls(BO.CallField? filterField, object? filterValue, BO.CallField? sortField)
     {
-       try {
-        // Explicit type for the calls and assignments
-        IEnumerable<DO.Call> allCalls = _dal.Call.ReadAll().ToList();
-        // Map calls to BO.CallInList objects
-        IEnumerable<BO.CallInList> callList = allCalls.Select(call =>
+        try
         {
-            var assignments = _dal.Assignment.ReadAll(a => a.CallId == call.Id);
-            var latestAssignment = assignments.OrderByDescending(a => a.EntryTime).FirstOrDefault();
-
-            CallStatus status = CallManager.CalculateCallStatus(call, latestAssignment);
-
-            return new BO.CallInList
+            // Explicit type for the calls and assignments
+            IEnumerable<DO.Call> allCalls = _dal.Call.ReadAll().ToList();
+            // Map calls to BO.CallInList objects
+            IEnumerable<BO.CallInList> callList = allCalls.Select(call =>
             {
-                Id = latestAssignment?.Id,
-                CallId = call.Id,
-                CallType = (BO.CallType)call.MyCallType,
-                OpenTime = call.OpenTime,
-                TimeRemaining = call.MaxFinishTime.HasValue ? call.MaxFinishTime.Value - DateTime.Now : null,
-                LastVolunteerName = latestAssignment != null
-                    ? _dal.Volunteer.Read(latestAssignment.VolunteerId)?.Name : null,
-                TreatmentCompletionTime = latestAssignment?.exitTime.HasValue == true
-                    ? latestAssignment.exitTime.Value - call.OpenTime
-                    : null,
-                Status = status,
-                AssignmentsCount = assignments.Count(a => a.CallId == call.Id)
-            };
-        });
+                var assignments = _dal.Assignment.ReadAll(a => a.CallId == call.Id);
+                var latestAssignment = assignments.OrderByDescending(a => a.EntryTime).FirstOrDefault();
 
-        // Apply filtering
-        if (filterField != null && filterValue != null)
-        {
-            callList = callList.Where(c => c.GetType().GetProperty(filterField.ToString()!)?.GetValue(c)?.Equals(filterValue) == true);
+                CallStatus status = CallManager.CalculateCallStatus(call, latestAssignment);
+
+                return new BO.CallInList
+                {
+                    Id = latestAssignment?.Id,
+                    CallId = call.Id,
+                    CallType = (BO.CallType)call.MyCallType,
+                    OpenTime = call.OpenTime,
+                    TimeRemaining = call.MaxFinishTime.HasValue ? call.MaxFinishTime.Value - DateTime.Now : null,
+                    LastVolunteerName = latestAssignment != null
+                        ? _dal.Volunteer.Read(latestAssignment.VolunteerId)?.Name : null,
+                    TreatmentCompletionTime = latestAssignment?.exitTime.HasValue == true
+                        ? latestAssignment.exitTime.Value - call.OpenTime
+                        : null,
+                    Status = status,
+                    AssignmentsCount = assignments.Count(a => a.CallId == call.Id)
+                };
+            });
+
+            // Apply filtering
+            if (filterField != null && filterValue != null)
+            {
+                callList = callList.Where(c => c.GetType().GetProperty(filterField.ToString()!)?.GetValue(c)?.Equals(filterValue) == true);
+            }
+
+            // Apply sorting
+
+            return sortField.HasValue
+                ? callList.OrderBy(c => typeof(BO.CallInList).GetProperty(sortField.ToString())?.GetValue(c))
+                : callList.OrderBy(c => c.CallId);
         }
-
-        // Apply sorting
-
-        return sortField.HasValue
-            ? callList.OrderBy(c => typeof(BO.CallInList).GetProperty(sortField.ToString())?.GetValue(c))
-            : callList.OrderBy(c => c.CallId);
-        }catch (Exception ex)
+        catch (Exception ex)
         {
             throw new BO.BlGeneralDatabaseException("Failed to retrieve calls list", ex);
         }
@@ -321,7 +327,7 @@ public void CancelAssignment(int requesterId, int assignmentId)
                 .Where(a => callType == null || (BO.CallType)_dal.Call.Read(a.CallId)!.MyCallType == callType)
                 .Select(a =>
                 {
-                    var call = _dal.Call.Read(a.CallId)?? throw new BO.BlDoesNotExistException($"Call with ID={a.CallId} does not exist.and there is problem in Assignment with id= {a.Id}"); ;
+                    var call = _dal.Call.Read(a.CallId) ?? throw new BO.BlDoesNotExistException($"Call with ID={a.CallId} does not exist.and there is problem in Assignment with id= {a.Id}"); ;
                     return new BO.ClosedCallInList
                     {
                         Id = call.Id,
@@ -346,7 +352,7 @@ public void CancelAssignment(int requesterId, int assignmentId)
 
     public IEnumerable<BO.OpenCallInList> GetOpenCallsForVolunteer(int volunteerId, BO.CallType? callType, BO.CallField? sortField)
     {
-       
+
         try
         {
             var volunteer = _dal.Volunteer.Read(volunteerId) ?? throw new BO.BlDoesNotExistException($"Volunteer with ID={volunteerId} does not exist.");
@@ -355,15 +361,15 @@ public void CancelAssignment(int requesterId, int assignmentId)
                 volunteer.Longitude ?? throw new BO.BlInvalidFormatException($"Cannot calculate distance: Volunteer with ID {volunteerId} is missing longitude.")
             ); var openCalls = _dal.Call.ReadAll()
                 .Where(c =>
-                (CallManager.CalculateCallStatus(c) == BO.CallStatus.Open || CallManager.CalculateCallStatus(c) == BO.CallStatus.OpenRisk)) 
+                (CallManager.CalculateCallStatus(c) == BO.CallStatus.Open || CallManager.CalculateCallStatus(c) == BO.CallStatus.OpenRisk))
                 .Select(c => new BO.OpenCallInList
                 {
-                    Id = c.Id, 
-                    CallType = (BO.CallType)c.MyCallType, 
+                    Id = c.Id,
+                    CallType = (BO.CallType)c.MyCallType,
                     Description = c.Description,
-                    FullAddress = c.Address, 
+                    FullAddress = c.Address,
                     OpenTime = c.OpenTime,
-                    MaxEndTime = c.MaxFinishTime,  
+                    MaxEndTime = c.MaxFinishTime,
                     DistanceFromVolunteer = Tools.CalculateDistance(volunteerLat, volunteerLon, c.Latitude, c.Longitude)
                 });
 
@@ -390,7 +396,7 @@ public void CancelAssignment(int requesterId, int assignmentId)
                     .ToList()
                     .ForEach(g => counts[(int)g.Key] = g.Count());
         return counts;
-      
+
     }
 
 
@@ -407,7 +413,7 @@ public void CancelAssignment(int requesterId, int assignmentId)
         {
             // Validate the input data (check for format and logical consistency)
             Helpers.CallManager.ValidateCallDetails(updatedCall);
-           Helpers.CallManager.logicalChecking(updatedCall);
+            Helpers.CallManager.logicalChecking(updatedCall);
             var (latitude, longitude) = Tools.GetCoordinatesFromAddress(updatedCall.FullAddress);
             // Check if either latitude or longitude is null
             if (latitude is null || longitude is null)
@@ -436,6 +442,9 @@ public void CancelAssignment(int requesterId, int assignmentId)
             // Attempt to update the call in the data layer
 
             _dal.Call.Update(callToUpdate);
+            CallManager.Observers.NotifyListUpdated(); //stage 5
+            CallManager.Observers.NotifyItemUpdated(callToUpdate.Id); //stage 5
+
         }
         catch (DO.DalDoesNotExistException ex)
         {
@@ -446,7 +455,20 @@ public void CancelAssignment(int requesterId, int assignmentId)
             // Catch the data layer exception and rethrow a custom exception to the UI layer
             throw new BO.BlGeneralDatabaseException("An unexpected error occurred while update.", ex);
         }
-     }
+    }
+
+
+    #region Stage 5
+    public void AddObserver(Action listObserver) =>
+    CallManager.Observers.AddListObserver(listObserver); //stage 5
+    public void AddObserver(int id, Action observer) =>
+    CallManager.Observers.AddObserver(id, observer); //stage 5
+    public void RemoveObserver(Action listObserver) =>
+    CallManager.Observers.RemoveListObserver(listObserver); //stage 5
+    public void RemoveObserver(int id, Action observer) =>
+    CallManager.Observers.RemoveObserver(id, observer); //stage 5
+    #endregion Stage 5
+
 
 }
 

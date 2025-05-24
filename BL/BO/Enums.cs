@@ -87,9 +87,11 @@ public enum EndOfTreatment {
 // Enum for volunteer sort
 public enum VolunteerSortField
 {
+    None,
     Id,
     Name,
        IsActive,
+    //SumOfCalls,
         SumOfExpiredCalls,
     SumOfCancellation,
     TotalHandledCalls,

@@ -27,6 +27,8 @@ internal class VolunteerImplementation : IVolunteer
             // Prepare DO.Volunteer object 
             DO.Volunteer doVolunteer = VolunteerManager.CreateDoVolunteer(boVolunteer);
             _dal.Volunteer.Create(doVolunteer);
+            VolunteerManager.Observers.NotifyListUpdated(); //stage 5
+
         }
         catch (DO.DalAlreadyExistsException ex)
         {
@@ -59,8 +61,10 @@ internal class VolunteerImplementation : IVolunteer
             if (assignmentsWithVolunteer is not null)
                 throw new BO.BlInvalidFormatException("Volunteer cannot be deleted because they are or have been assigned to tasks.");
             _dal.Volunteer.Delete(volunteerId);
+            VolunteerManager.Observers.NotifyListUpdated(); //stage 5
+
         }
-       
+
         catch (InvalidOperationException ex)
         {
             // Handle logical business errors, such as tasks assigned to the volunteer
@@ -238,7 +242,7 @@ internal class VolunteerImplementation : IVolunteer
     }
 
 
-  
+
     /// <summary>
     /// Updates the details of a volunteer.
     /// Validates input, permissions, and logical constraints before updating the data layer.
@@ -251,7 +255,7 @@ internal class VolunteerImplementation : IVolunteer
     /// <exception cref="ApplicationException">Thrown when an error occurs in the data layer.</exception>
     public void UpdateVolunteer(int requesterId, BO.Volunteer VolunteerForUpdate)
     {
-       
+
         try
         {
             DO.Volunteer requester = _dal.Volunteer.Read(requesterId) ?? throw new BO.BlDoesNotExistException($"Volunteer with ID={requesterId} does not  exists and can not update other Volunteer");
@@ -259,12 +263,12 @@ internal class VolunteerImplementation : IVolunteer
             VolunteerManager.ValidatePermissions(requester, VolunteerForUpdate);
 
             // Validate input format and basic structure
-            VolunteerManager.ValidateInputFormat( VolunteerForUpdate);
+            VolunteerManager.ValidateInputFormat(VolunteerForUpdate);
 
-          // Validate logical rules for the volunteer
-          (VolunteerForUpdate.Latitude, VolunteerForUpdate.Longitude) = VolunteerManager.logicalChecking( VolunteerForUpdate);
+            // Validate logical rules for the volunteer
+            (VolunteerForUpdate.Latitude, VolunteerForUpdate.Longitude) = VolunteerManager.logicalChecking(VolunteerForUpdate);
 
-             DO.Volunteer  originalVolunteer = _dal.Volunteer.Read(VolunteerForUpdate.Id)!;
+            DO.Volunteer originalVolunteer = _dal.Volunteer.Read(VolunteerForUpdate.Id)!;
             var changedFields = VolunteerManager.GetChangedFields(originalVolunteer, VolunteerForUpdate);
             VolunteerManager.CanUpdateFields(requester.role, changedFields, VolunteerForUpdate);
 
@@ -272,6 +276,9 @@ internal class VolunteerImplementation : IVolunteer
             DO.Volunteer doVolunteer = VolunteerManager.CreateDoVolunteer(VolunteerForUpdate);
 
             _dal.Volunteer.Update(doVolunteer); // Attempt to update the data layer
+            VolunteerManager.Observers.NotifyListUpdated(); //stage 5
+            VolunteerManager.Observers.NotifyItemUpdated(doVolunteer.Id); //stage 5
+
         }
         catch (DO.DalDoesNotExistException ex)
         {
@@ -285,5 +292,16 @@ internal class VolunteerImplementation : IVolunteer
             throw new BO.BlGeneralDatabaseException("An unexpected error occurred while update.", ex);
         }
     }
+    #region Stage 5
+    public void AddObserver(Action listObserver) =>
+    VolunteerManager.Observers.AddListObserver(listObserver); //stage 5
+    public void AddObserver(int id, Action observer) =>
+    VolunteerManager.Observers.AddObserver(id, observer); //stage 5
+    public void RemoveObserver(Action listObserver) =>
+    VolunteerManager.Observers.RemoveListObserver(listObserver); //stage 5
+    public void RemoveObserver(int id, Action observer) =>
+    VolunteerManager.Observers.RemoveObserver(id, observer); //stage 5
+    #endregion Stage 5
+
 
 }

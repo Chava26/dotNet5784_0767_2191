@@ -7,7 +7,7 @@ namespace BlApi;
 /// <summary>
 /// Interface for managing calls in the system.
 /// </summary>
-public interface ICall
+public interface ICall: IObservable
 {
     /// <summary>
     /// Retrieves quantities of calls grouped by their status.
