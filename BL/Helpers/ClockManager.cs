@@ -38,10 +38,6 @@ internal static class ClockManager //stage 4
         //Go through all students to update properties that are affected by the clock update
         //(students becomes not active after 5 years etc.)
         CallManager.PeriodicCallsUpdates(oldClock, newClock); //stage 4
-
-        //CallManager.PeriodicCallsUpdates(oldClock, newClock); //stage 4
-        //etc ...
-
         //Calling all the observers of clock update
         //ClockUpdatedObservers?.Invoke(); //prepared for stage 5
     }

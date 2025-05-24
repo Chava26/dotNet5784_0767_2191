@@ -231,8 +231,10 @@ internal class CallManager
     /// </summary>
     /// <param name="oldClock">The previous clock time.</param>
     /// <param name="newClock">The new clock time.</param>
-    public static void PeriodicCallsUpdates(DateTime oldClock, DateTime newClock)
+  
+    internal static void PeriodicCallsUpdates(DateTime oldClock, DateTime newClock)
     {
+<<<<<<< HEAD
             s_dal.Call.ReadAll(c => c.MaxFinishTime > AdminManager.Now).ToList().ForEach(call =>
             {
                 List<DO.Assignment> allAssignmentsCall = s_dal.Assignment.ReadAll(a => a.CallId == call.Id && a.TypeOfEndTime == null).ToList();
@@ -252,6 +254,41 @@ internal class CallManager
                 //    s_dal.Assignment.Update(updatedAssignment with { exitTime = AdminManager.Now, TypeOfEndTime = DO.EndOfTreatment.expired });
                 //}
             });      
+=======
+        List<DO.Call> expiredCalls = s_dal.Call.ReadAll(c => c.MaxFinishTime < newClock).ToList();
+        expiredCalls.ForEach(call =>
+        {
+            List<DO.Assignment> assignments = s_dal.Assignment.ReadAll(a => a.CallId == call.Id).ToList();
+
+            if (!assignments.Any())
+            {
+                s_dal.Assignment.Create(new DO.Assignment(
+                    CallId: call.Id,
+                    VolunteerId: 0,
+                    EntryTime: ClockManager.Now,
+                    exitTime: ClockManager.Now,
+                    TypeOfEndTime: (DO.EndOfTreatment)BO.EndOfTreatment.expired
+                ));
+            }
+
+            List<DO.Assignment> assignmentsWithNull = s_dal.Assignment.ReadAll(a => a.CallId == call.Id && a.TypeOfEndTime is null).ToList();
+
+            if (assignmentsWithNull.Any())
+            {
+                assignments.ForEach(assignment => {
+                    s_dal.Assignment.Update(assignment with
+                    {
+                        exitTime = ClockManager.Now,
+                        TypeOfEndTime = (DO.EndOfTreatment)BO.EndOfTreatment.expired
+                    });
+                    DO.Volunteer volunteer = s_dal.Volunteer.Read(a => a.Id == assignment.VolunteerId)!;
+                    SendEmailToVolunteer(volunteer, assignment);
+
+                }
+                    );
+            }
+        });
+>>>>>>> d7b9aefd8be8853e3b76a067c98434fa39de2c71
     }
 
 
