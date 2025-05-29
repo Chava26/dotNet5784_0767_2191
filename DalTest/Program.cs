@@ -1,4 +1,4 @@
-﻿using Dal; // Namespace for the DAL implementation
+using Dal; // Namespace for the DAL implementation
 using DalApi; // Namespace for the DAL API interface
 using DO; // Namespace for Data Objects
 //using static DO; // Allows direct access to Enums without specifying the class name
@@ -526,6 +526,7 @@ namespace DalTest
                             ConfigSubmenuu();
                             break;
                         case MainMenu.ResetDatabase:
+                            Console.WriteLine(AppContext.BaseDirectory);
                             s_dal!.ResetDB(); // Reset the database.
                             break;
                     }

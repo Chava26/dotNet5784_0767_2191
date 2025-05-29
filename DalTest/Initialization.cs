@@ -1,4 +1,4 @@
-ï»¿using DalApi; // Using the API for accessing the data layer (DAL)
+using DalApi; // Using the API for accessing the data layer (DAL)
 using DO; // Using the Data Objects representing the information
 using System.Data; // Provides support for database-related structures
 using System.Numerics;
@@ -92,12 +92,12 @@ public static class Initialization
         string[] issues = {
     "Flat tire", "Engine failure", "Battery is dead", "Ran out of fuel", "Locked keys inside the car", "Brake system malfunction",
     "Overheated engine", "Warning light is on","Strange noise from the engine", "Headlights are not working", "Power steering failure","Transmission problem",
-    "Exhaust system damage","Car wonâ€™t start","Tire tread is worn out","Leaking oil", "Windshield wipers are broken","Clutch is slipping",
+    "Exhaust system damage","Car won’t start","Tire tread is worn out","Leaking oil", "Windshield wipers are broken","Clutch is slipping",
     "Car stuck in gear","AC is not working","Heater is not functioning","Radiator is leaking", "Alternator failure","Starter motor failure",
     "Car is vibrating while driving","Brake pads are worn out","Broken timing belt","Suspension problem", "Check engine light is blinking","Fuel pump failure",
     "Spark plugs need replacement","Catalytic converter issue","Car pulling to one side while driving","Broken fan belt", "Electric window not working",
-    "Central locking system failure","Flat spare tire","Key fob is not functioning","Damaged side mirror","Tail lights are not working","Hood wonâ€™t close",
-    "Trunk wonâ€™t open","Excessive smoke from exhaust","Battery terminals are corroded","Parking brake is stuck","Fuel gauge is not accurate",
+    "Central locking system failure","Flat spare tire","Key fob is not functioning","Damaged side mirror","Tail lights are not working","Hood won’t close",
+    "Trunk won’t open","Excessive smoke from exhaust","Battery terminals are corroded","Parking brake is stuck","Fuel gauge is not accurate",
     "Airbag warning light is on","Steering wheel is stiff","Horn is not working","Dashboard lights flickering"
      };
         //I used GPT to create this array
@@ -142,7 +142,7 @@ public static class Initialization
         for (int i = 0; i < 50; i++) // Loop to create 50 emergency calls
         {
 
-            CallType _callType = (CallType)s_rand.Next(0, Enum.GetValues(typeof(CallType)).Length); // Random call type
+            CallType _callType = (CallType)s_rand.Next(1, Enum.GetValues(typeof(CallType)).Length); // Random call type
             DateTime TimeOfOpen = s_dal!.Config.Clock.AddHours(1); // Call open time
             DateTime MaxTimeToFinish = TimeOfOpen.AddDays(s_rand.Next((s_dal!.Config.Clock - TimeOfOpen).Days)); // Maximum finish time
 

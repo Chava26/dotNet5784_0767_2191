@@ -1,4 +1,4 @@
-﻿
+
 
 using System.Net.NetworkInformation;
 
@@ -27,11 +27,31 @@ public enum DistanceType
 public enum CallType
 {
     None,
-    necessary,
-    Regular,
     General,             // General calls.Follow-up calls
-    FollowUp,
-    noNecessary
+    FlatTire,
+    DeadBattery,
+    EngineFailure,
+    Overheating,
+    BrakeFailure,
+    TransmissionIssue,
+    AlternatorFailure,
+    StarterMotorFailure,
+    OilLeak,
+    CoolantLeak,
+    FuelPumpFailure,
+    CloggedFuelFilter,
+    ExhaustLeak,
+    SuspensionProblem,
+    PowerSteeringFailure,
+    TimingBeltFailure,
+    BatteryCorrosion,
+    CheckEngineLight,
+    AirConditionerFailure,
+    WornBrakePads,
+    SparkPlugIssue,
+    BlownFuse,
+    HeadlightFailure,
+    SensorMalfunction
 }
 
 /// <summary>

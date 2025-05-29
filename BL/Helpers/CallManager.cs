@@ -234,27 +234,8 @@ internal class CallManager
   
     internal static void PeriodicCallsUpdates(DateTime oldClock, DateTime newClock)
     {
-<<<<<<< HEAD
-            s_dal.Call.ReadAll(c => c.MaxFinishTime > AdminManager.Now).ToList().ForEach(call =>
-            {
-                List<DO.Assignment> allAssignmentsCall = s_dal.Assignment.ReadAll(a => a.CallId == call.Id && a.TypeOfEndTime == null).ToList();
 
-                //if (!allAssignmentsCall.Any())
-                //{
-                //    DO.Assignment newAssignment = new DO.Assignment(0, call.Id, AdminManager.Now, DO.EndOfTreatment.expired, AdminManager.Now);
-                //    s_dal.Assignment.Create(newAssignment);
-                //}
-                //allAssignmentsCall.ForEach(ass =>
-                //{
-                //    if 
-                //} )
-                //else
-                //{
-                //    DO.Assignment updatedAssignment = allAssignmentsCall.FirstOrDefault(a => a.exitTime == null);
-                //    s_dal.Assignment.Update(updatedAssignment with { exitTime = AdminManager.Now, TypeOfEndTime = DO.EndOfTreatment.expired });
-                //}
-            });      
-=======
+               
         List<DO.Call> expiredCalls = s_dal.Call.ReadAll(c => c.MaxFinishTime < newClock).ToList();
         expiredCalls.ForEach(call =>
         {
@@ -269,6 +250,8 @@ internal class CallManager
                     exitTime: ClockManager.Now,
                     TypeOfEndTime: (DO.EndOfTreatment)BO.EndOfTreatment.expired
                 ));
+                CallManager.Observers.NotifyListUpdated(); // Stage 5
+
             }
 
             List<DO.Assignment> assignmentsWithNull = s_dal.Assignment.ReadAll(a => a.CallId == call.Id && a.TypeOfEndTime is null).ToList();
@@ -281,6 +264,7 @@ internal class CallManager
                         exitTime = ClockManager.Now,
                         TypeOfEndTime = (DO.EndOfTreatment)BO.EndOfTreatment.expired
                     });
+                    Observers.NotifyItemUpdated(assignment.Id); //stage 5 
                     DO.Volunteer volunteer = s_dal.Volunteer.Read(a => a.Id == assignment.VolunteerId)!;
                     SendEmailToVolunteer(volunteer, assignment);
 
@@ -288,7 +272,6 @@ internal class CallManager
                     );
             }
         });
->>>>>>> d7b9aefd8be8853e3b76a067c98434fa39de2c71
     }
 
 

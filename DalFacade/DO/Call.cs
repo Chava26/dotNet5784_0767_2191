@@ -1,4 +1,4 @@
-﻿
+
 
 
 
@@ -28,5 +28,5 @@ public record Call
     /// <summary>
     /// Default constructor
     /// </summary>
-    public Call() : this(CallType.necessary, "", 0, 0, DateTime.MinValue) { }
+    public Call() : this(CallType.None, "", 0, 0, DateTime.MinValue) { }
 }

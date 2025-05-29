@@ -1,4 +1,4 @@
-ï»¿<Window x:Class="PL.Volunteer.VolunteerListWindow"
+<Window x:Class="PL.Volunteer.VolunteerListWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -11,31 +11,29 @@
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}">
 
     <Window.Resources>
-        <
-            
-            local:VolunteerSortFieldCollection x:Key="VolunteerSortFieldCollection"/>
+        <local:VolunteerSortFieldCollection x:Key="VolunteerSortFieldCollection"/>
     </Window.Resources>
 
 
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-        <!-- ×”×’×“×¨×ª ×©×•×¨×•×ª -->
+        <!-- äâãøú ùåøåú -->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- ×’×¨×™×“ ×¤× ×™×ž×™ ×¢×œ×™×•×Ÿ - ×©×•×¨×ª ×¡×™× ×•×Ÿ -->
+        <!-- âøéã ôðéîé òìéåï - ùåøú ñéðåï -->
         <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Label ×‘×¢×ž×•×“×” 0 -->
+            <!-- Label áòîåãä 0 -->
             <Label Grid.Column="0" Content="Select:" VerticalAlignment="Center" Margin="10"/>
 
-            <!-- ComboBox ×‘×¢×ž×•×“×” 1 -->
+            <!-- ComboBox áòîåãä 1 -->
             <ComboBox Grid.Column="1" HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch" Margin="10" 
                       SelectedValue="{Binding SelectedSortField, Mode=TwoWay}"
@@ -77,7 +75,7 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
         </Grid>
-        <!-- ×¤×§×“ DataGrid (×‘×ž×§×•× ListView) -->
+        <!-- ô÷ã DataGrid (áî÷åí ListView) -->
         <DataGrid Grid.Row="1" Margin="10"
                   ItemsSource="{Binding Path=VolunteerList}"
                   IsReadOnly="True"
@@ -88,10 +86,10 @@
                   MouseDoubleClick="lsvVolunteerList_MouseDoubleClick">
 
             <DataGrid.Columns>
-                <!-- ×¢×ž×•×“×ª Id -->
+                <!-- òîåãú Id -->
                 <DataGridTextColumn Binding="{Binding Id}" Header="Id" Width="Auto"/>
 
-                <!-- ×¢×ž×•×“×ª ×©× ×¢× ×”×“×’×©×” -->
+                <!-- òîåãú ùí òí äãâùä -->
                 <DataGridTemplateColumn Header="Name" Width="Auto">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -110,36 +108,37 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- ×¢×ž×•×“×ª ×ª×™×‘×ª ×¡×™×ž×•×Ÿ ×¢×‘×•×¨ IsActive -->
+                <!-- òîåãú úéáú ñéîåï òáåø IsActive -->
                 <DataGridTemplateColumn Header="Is Active" Width="Auto">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <CheckBox IsChecked="{Binding IsActive}" IsEnabled="False" HorizontalAlignment="Center"/>
+                            <CheckBox IsChecked="{Binding Active}" IsEnabled="False" HorizontalAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- ×¢×ž×•×“×ª TotalResponsesHandled -->
-                <DataGridTextColumn Binding="{Binding TotalResponsesHandled}" Header="Total Responses Handled" Width="Auto"/>
+                <!-- òîåãú TotalResponsesHandled -->
+                <DataGridTextColumn Binding="{Binding TotalHandledCalls}" Header="Total Responses Handled" Width="Auto"/>
 
-                <!-- ×¢×ž×•×“×ª TotalResponsesCancelled -->
-                <DataGridTextColumn Binding="{Binding TotalResponsesCancelled}" Header="Total Responses Cancelled" Width="Auto"/>
+                <!-- òîåãú TotalResponsesCancelled -->
+                <DataGridTextColumn Binding="{Binding TotalHandledCalls}" Header="Total Responses Cancelled" Width="Auto"/>
 
-                <!-- ×¢×ž×•×“×ª TotalExpiredResponses -->
-                <DataGridTextColumn Binding="{Binding TotalExpiredResponses}" Header="Total Expired Responses" Width="Auto"/>
+                <!-- òîåãú TotalExpiredResponses -->
+                <DataGridTextColumn Binding="{Binding TotalExpiredCalls}" Header="Total Expired Responses" Width="Auto"/>
 
-                <!-- ×¢×ž×•×“×ª SumOfCalls -->
-                <DataGridTextColumn Binding="{Binding SumOfCalls}" Header="Sum of Calls" Width="Auto"/>
+                <!-- òîåãú SumOfCalls -->
+                <!--<DataGridTextColumn Binding="{Binding SumOfCalls}" Header="Sum of Calls" Width="Auto"/>-->
 
-                <!-- ×¢×ž×•×“×ª SumOfCancellation -->
+                <!-- òîåãú SumOfCancellation -->
                 <DataGridTextColumn Binding="{Binding SumOfCancellation}" Header="Sum of Cancellation" Width="Auto"/>
 
-                <!-- ×¢×ž×•×“×ª SumOfExpiredCalls -->
+                <!-- òîåãú SumOfExpiredCalls -->
                 <DataGridTextColumn Binding="{Binding SumOfExpiredCalls}" Header="Sum of Expired Calls" Width="Auto"/>
 
             </DataGrid.Columns>
         </DataGrid>
 
+        <!-- ëôúåø äåñôä -->
         <Button Grid.Row="2" Content="Add" HorizontalAlignment="Center" Margin="10" Width="150" Height="40" Click="btnAdd_Click"/>
     </Grid>
 </Window>

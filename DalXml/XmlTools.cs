@@ -1,4 +1,4 @@
-ο»Ώ
+
 namespace Dal;
 
 using DO;
@@ -13,9 +13,13 @@ using System.Xml.Serialization;
 
 static class XMLTools
 {
+    //static readonly string s_xmlDir = Path.Combine(AppContext.BaseDirectory, "xml");
+
     const string s_xmlDir = @"..\xml\";
     static XMLTools()
     {
+        //Console.WriteLine($"Looking for XML files in: {Path.Combine(AppContext.BaseDirectory, "xml")}");
+
         if (!Directory.Exists(s_xmlDir))
             Directory.CreateDirectory(s_xmlDir);
     }
@@ -61,7 +65,7 @@ static class XMLTools
         try
         {
             rootElem.Save(xmlFilePath);
-            Console.WriteLine($"Saving XML to: {xmlFilePath}"); // Χ”Χ•Χ“ΧΆΧª Χ“Χ™Χ‘Χ•Χ’
+            Console.WriteLine($"Saving XML to: {xmlFilePath}"); // δεγςϊ γιαεβ
 
         }
         catch (Exception ex)

@@ -4,6 +4,11 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
+	  <BaseOutputPath>$(SolutionDir)\bin\</BaseOutputPath>
+	<OutputPath>$(SolutionDir)\bin\</OutputPath>
+	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	  <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+	  <UseCommonOutputDirectory>true</UseCommonOutputDirectory>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
@@ -15,6 +20,10 @@
     <ProjectReference Include="..\DalFacade\DalFacade.csproj" />
     <ProjectReference Include="..\DalList\DalList.csproj" />
     <ProjectReference Include="..\DalXml\DalXml.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>

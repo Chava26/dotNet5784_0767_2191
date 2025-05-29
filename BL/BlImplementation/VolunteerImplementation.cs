@@ -89,16 +89,15 @@ internal class VolunteerImplementation : IVolunteer
     /// <param name="isActive">A nullable boolean to filter volunteers by their activity status. If null, no filtering is applied.</param>
     /// <param name="sortBy">A nullable enumeration for sorting the list by a specific volunteer field.</param>
     /// <returns>An ordered and filtered list of volunteer entities in the business logic layer.</returns>
-  public IEnumerable<BO.VolunteerInList> GetVolunteersList(bool? isActive = null, BO.VolunteerSortField? sortBy = null)
+  public IEnumerable<BO.VolunteerInList> GetVolunteersList(bool? isActive = null, BO.VolunteerSortField? sortBy = null, BO.CallType? filterField = null)
 {
     try
     {
-        // Fetch all volunteers, applying an optional filter for activity status
-        IEnumerable<DO.Volunteer> volunteers = _dal.Volunteer.ReadAll(v =>
-            !isActive.HasValue || v.IsActive == isActive.Value);
-
-        // Map the data to the business object VolunteerInList
-        var volunteerList = volunteers.Select(v =>
+            // Fetch all volunteers, applying an optional filter for activity status
+            IEnumerable<DO.Volunteer> volunteers = _dal.Volunteer.ReadAll(v =>
+                !isActive.HasValue || v.IsActive == isActive.Value);
+            // Map the data to the business object VolunteerInList
+            var volunteerList = volunteers.Select(v =>
         {
             // Retrieve all assignments for the volunteer
             var volunteerAssignments = _dal.Assignment.ReadAll(a => a.VolunteerId == v.Id);
@@ -125,7 +124,7 @@ internal class VolunteerImplementation : IVolunteer
                     ? (BO.CallType)(_dal.Call.Read(currentCallId.Value)?.MyCallType ?? DO.CallType.None)
                     : BO.CallType.None
             };
-        });
+        }).Where(vol => !filterField.HasValue || vol.CurrentCallType == filterField.Value);
 
         // Sort the volunteer list based on the provided sorting criterion
         return sortBy switch

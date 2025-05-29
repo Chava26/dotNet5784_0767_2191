@@ -1,42 +1,39 @@
-﻿using BlApi;
+using BlApi;
 using BO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace PL.Volunteer;
 
 public partial class VolunteerWindow : Window
 {
-    private readonly IBl _volunteerBl = Factory.Get();
+    private readonly IBl _bl = Factory.Get();
+
+    public IEnumerable<Role> Roles { get; set; }
+    public IEnumerable<DistanceType> DistanceTypes { get; set; }
+    private readonly bool _isUpdate;
+    private readonly int _volunteerId;
+
+
+    public BO.Volunteer? Volunteer
+    {
+        get => (BO.Volunteer?)GetValue(VolunteerProperty);
+        set => SetValue(VolunteerProperty, value);
+    }
+
+    public static readonly DependencyProperty VolunteerProperty =
+        DependencyProperty.Register(nameof(Volunteer), typeof(BO.Volunteer), typeof(VolunteerWindow), new PropertyMetadata(null));
 
     public string ButtonText
     {
-        get => (string)GetValue(ButtonTextProperty);
-        set => SetValue(ButtonTextProperty, value);
+        get => (string)GetValue(ActionTextProperty);
+        set => SetValue(ActionTextProperty, value);
     }
 
-    public static readonly DependencyProperty ButtonTextProperty =
+    public static readonly DependencyProperty ActionTextProperty =
         DependencyProperty.Register(nameof(ButtonText), typeof(string), typeof(VolunteerWindow), new PropertyMetadata("Add"));
-
-
-    public IEnumerable<BO.Role> RoleCollection { get; set; }
-    public IEnumerable<BO.DistanceType> DistanceTypeCollection { get; set; }
-
-    public BO.Volunteer? CurrentVolunteer
-    {
-        get => (BO.Volunteer?)GetValue(CurrentVolunteerProperty);
-        set => SetValue(CurrentVolunteerProperty, value);
-    }
-
-    public static readonly DependencyProperty CurrentVolunteerProperty =
-        DependencyProperty.Register(
-            nameof(CurrentVolunteer),
-            typeof(BO.Volunteer),
-            typeof(VolunteerWindow),
-            new PropertyMetadata(null));
 
     public string Password
     {
@@ -45,105 +42,91 @@ public partial class VolunteerWindow : Window
     }
 
     public static readonly DependencyProperty PasswordProperty =
-        DependencyProperty.Register(
-            nameof(Password),
-            typeof(string),
-            typeof(VolunteerWindow),
-            new PropertyMetadata(string.Empty));
+        DependencyProperty.Register(nameof(Password), typeof(string), typeof(VolunteerWindow), new PropertyMetadata(string.Empty));
+
+    public VolunteerWindow(bool Update = false,int id=0)
+    {
+        Roles = Enum.GetValues(typeof(BO.Role)).Cast<Role>();
+        DistanceTypes = Enum.GetValues(typeof(BO.DistanceType)).Cast<DistanceType>();
+
+        InitializeComponent();
+        Loaded += Window_Loaded;
+        Closed += Window_Closed;
+        _isUpdate = Update;
+
+        _volunteerId = id; 
+
+        ButtonText = Update ? "Update" : "Add";
+        DataContext = this;
+
+    }
+
+    private BO.Volunteer? LoadVolunteer(int id)
+    {
+        
+        var volunteer = _bl.Volunteer.GetVolunteerDetails(id);
+        if (volunteer != null)
+            return volunteer;
+
+        MessageBox.Show("Volunteer not found.");
+        Close();
+        return null;
+    }
+
+    private static BO.Volunteer CreateNewVolunteer() =>
+        new()
+        {
+            Id = 0,
+            FullName = "",
+            PhoneNumber = "",
+            Email = "",
+            Address = "",
+            IsActive = false,
+            Latitude = 0,
+            Longitude = 0,
+            MaxDistanceForTask = 0,
+            DistanceType = DistanceType.AirDistance,
+            role = Role.Volunteer
+        };
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
-        if (CurrentVolunteer != null && CurrentVolunteer.Id != 0)
-            _volunteerBl.Volunteer.AddObserver(CurrentVolunteer.Id, RefreshVolunteer);
+        if (_isUpdate)
+        {
+            Volunteer = LoadVolunteer(_volunteerId);
+            if (Volunteer != null)
+                _bl.Volunteer.AddObserver(Volunteer.Id, RefreshVolunteer);
+        }
+        else
+        {
+            Volunteer = CreateNewVolunteer();
+        }
     }
 
     private void Window_Closed(object? sender, EventArgs e)
     {
-        if (CurrentVolunteer != null && CurrentVolunteer.Id != 0)
-            _volunteerBl.Volunteer.RemoveObserver(CurrentVolunteer.Id, RefreshVolunteer);
-    }
-    //private void VolunteerObserver()
-    //{
-    //    int id = CurrentVolunteer!.Id;
-    //    CurrentVolunteer = null;
-    //    CurrentVolunteer = _volunteerBl.Volunteer.GetVolunteerDetails(id);
-    //}
-
-
-    public VolunteerWindow(int id = 0)
-    {
-        InitializeComponent();
-        Loaded += Window_Loaded;
-        Closed += Window_Closed;
-        ButtonText = id != 0 ? "Update" : "Add";
-
-
-
-        RoleCollection = Enum.GetValues(typeof(BO.Role)).Cast<BO.Role>();
-        DistanceTypeCollection = Enum.GetValues(typeof(BO.DistanceType)).Cast<BO.DistanceType>();
-
-        if (id != 0)
-        {
-
-            var volunteer = _volunteerBl.Volunteer.GetVolunteerDetails(id);
-            if (volunteer != null)
-            {
-                CurrentVolunteer = volunteer;
-            }
-            else
-            {
-                MessageBox.Show("Volunteer not found.");
-                Close();
-            }
-        }
-        else
-        {
-            CurrentVolunteer = new BO.Volunteer
-            {
-                Id = 0,
-                FullName = "",
-                PhoneNumber = "",
-                Email = "",
-                Address = "",
-                IsActive = false,
-                Latitude = 0,
-                Longitude = 0,
-                MaxDistanceForTask = 0,
-                DistanceType = BO.DistanceType.AirDistance,
-                role = BO.Role.Volunteer
-            };
-        }
-
-        DataContext = this;
+        if (Volunteer != null && _isUpdate)
+            _bl.Volunteer.RemoveObserver(Volunteer!.Id, RefreshVolunteer);
     }
 
-    private void btnAddUpdate_Click(object sender, RoutedEventArgs e)
+    private void AddOrUpdate_Click(object sender, RoutedEventArgs e)
     {
+        if (Volunteer == null) return;
+
         try
         {
-            if (CurrentVolunteer == null)
-                return;
+            Volunteer.Password = Password;
 
-            CurrentVolunteer.Password = Password;
-
-
-            if (CurrentVolunteer.Id == 0)
+            if (_isUpdate ==false)
             {
-                _volunteerBl.Volunteer.AddVolunteer(CurrentVolunteer);
-                MessageBox.Show("Volunteer added successfully.");
-
-
+                _bl.Volunteer.AddVolunteer(Volunteer);
+                ShowMessageAndClose("Volunteer added successfully.");
             }
             else
             {
-                _volunteerBl.Volunteer.UpdateVolunteer(CurrentVolunteer.Id, CurrentVolunteer);
-                MessageBox.Show("Volunteer updated successfully.");
-
+                _bl.Volunteer.UpdateVolunteer(Volunteer.Id, Volunteer);
+                ShowMessageAndClose("Volunteer updated successfully.");
             }
-
-            Password = "";
-            PasswordBox.Clear();
-            Close();
         }
         catch (Exception ex)
         {
@@ -151,22 +134,26 @@ public partial class VolunteerWindow : Window
         }
     }
 
-    private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+    private void ShowMessageAndClose(string message)
     {
-        var passwordBox = sender as System.Windows.Controls.PasswordBox;
-        if (passwordBox != null)
-            Password = passwordBox.Password;
+        MessageBox.Show(message);
+        Password = string.Empty;
+        Close();
     }
+
     private void RefreshVolunteer()
     {
-        if (CurrentVolunteer == null)
-            return;
+        if (Volunteer == null) return;
 
-        int id = CurrentVolunteer.Id;
-        CurrentVolunteer = null;
-        CurrentVolunteer = _volunteerBl.Volunteer.GetVolunteerDetails(id);
+        int id = Volunteer.Id;
+        Volunteer = null;
+        Volunteer = _bl.Volunteer.GetVolunteerDetails(id);
         DataContext = null;
         DataContext = this;
     }
 
+    private void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+
+    }
 }

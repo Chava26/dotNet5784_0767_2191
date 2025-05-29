@@ -1,4 +1,4 @@
-﻿
+
 using System;
 using System.Net.NetworkInformation;
 using System.Numerics;
@@ -904,7 +904,32 @@ namespace BlTest
         }
         static BO.Call CreateCall(int id)
         {
-            Console.WriteLine("Enter the call type (0 for None, 1 for  necessary, 2 for Regular, 3 for General:");
+            Console.WriteLine("Enter the car issue type:");
+            Console.WriteLine("0 - None");
+            Console.WriteLine("1 - Flat Tire");
+            Console.WriteLine("2 - Dead Battery");
+            Console.WriteLine("3 - Engine Failure");
+            Console.WriteLine("4 - Overheating");
+            Console.WriteLine("5 - Brake Failure");
+            Console.WriteLine("6 - Transmission Issue");
+            Console.WriteLine("7 - Alternator Failure");
+            Console.WriteLine("8 - Starter Motor Failure");
+            Console.WriteLine("9 - Oil Leak");
+            Console.WriteLine("10 - Coolant Leak");
+            Console.WriteLine("11 - Fuel Pump Failure");
+            Console.WriteLine("12 - Clogged Fuel Filter");
+            Console.WriteLine("13 - Exhaust Leak");
+            Console.WriteLine("14 - Suspension Problem");
+            Console.WriteLine("15 - Power Steering Failure");
+            Console.WriteLine("16 - Timing Belt Failure");
+            Console.WriteLine("17 - Battery Corrosion");
+            Console.WriteLine("18 - Check Engine Light");
+            Console.WriteLine("19 - Air Conditioner Failure");
+            Console.WriteLine("20 - Worn Brake Pads");
+            Console.WriteLine("21 - Spark Plug Issue");
+            Console.WriteLine("22 - Blown Fuse");
+            Console.WriteLine("23 - Headlight Failure");
+            Console.WriteLine("24 - Sensor Malfunction");
             if (!Enum.TryParse(Console.ReadLine(), out BO.CallType callType))
             {
                 throw new FormatException("Invalid call type.");

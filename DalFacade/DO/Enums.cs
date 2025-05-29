@@ -1,4 +1,4 @@
-﻿
+
 
 namespace DO;
 /// <summary>
@@ -10,12 +10,32 @@ public enum Role { volunteer, Manager };
 public enum DistanceType { airDistance, walkingDistance, drivingDistance };
 public enum CallType
 {
-    necessary,
     None,
-    Regular,
-    General,
-    FollowUp,
-    noNecessary
+    General,             // General calls.Follow-up calls
+    FlatTire,
+    DeadBattery,
+    EngineFailure,
+    Overheating,
+    BrakeFailure,
+    TransmissionIssue,
+    AlternatorFailure,
+    StarterMotorFailure,
+    OilLeak,
+    CoolantLeak,
+    FuelPumpFailure,
+    CloggedFuelFilter,
+    ExhaustLeak,
+    SuspensionProblem,
+    PowerSteeringFailure,
+    TimingBeltFailure,
+    BatteryCorrosion,
+    CheckEngineLight,
+    AirConditionerFailure,
+    WornBrakePads,
+    SparkPlugIssue,
+    BlownFuse,
+    HeadlightFailure,
+    SensorMalfunction
 };
 public enum EndOfTreatment { treated, selfCancel, administratorCancel, expired };
 
