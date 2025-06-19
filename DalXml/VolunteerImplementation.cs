@@ -1,4 +1,4 @@
-﻿namespace Dal;
+namespace Dal;
 using DalApi;
 using DO;
 using System.Xml.Linq;
@@ -16,7 +16,9 @@ internal class VolunteerImplementation : IVolunteer
     /// <exception cref="DalXMLFileLoadCreateException">Thrown if any required fields cannot be converted.</exception>
     static Volunteer getVolunteer(XElement s)
     {
-        
+        Console.WriteLine($"ID from XML: '{s.Element("Id")?.Value}'");
+
+
         return new Volunteer()
         {
            
@@ -86,11 +88,21 @@ internal class VolunteerImplementation : IVolunteer
     /// <exception cref="DalDoesNotExistException">Thrown if the Volunteer does not exist.</exception>
     public void Update(Volunteer item)
     {
+
+        //XElement volunteersRootElem = XMLTools.LoadListFromXMLElement(Config.s_volunteers_xml);
+
+        //(volunteersRootElem.Elements().FirstOrDefault(v => (int?)v.Element("Id") == item.Id)
+        //?? throw new DO.DalDoesNotExistException($"Volunteer with ID={item.Id} does Not exist"))
+        //        .Remove();
+
+        //volunteersRootElem.Add(CreateVolunteerElement(item));
+
+        //XMLTools.SaveListToXMLElement(volunteersRootElem, Config.s_volunteers_xml);
         XElement VolunteersRootElem = XMLTools.LoadListFromXMLElement(Config.s_volunteers_xml);
         (VolunteersRootElem.Elements().FirstOrDefault(st => (int?)st.Element("Id") == item.Id)
         ?? throw new DO.DalDoesNotExistException($"Volunteer with ID={item.Id} does Not exist"))
         .Remove();
-        VolunteersRootElem.Add(new XElement("Volunteer", CreateVolunteerElement(item)));
+        VolunteersRootElem.Add(CreateVolunteerElement(item));
         XMLTools.SaveListToXMLElement(VolunteersRootElem, Config.s_volunteers_xml);
     }
     /// <summary>

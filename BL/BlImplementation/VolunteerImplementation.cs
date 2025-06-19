@@ -1,4 +1,4 @@
-ן»¿
+
 namespace BlImplementation;
 using BlApi;
 using Helpers;
@@ -18,7 +18,7 @@ internal class VolunteerImplementation : IVolunteer
             Helpers.VolunteerManager.ValidateInputFormat(boVolunteer);
             // Validate logical rules for the volunteer
             var (latitude, longitude) = VolunteerManager.logicalChecking(boVolunteer);
-            if(latitude != null && longitude != null)
+            if (latitude != null && longitude != null)
             {
                 // Update the properties of the BOVolunteer instance
                 boVolunteer.Latitude = latitude;
@@ -34,6 +34,11 @@ internal class VolunteerImplementation : IVolunteer
         {
             throw new BO.BlAlreadyExistsException($"Volunteer with ID={boVolunteer.Id} already exists", ex);
         }
+        catch (BO.BlInvalidFormatException )
+        {
+            throw ;
+        }
+
         catch (Exception ex)
         {
             // Handle all other unexpected exceptions
@@ -50,7 +55,7 @@ internal class VolunteerImplementation : IVolunteer
     /// <param name="volunteerId">The ID of the volunteer to delete.</param>
     /// <exception cref="ArgumentException">Thrown when the input ID is invalid.</exception>
     /// <exception cref="InvalidOperationException">Thrown when the volunteer cannot be deleted.</exception>
-    /// <exception cref="ApplicationException">Thrown when an error occurs in the data layer.</exception>
+    /// <exception cref="BlDeletionException">Thrown when an error occurs in the data layer.</exception>
     public void DeleteVolunteer(int volunteerId)
     {
         try
@@ -58,22 +63,22 @@ internal class VolunteerImplementation : IVolunteer
 
             // Check if the volunteer can be deleted
             IEnumerable<DO.Assignment> assignmentsWithVolunteer = _dal.Assignment.ReadAll(a => a.VolunteerId == volunteerId);
-            if (assignmentsWithVolunteer is not null)
-                throw new BO.BlInvalidFormatException("Volunteer cannot be deleted because they are or have been assigned to tasks.");
+            if (assignmentsWithVolunteer.Any())
+                throw new BO.InvalidOperationException("Volunteer cannot be deleted because they are or have been assigned to tasks.");
             _dal.Volunteer.Delete(volunteerId);
             VolunteerManager.Observers.NotifyListUpdated(); //stage 5
 
         }
 
-        catch (InvalidOperationException ex)
+        catch (BO.InvalidOperationException ex)
         {
             // Handle logical business errors, such as tasks assigned to the volunteer
-            throw new BO.VolunteerDeletionException($"Unable to delete volunteer with ID {volunteerId} because they are assigned to tasks.", ex);
+            throw new BO.BlDeletionException($"Unable to delete volunteer with ID {volunteerId} because they are assigned to tasks.", ex);
         }
         catch (DO.DalDoesNotExistException ex)
         {
             // Handle the case where the volunteer does not exist in the database
-            throw new BO.VolunteerDeletionException($"Error deleting volunteer with ID {volunteerId}. Volunteer not found.", ex);
+            throw new BO.BlDeletionException($"Error deleting volunteer with ID {volunteerId}. Volunteer not found.", ex);
         }
         catch (Exception ex)
         {
@@ -89,68 +94,77 @@ internal class VolunteerImplementation : IVolunteer
     /// <param name="isActive">A nullable boolean to filter volunteers by their activity status. If null, no filtering is applied.</param>
     /// <param name="sortBy">A nullable enumeration for sorting the list by a specific volunteer field.</param>
     /// <returns>An ordered and filtered list of volunteer entities in the business logic layer.</returns>
-  public IEnumerable<BO.VolunteerInList> GetVolunteersList(bool? isActive = null, BO.VolunteerSortField? sortBy = null, BO.CallType? filterField = null)
-{
-    try
+    public IEnumerable<BO.VolunteerInList> GetVolunteersList(
+            bool? isActive = null,
+            BO.VolunteerSortField? sortBy = null,
+            BO.CallType? filterField = null)
     {
-            // Fetch all volunteers, applying an optional filter for activity status
-            IEnumerable<DO.Volunteer> volunteers = _dal.Volunteer.ReadAll(v =>
-                !isActive.HasValue || v.IsActive == isActive.Value);
-            // Map the data to the business object VolunteerInList
-            var volunteerList = volunteers.Select(v =>
+        try
         {
-            // Retrieve all assignments for the volunteer
-            var volunteerAssignments = _dal.Assignment.ReadAll(a => a.VolunteerId == v.Id);
+            //  טעינה ראשונית
+            var volunteers = _dal.Volunteer
+                .ReadAll(v => !isActive.HasValue || v.IsActive == isActive.Value)
+                .ToList();
 
-            // Count different types of assignments (Handled, Canceled, Expired)
-            var totalHandled = volunteerAssignments.Count(a => a.TypeOfEndTime == DO.EndOfTreatment.treated);
-            var totalCanceled = volunteerAssignments.Count(a => a.TypeOfEndTime == DO.EndOfTreatment.administratorCancel);
-            var totalExpired = volunteerAssignments.Count(a => a.TypeOfEndTime == DO.EndOfTreatment.expired);
+            var assignmentsByVolunteer = _dal.Assignment.ReadAll()
+                .GroupBy(a => a.VolunteerId)
+                .ToDictionary(g => g.Key, g => g.ToList());
 
-            // Get the current assignment if available
-            var currentAssignment = volunteerAssignments.FirstOrDefault(a => a.exitTime == null);
-            var currentCallId = currentAssignment?.CallId;
+            var callsById = _dal.Call.ReadAll().ToDictionary(c => c.Id);
 
-            return new BO.VolunteerInList
+            // השלכת הנתונים לאובייקט העסקי
+            var list = volunteers.Select(v =>
             {
-                Id = v.Id,
-                FullName = v.Name,
-                IsActive = v.IsActive,
-                TotalHandledCalls = totalHandled,
-                TotalCanceledCalls = totalCanceled,
-                TotalExpiredCalls = totalExpired,
-                CurrentCallId = currentCallId,
-                CurrentCallType = currentCallId.HasValue
-                    ? (BO.CallType)(_dal.Call.Read(currentCallId.Value)?.MyCallType ?? DO.CallType.None)
-                    : BO.CallType.None
+                var aList = assignmentsByVolunteer.TryGetValue(v.Id, out var l) ? l : new List<DO.Assignment>();
+
+                // סיכומים
+                var handled = aList.Count(a => a.TypeOfEndTime == DO.EndOfTreatment.treated);
+                var canceled = aList.Count(a => a.TypeOfEndTime == DO.EndOfTreatment.administratorCancel);
+                var expired = aList.Count(a => a.TypeOfEndTime == DO.EndOfTreatment.expired);
+
+                // הקצאה פעילה
+                var current = aList.FirstOrDefault(a => a.exitTime == null);
+                var callType = current?.CallId is int cid && callsById.TryGetValue(cid, out var c)
+                               ? (BO.CallType)c.MyCallType
+                               : BO.CallType.None;
+
+                return new BO.VolunteerInList
+                {
+                    Id = v.Id,
+                    FullName = v.Name,
+                    IsActive = v.IsActive,
+                    TotalHandledCalls = handled,
+                    TotalCanceledCalls = canceled,
+                    TotalExpiredCalls = expired,
+                    CurrentCallId = current?.CallId,
+                    CurrentCallType = callType
+                };
+            })
+            .Where(vol => !filterField.HasValue || vol.CurrentCallType == filterField.Value)
+            .ToList();          // חומריזציה
+
+            // מיון
+            return sortBy switch
+            {
+                BO.VolunteerSortField.Name => list.OrderBy(v => v.FullName),
+                BO.VolunteerSortField.TotalHandledCalls => list.OrderByDescending(v => v.TotalHandledCalls),
+                BO.VolunteerSortField.TotalCanceledCalls => list.OrderByDescending(v => v.TotalCanceledCalls),
+                BO.VolunteerSortField.TotalExpiredCalls => list.OrderByDescending(v => v.TotalExpiredCalls),
+                BO.VolunteerSortField.SumOfCancellation => list.OrderByDescending(v => v.TotalCanceledCalls),
+                BO.VolunteerSortField.SumOfExpiredCalls => list.OrderByDescending(v => v.TotalExpiredCalls),
+                _ => list.OrderBy(v => v.Id)
             };
-        }).Where(vol => !filterField.HasValue || vol.CurrentCallType == filterField.Value);
-
-        // Sort the volunteer list based on the provided sorting criterion
-        return sortBy switch
+        }
+        catch (DO.DalDoesNotExistException ex)
         {
-            BO.VolunteerSortField.Name => volunteerList.OrderBy(v => v.FullName),
-
-            BO.VolunteerSortField.TotalHandledCalls => volunteerList.OrderByDescending(v => v.TotalHandledCalls),
-            BO.VolunteerSortField.TotalCanceledCalls => volunteerList.OrderByDescending(v => v.TotalCanceledCalls),
-            BO.VolunteerSortField.TotalExpiredCalls => volunteerList.OrderByDescending(v => v.TotalExpiredCalls),
-            //BO.VolunteerSortField.SumOfCalls => volunteerList.OrderBy(v => v.TotalHandledCalls),
-            BO.VolunteerSortField.SumOfCancellation => volunteerList.OrderBy(v => v.TotalCanceledCalls),
-            BO.VolunteerSortField.SumOfExpiredCalls => volunteerList.OrderBy(v => v.TotalExpiredCalls),
-            _ => volunteerList.OrderBy(v => v.Id) // Default: Sort by volunteer ID
-        };
-    }
-    catch (DO.DalDoesNotExistException ex)
-    {
-        // Catch data access exceptions and rethrow as business logic exceptions
-        throw new BO.BlGeneralDatabaseException("Error accessing data.", ex);
-    }
+            throw new BO.BlGeneralDatabaseException("Error accessing data.", ex);
+        }
         catch (Exception ex)
         {
-            // Handle all other unexpected exceptions
-            throw new BO.BlGeneralDatabaseException("An unexpected error occurred while geting Volunteers.", ex);
+            throw new BO.BlGeneralDatabaseException("An unexpected error occurred while getting volunteers.", ex);
         }
     }
+
 
 
     /// <summary>
@@ -258,6 +272,12 @@ internal class VolunteerImplementation : IVolunteer
         try
         {
             DO.Volunteer requester = _dal.Volunteer.Read(requesterId) ?? throw new BO.BlDoesNotExistException($"Volunteer with ID={requesterId} does not  exists and can not update other Volunteer");
+            DO.Volunteer originalVolunteer = _dal.Volunteer.Read(VolunteerForUpdate.Id)!;
+            if (VolunteerForUpdate.Password == "")
+            {
+                VolunteerForUpdate.Password = originalVolunteer.Password!;
+            }
+           
             // Ensure permissions are correct
             VolunteerManager.ValidatePermissions(requester, VolunteerForUpdate);
 
@@ -267,7 +287,6 @@ internal class VolunteerImplementation : IVolunteer
             // Validate logical rules for the volunteer
             (VolunteerForUpdate.Latitude, VolunteerForUpdate.Longitude) = VolunteerManager.logicalChecking(VolunteerForUpdate);
 
-            DO.Volunteer originalVolunteer = _dal.Volunteer.Read(VolunteerForUpdate.Id)!;
             var changedFields = VolunteerManager.GetChangedFields(originalVolunteer, VolunteerForUpdate);
             VolunteerManager.CanUpdateFields(requester.role, changedFields, VolunteerForUpdate);
 
@@ -277,6 +296,11 @@ internal class VolunteerImplementation : IVolunteer
             _dal.Volunteer.Update(doVolunteer); // Attempt to update the data layer
             VolunteerManager.Observers.NotifyListUpdated(); //stage 5
             VolunteerManager.Observers.NotifyItemUpdated(doVolunteer.Id); //stage 5
+
+        }
+        catch (BO.BlUpdatingException )
+        {
+            throw ;
 
         }
         catch (DO.DalDoesNotExistException ex)

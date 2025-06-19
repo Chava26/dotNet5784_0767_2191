@@ -1,4 +1,4 @@
-﻿namespace Dal;
+namespace Dal;
 using DalApi;
 using DO;
 
@@ -44,8 +44,11 @@ internal class AssignmentImplementation : IAssignment
     /// <returns>An IEnumerable collection of calls matching the filter criteria.</returns>
     public IEnumerable<Assignment> ReadAll(Func<Assignment, bool>? filter = null)
     {
-        return XMLTools.LoadListFromXMLSerializer<Assignment>(Config.s_assignments_xml);
+        List<Assignment> assignments = XMLTools.LoadListFromXMLSerializer<Assignment>(Config.s_assignments_xml);
+        return filter == null ? assignments : assignments.Where(filter); ;
     }
+   
+
     /// <summary>
     /// Updates an existing assignment in the XML data source.
     /// If the assignment does not exist, throws a DalDoesNotExistException.

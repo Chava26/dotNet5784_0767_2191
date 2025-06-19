@@ -32,9 +32,9 @@ public static class Initialization
 };
 
         string[] phones = {
-    "050-321-4571", "052-897-6524", "054-123-8745", "053-549-1235", "055-789-6521",
-    "050-987-1234", "054-112-3345", "053-785-9513", "052-312-6578", "055-654-9872",
-    "053-789-2134", "050-125-6789", "052-456-7890", "054-654-3210", "055-123-7894"
+    "0503214571", "0528976524", "0541238745", "0535491235", "0557896521",
+    "0509871234", "0541123345", "0537859513", "0523126578", "0556549872",
+    "0537892134", "0501256789", "0524567890", "0546543210", "0551237894"
 };
         //I used GPT to create this array
         string[] addresses = {
@@ -44,24 +44,22 @@ public static class Initialization
 };
         //I used GPT to create this array
         string[] passwords = {
-    "Sari45G92h","Pnina87Z56j", "Shira32X19b", "Chaya54L72k", "Yosi18M91q", "Beni39P65a",
-    "Tamar75V21n", "Eli26W83f", "Moshe90R47z", "Chana63S29m", "Ari42D78c", "Chaim56H14p", "Shani81J67y",
-   "Yonatan97K50x", "David34Q85v"
+    "Sari45G92h@","Pnina87Z56j&", "Shira32X19b@", "Chaya@54L72k", "Yosi@18M91q", "Beni@39P65a",
+    "Tamar75V21n#", "Eli26W83f!", "Moshe@90R47z", "Chana@63S29m", "Ari@42D78c", "Chaim@56H14p", "Shani@81J67y",
+   "Yonatan97K50x%", "David34Q85v@"
 };
         //I used GPT to create this array
-     (double Latitude, double Longitude)[] coordinates = {
+        (double Latitude, double Longitude)[] coordinates = {
          (31.7683, 35.2137),(32.0853, 34.7818), (32.7940, 34.9896), (31.2518, 34.7913), (31.8044, 34.6553),
          (32.3215, 34.8532), (31.9706, 34.7925), (32.0840, 34.8878), (32.0158, 34.7874),  (32.0809, 34.8333),
           (31.8948, 34.8093), (32.0236, 34.7502), (32.1663, 34.8436), (32.4340, 34.9196),(29.5581, 34.9482)
      };
         for (int i = 0; i < 15; i++) // Loop to create 15 volunteers
         {
-            int id;
-            do
-                id = s_rand.Next(100000000, 999999999); // Generate a random unique ID
-            while (s_dal!.Volunteer.Read(id) != null); // Ensure the ID is unique
-           // Function to encrypt password
-            string EncryptPassword(string password)
+
+             int id = GenerateValidIsraeliId(s_rand); // Generate a random unique ID
+              
+            string EncryptPassword(string password)   // Function to encrypt password
             {
                 using (var sha256 = System.Security.Cryptography.SHA256.Create())
                 {
@@ -83,6 +81,26 @@ public static class Initialization
             // Add the volunteer to the database
             s_dal!.Volunteer.Create(new Volunteer(id, name, email, phone, Role.volunteer, true, MaximumDistance, password, addresses[i], Longitude, Latitude));
         }
+    }
+    private static int GenerateValidIsraeliId(Random rand)
+    {
+        int idWithoutCheckDigit = rand.Next(10000000, 99999999);
+        int checkDigit = CalculateIsraeliIdCheckDigit(idWithoutCheckDigit);
+        int finalId = unchecked(idWithoutCheckDigit * 10 + checkDigit);
+
+        return finalId >= 0 ? finalId : -finalId;
+    }
+
+    private static int CalculateIsraeliIdCheckDigit(int idWithoutCheckDigit)
+    {
+        int sum = 0;
+        for (int i = 0; i < 8; i++)
+        {
+            int digit = (idWithoutCheckDigit / (int)Math.Pow(10, 7 - i)) % 10;
+            int weighted = digit * (i % 2 == 0 ? 1 : 2);
+            sum += (weighted > 9) ? weighted - 9 : weighted;
+        }
+        return (10 - (sum % 10)) % 10;
     }
 
     // Function to create emergency call data
@@ -160,9 +178,9 @@ public static class Initialization
     // Function to create assignments linking volunteers to calls
     private static void createAssignments()
     {
-        IEnumerable<Volunteer>? volunteers = s_dal!.Volunteer.ReadAll(); // Retrieve all volunteers
+        List<Volunteer>? volunteers = s_dal!.Volunteer.ReadAll().ToList(); ;
         IEnumerable<Call>? calls = s_dal!.Call.ReadAll(); // Retrieve all calls
-
+       
         for (int i = 0; i < 50; i++) // Loop to create 50 assignments
         {
             DateTime minTime = calls.ElementAt(i).OpenTime; // Call open time
@@ -172,13 +190,22 @@ public static class Initialization
             // Generate a random time within the range
             int validDifference = (int)Math.Max(difference.TotalMinutes, 0);
             DateTime randomTime = minTime.AddMinutes(s_rand.Next(validDifference));
-
-            // Create the assignment
-            s_dal!.Assignment.Create(new Assignment(calls.ElementAt(s_rand.Next(calls.Count() - 15)).Id, volunteers.ElementAt(s_rand.Next(volunteers.Count())).Id, randomTime , (EndOfTreatment)
-                s_rand.Next(Enum.GetValues(typeof(EndOfTreatment)).Length - 1), randomTime.AddHours(2)));
+            //אני רוצה בשביל ההמשך שחלק עדין לא יקבלו זמן סיום
+            if (i < 25)
+            {
+                //calls.ElementAt(s_rand.Next(calls.Count() - 15)).Id;
+                // Create the assignment
+                s_dal!.Assignment.Create(new Assignment(calls.ElementAt(i).Id, volunteers[s_rand.Next(volunteers.Count)].Id, randomTime, (EndOfTreatment)
+                    s_rand.Next(Enum.GetValues(typeof(EndOfTreatment)).Length - 1), randomTime.AddHours(2)));
+            }
+            else{
+                // Create the assignment
+                s_dal!.Assignment.Create(new Assignment(calls.ElementAt(i).Id, volunteers[s_rand.Next(volunteers.Count)].Id, randomTime, (EndOfTreatment)
+                    s_rand.Next(Enum.GetValues(typeof(EndOfTreatment)).Length - 1)));
+            }
         }
-    }
-
+     }
+    
     // Main function to start the initialization process
     public static void Do()
     {

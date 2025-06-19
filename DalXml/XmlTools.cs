@@ -28,6 +28,8 @@ static class XMLTools
     public static void SaveListToXMLSerializer<T>(List<T> list, string xmlFileName) where T : class
     {
         string xmlFilePath = s_xmlDir + xmlFileName;
+        Console.WriteLine($"Saving XML to: {xmlFilePath}"); // הודעת דיבוג
+
 
         try
         {
@@ -42,6 +44,7 @@ static class XMLTools
     public static List<T> LoadListFromXMLSerializer<T>(string xmlFileName) where T : class
     {
         string xmlFilePath = s_xmlDir + xmlFileName;
+        Console.WriteLine($" XML to: {xmlFilePath}"); // הודעת דיבוג
 
         try
         {
@@ -76,6 +79,7 @@ static class XMLTools
     public static XElement LoadListFromXMLElement(string xmlFileName)
     {
         string xmlFilePath = s_xmlDir + xmlFileName;
+        Console.WriteLine($"Saving XML to: {xmlFilePath}"); // הודעת דיבוג
 
         try
         {
@@ -83,6 +87,8 @@ static class XMLTools
                 return XElement.Load(xmlFilePath);
             XElement rootElem = new(xmlFileName);
             rootElem.Save(xmlFilePath);
+            Console.WriteLine($"Saving XML : {rootElem}"); // הודעת דיבוג
+
             return rootElem;
         }
         catch (Exception ex)

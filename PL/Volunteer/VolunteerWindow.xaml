@@ -7,8 +7,7 @@
         xmlns:conv="clr-namespace:PL.Converters"
         mc:Ignorable="d"
         Title="VolunteerWindow" Height="450" Width="800"
-         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:behaviors="clr-namespace:PL.Behaviors;assembly=PL">
+         xmlns:i="http://schemas.microsoft.com/xaml/behaviors">
 
     <Window.Resources>
 
@@ -104,6 +103,10 @@
         <ComboBox Grid.Row="8" Grid.Column="1" Style="{StaticResource ComboBoxStyle}"
                   ItemsSource="{Binding DistanceTypes }" SelectedItem="{Binding Volunteer.DistanceType, Mode=TwoWay}"/>
 
+
+        <!-- Password -->
+        <Label Content="Password:" Grid.Row="9" Grid.Column="0" Style="{StaticResource LabelStyle}" Visibility="{Binding ButtonText}"/>
+        <PasswordBox x:Name="PasswordBox" Grid.Row="9" Grid.Column="1" PasswordChanged="PasswordBox_PasswordChanged" />
         <!-- Password -->
         <!--<PasswordBox Grid.Row="9" Grid.Column="1">
             <i:Interaction.Behaviors>

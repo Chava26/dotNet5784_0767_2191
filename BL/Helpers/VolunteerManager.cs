@@ -1,4 +1,4 @@
-﻿using BO;
+using BO;
 using DalApi;
 using DO;
 using Newtonsoft.Json.Linq;
@@ -71,8 +71,7 @@ namespace Helpers
         /// <exception cref="ArgumentException">Thrown when any input format is invalid.</exception>
         internal static void ValidateInputFormat(BO.Volunteer boVolunteer)
         {
-           
-
+         
             if (boVolunteer == null)
                 throw new BO.BlDoesNotExistException("Volunteer object cannot be null.");
 
@@ -90,6 +89,7 @@ namespace Helpers
 
             if (boVolunteer.Password.Length < 6)
                 throw new BO.BlInvalidFormatException("Password is too short");
+            
         }
         internal static bool IsValidId(int id)
         {

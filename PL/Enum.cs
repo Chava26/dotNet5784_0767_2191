@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +13,12 @@ internal class VolunteerSortFieldCollection : IEnumerable
         (System.Enum.GetValues(typeof(BO.VolunteerSortField)) as IEnumerable<BO.VolunteerSortField>)!;
     public IEnumerator GetEnumerator() => s_enums.GetEnumerator();
 }
-
+internal class CallTypeCollection : IEnumerable
+{
+    static readonly IEnumerable<BO.CallType> s_enums =
+        (System.Enum.GetValues(typeof(BO.CallType)) as IEnumerable<BO.CallType>)!;
+    public IEnumerator GetEnumerator() => s_enums.GetEnumerator();
+}
 internal class CallInListFieldsCollection : IEnumerable
 {
     static readonly IEnumerable<BO.CallField> s_enums =

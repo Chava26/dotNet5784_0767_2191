@@ -1,4 +1,4 @@
-﻿using BlImplementation;
+using BlImplementation;
 using BO;
 using DalApi;
 using System.Threading;
@@ -64,7 +64,7 @@ ClockUpdatedObservers?.Invoke(); //prepared for stage 5
         //lock (BlMutex) //stage 7
         {
             DalTest.Initialization.Do();
-            AdminManager.UpdateClock(AdminManager.Now); // stage 5 - needed for update the PL
+            UpdateClock(Now); // stage 5 - needed for update the PL
             AdminManager.MaxRange = AdminManager.MaxRange; // stage 5 - needed for update the PL
         }
     }

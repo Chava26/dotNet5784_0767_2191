@@ -1,4 +1,4 @@
-﻿
+
 namespace BlImplementation;
 
 using BO;
@@ -205,21 +205,37 @@ internal class CallImplementation : BlApi.ICall
 
         // Step 3: Calculate the status using the helper method
         CallStatus status = CallManager.CalculateCallStatus(call);
+        try { 
         // Step 4: Check if the call can be deleted
         if (status != CallStatus.Open)
         {
-            throw new BO.BlDeletionException("The call cannot be deleted because it is not in an open state.");
+            throw new BO.InvalidOperationException("The call cannot be deleted because it is not in an open state.");
         }
 
         if (latestAssignment is not null)
         {
-            throw new BO.BlDeletionException("The call cannot be deleted because it has been assigned to a volunteer.");
+            throw new BO.InvalidOperationException("The call cannot be deleted because it has been assigned to a volunteer.");
         }
 
         // Step 5: Attempt to delete the call
         _dal.Call.Delete(callId); // Call the data layer's Delete method
         CallManager.Observers.NotifyListUpdated(); //stage 5
-
+        }
+        catch (InvalidOperationException ex)
+        {
+            // Handle logical business errors, such as tasks assigned to the volunteer
+            throw new BO.BlDeletionException($"Unable to delete Call with ID {callId} :", ex);
+        }
+        catch (DO.DalDoesNotExistException ex)
+        {
+            // Handle the case where the volunteer does not exist in the database
+            throw new BO.BlDeletionException($"Error deleting call with ID {callId}. call not found.", ex);
+        }
+        catch (Exception ex)
+        {
+            // Handle all other unexpected exceptions
+            throw new BO.BlGeneralDatabaseException("An unexpected error occurred while deleting the volunteer.", ex);
+        }
     }
 
 

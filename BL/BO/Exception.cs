@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,9 +10,15 @@ public class AuthenticationException : Exception
 {
     public AuthenticationException(string message) : base(message) { }
 }
+public class InvalidOperationException : Exception
+{
+    public InvalidOperationException(string message) : base(message) { }
+}
 public class BlGeneralDatabaseException : Exception
 {
-    public BlGeneralDatabaseException(string? message, Exception? innerException) : base(message) { }
+    public BlGeneralDatabaseException(string? message) : base(message) { }
+    public BlGeneralDatabaseException(string? message, Exception? innerException)
+     : base(message, innerException) { }
 }
 public class BlAlreadyExistsException : Exception
     {
@@ -24,13 +30,6 @@ public class BlAlreadyExistsException : Exception
 
 
     }
-    public class VolunteerDeletionException : Exception
-    {
-        public VolunteerDeletionException(string? message, Exception ex) : base(message) { }
-
-
-    }
- 
 
 public class BlDoesNotExistException : Exception
 {
@@ -38,7 +37,17 @@ public class BlDoesNotExistException : Exception
 }
 public class BlDeletionException : Exception
 {
-    public BlDeletionException(string? message) : base(message) { }
+    public BlDeletionException(string? message, Exception ex) : base(message,ex) { }
+}
+[Serializable]
+public class BlUpdatingException : Exception
+{
+    public BlUpdatingException() { }
+
+    public BlUpdatingException(string? message) : base(message) { }
+
+    public BlUpdatingException(string? message, Exception? innerException)
+        : base(message, innerException) { }
 }
 
 public class BlUnauthorizedAccessException : Exception

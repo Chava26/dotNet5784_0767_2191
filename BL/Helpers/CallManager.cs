@@ -1,4 +1,4 @@
-﻿using BlApi;
+using BlApi;
 using BO;
 using DalApi;
 using DO;
@@ -120,7 +120,7 @@ internal class CallManager
     {
         if (boCall.MaxEndTime.HasValue && boCall.MaxEndTime.Value <= boCall.OpenTime)
         {
-            throw new InvalidOperationException("The MaxEndTime must be greater than the OpenTime.");
+            throw new BO.BlInvalidOperationException("The MaxEndTime must be greater than the OpenTime.");
         }
         // Validate that the open time is not in the future
         if (boCall.OpenTime > DateTime.Now)

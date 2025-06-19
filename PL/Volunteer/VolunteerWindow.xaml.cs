@@ -4,19 +4,33 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace PL.Volunteer;
 
 public partial class VolunteerWindow : Window
 {
+    /// <summary>
+    /// Access to the business logic layer.
+    /// </summary>
     private readonly IBl _bl = Factory.Get();
 
+    /// <summary>
+    /// All available volunteer roles.
+    /// </summary>
     public IEnumerable<Role> Roles { get; set; }
+
+    /// <summary>
+    /// All available distance measurement types.
+    /// </summary>
     public IEnumerable<DistanceType> DistanceTypes { get; set; }
+
     private readonly bool _isUpdate;
     private readonly int _volunteerId;
 
-
+    /// <summary>
+    /// The volunteer object being created or edited.
+    /// </summary>
     public BO.Volunteer? Volunteer
     {
         get => (BO.Volunteer?)GetValue(VolunteerProperty);
@@ -26,6 +40,9 @@ public partial class VolunteerWindow : Window
     public static readonly DependencyProperty VolunteerProperty =
         DependencyProperty.Register(nameof(Volunteer), typeof(BO.Volunteer), typeof(VolunteerWindow), new PropertyMetadata(null));
 
+    /// <summary>
+    /// Text displayed on the Add/Update button.
+    /// </summary>
     public string ButtonText
     {
         get => (string)GetValue(ActionTextProperty);
@@ -35,6 +52,9 @@ public partial class VolunteerWindow : Window
     public static readonly DependencyProperty ActionTextProperty =
         DependencyProperty.Register(nameof(ButtonText), typeof(string), typeof(VolunteerWindow), new PropertyMetadata("Add"));
 
+    /// <summary>
+    /// The password input by the user (bound to password box).
+    /// </summary>
     public string Password
     {
         get => (string)GetValue(PasswordProperty);
@@ -42,9 +62,26 @@ public partial class VolunteerWindow : Window
     }
 
     public static readonly DependencyProperty PasswordProperty =
-        DependencyProperty.Register(nameof(Password), typeof(string), typeof(VolunteerWindow), new PropertyMetadata(string.Empty));
+        DependencyProperty.Register(
+            nameof(Password),
+            typeof(string),
+            typeof(VolunteerWindow),
+            new PropertyMetadata(string.Empty));
 
-    public VolunteerWindow(bool Update = false,int id=0)
+    /// <summary>
+    /// Updates the Password property when the password box is changed.
+    /// </summary>
+    private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+    {
+        var passwordBox = sender as PasswordBox;
+        if (passwordBox != null)
+            Password = passwordBox.Password;
+    }
+
+    /// <summary>
+    /// Constructor for creating or updating a volunteer.
+    /// </summary>
+    public VolunteerWindow(bool Update = false, int id = 0)
     {
         Roles = Enum.GetValues(typeof(BO.Role)).Cast<Role>();
         DistanceTypes = Enum.GetValues(typeof(BO.DistanceType)).Cast<DistanceType>();
@@ -53,17 +90,16 @@ public partial class VolunteerWindow : Window
         Loaded += Window_Loaded;
         Closed += Window_Closed;
         _isUpdate = Update;
-
-        _volunteerId = id; 
-
+        _volunteerId = id;
         ButtonText = Update ? "Update" : "Add";
         DataContext = this;
-
     }
 
+    /// <summary>
+    /// Loads volunteer details from the business layer for update.
+    /// </summary>
     private BO.Volunteer? LoadVolunteer(int id)
     {
-        
         var volunteer = _bl.Volunteer.GetVolunteerDetails(id);
         if (volunteer != null)
             return volunteer;
@@ -73,6 +109,9 @@ public partial class VolunteerWindow : Window
         return null;
     }
 
+    /// <summary>
+    /// Creates a new blank volunteer object.
+    /// </summary>
     private static BO.Volunteer CreateNewVolunteer() =>
         new()
         {
@@ -89,6 +128,9 @@ public partial class VolunteerWindow : Window
             role = Role.Volunteer
         };
 
+    /// <summary>
+    /// Loads volunteer data on window load depending on mode (add/update).
+    /// </summary>
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
         if (_isUpdate)
@@ -103,12 +145,18 @@ public partial class VolunteerWindow : Window
         }
     }
 
+    /// <summary>
+    /// Unsubscribes from data updates on window close.
+    /// </summary>
     private void Window_Closed(object? sender, EventArgs e)
     {
         if (Volunteer != null && _isUpdate)
-            _bl.Volunteer.RemoveObserver(Volunteer!.Id, RefreshVolunteer);
+            _bl.Volunteer.RemoveObserver(Volunteer.Id, RefreshVolunteer);
     }
 
+    /// <summary>
+    /// Handles add or update click, validating and saving volunteer data.
+    /// </summary>
     private void AddOrUpdate_Click(object sender, RoutedEventArgs e)
     {
         if (Volunteer == null) return;
@@ -117,7 +165,7 @@ public partial class VolunteerWindow : Window
         {
             Volunteer.Password = Password;
 
-            if (_isUpdate ==false)
+            if (_isUpdate == false)
             {
                 _bl.Volunteer.AddVolunteer(Volunteer);
                 ShowMessageAndClose("Volunteer added successfully.");
@@ -130,17 +178,29 @@ public partial class VolunteerWindow : Window
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Error: {ex.Message}");
+            string fullMessage = $"Error: {ex.Message}";
+            if (ex.InnerException != null)
+            {
+                fullMessage += $"\nInner exception: {ex.InnerException.Message}";
+            }
+            MessageBox.Show(fullMessage);
         }
     }
 
+    /// <summary>
+    /// Displays a message and closes the window.
+    /// </summary>
     private void ShowMessageAndClose(string message)
     {
         MessageBox.Show(message);
         Password = string.Empty;
+        PasswordBox.Clear();
         Close();
     }
 
+    /// <summary>
+    /// Reloads the volunteer details from the business logic layer.
+    /// </summary>
     private void RefreshVolunteer()
     {
         if (Volunteer == null) return;
@@ -152,7 +212,10 @@ public partial class VolunteerWindow : Window
         DataContext = this;
     }
 
-    private void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+    /// <summary>
+    /// Handles selection change in combo box (currently unused).
+    /// </summary>
+    private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
 
     }
