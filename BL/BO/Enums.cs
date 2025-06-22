@@ -8,8 +8,9 @@ namespace BO;
 /// </summary>
 public enum Role
 {
-    Manager,
-    Volunteer
+    Volunteer,
+    Manager
+
 }
 
 /// <summary>
@@ -126,7 +127,7 @@ public enum VolunteerSortField
 /// </summary>
 public enum CallField
 {
-   
+    None,
     CallId,
     CallType,
     OpenTime,

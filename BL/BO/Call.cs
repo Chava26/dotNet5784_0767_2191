@@ -1,4 +1,4 @@
-﻿using Helpers;
+using Helpers;
 using System;
 using System.Collections.Generic;
 
@@ -40,13 +40,13 @@ namespace BO;
         /// The latitude of the call, which is used to calculate distances between addresses.
         /// The value is updated when the address is updated.
         /// </summary>
-        public double Latitude { get; set; }
+        public double? Latitude { get; set; }
 
         /// <summary>
         /// The longitude of the call, which is used to calculate distances between addresses.
         /// The value is updated when the address is updated.
         /// </summary>
-        public double Longitude { get; set; }
+        public double? Longitude { get; set; }
 
         /// <summary>
         /// The time when the call was opened.

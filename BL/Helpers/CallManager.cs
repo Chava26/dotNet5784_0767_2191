@@ -143,7 +143,7 @@ internal class CallManager
         foreach (var item in volunteer)
         {
 
-            if (item.MaximumDistance >= Tools.CalculateDistance((double)item.Latitude!, (double)item.Longitude!, call.Latitude, call.Longitude))
+            if (item.MaximumDistance >= Tools.CalculateDistance((double)item.Latitude!, (double)item.Longitude!, (double)call.Latitude!, (double)call.Longitude!))
             {
                 string subject = "Openning call";
                 string body = $@"
@@ -200,13 +200,14 @@ internal class CallManager
     }
     internal static DO.Call CreateDoCall(BO.Call call)
     {
+       
         return new DO.Call
         {
             MyCallType = (DO.CallType)call.CallType,
             Description = call.Description,
             Address = call.FullAddress,
-            Latitude = call.Latitude,
-            Longitude = call.Longitude,
+            Latitude = (double)call.Latitude!,
+            Longitude = (double)call.Longitude!,
             OpenTime = call.OpenTime,
             MaxFinishTime = call.MaxEndTime
         };
@@ -274,7 +275,32 @@ internal class CallManager
         });
     }
 
+    // פונקציות עזר לסינון ומיון
+    internal static IEnumerable<BO.CallInList> ApplyFilter(IEnumerable<BO.CallInList> callList, BO.CallField field, object value)
+    {
+        return field switch
+        {
+            BO.CallField.CallType => callList.Where(c => c.CallType.Equals(value)),
+            BO.CallField.Status => callList.Where(c => c.Status.Equals(value)),
+            BO.CallField.OpenTime => callList.Where(c => c.OpenTime.Equals(value)),
+            BO.CallField.AssignmentsCount => callList.Where(c => c.AssignmentsCount.Equals(value)),
+            BO.CallField.CallId => callList.Where(c => c.CallId.Equals(value)),
+            _ => callList
+        };
+    }
 
+    internal static IEnumerable<BO.CallInList> ApplySort(IEnumerable<BO.CallInList> callList, BO.CallField field)
+    {
+        return field switch
+        {
+            BO.CallField.CallType => callList.OrderBy(c => c.CallType),
+            BO.CallField.Status => callList.OrderBy(c => c.Status),
+            BO.CallField.OpenTime => callList.OrderBy(c => c.OpenTime),
+            BO.CallField.AssignmentsCount => callList.OrderBy(c => c.AssignmentsCount),
+            BO.CallField.CallId => callList.OrderBy(c => c.CallId),
+            _ => callList.OrderBy(c => c.CallId)
+        };
+    }
 }
 
 

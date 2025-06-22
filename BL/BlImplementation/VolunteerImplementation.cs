@@ -240,8 +240,8 @@ internal class VolunteerImplementation : IVolunteer
             // Fetch the user from the data layer
             IEnumerable<DO.Volunteer> volunteers = _dal.Volunteer.ReadAll(v => v.Name == username);
 
-            DO.Volunteer? matchingVolunteer = volunteers.FirstOrDefault(v => VolunteerManager.VerifyPassword(password, v.Password!)) ?? throw new BO.BlDoesNotExistException("Incorrect username or password."); 
-
+            DO.Volunteer? matchingVolunteer = volunteers.FirstOrDefault(v => VolunteerManager.VerifyPassword(password, v.Password!)) ?? throw new BO.BlDoesNotExistException("Incorrect username or password.");
+            BO.Role role = (BO.Role)matchingVolunteer.role;
             return (BO.Role)matchingVolunteer.role;
         }
         catch (BO.BlDoesNotExistException ex)

@@ -2,7 +2,9 @@
 namespace BlImplementation;
 
 using BO;
+using DalApi;
 using DO;
+using global::BO;
 using Helpers;
 using System.Collections.Generic;
 using System.Data;
@@ -286,6 +288,81 @@ internal class CallImplementation : BlApi.ICall
     /// <param name="sortField">The enum field of <see cref="BO.CallInList"/> to sort by. Nullable.</param>
     /// <returns>A filtered and sorted collection of <see cref="BO.CallInList"/>.</returns>
 
+
+
+    //// פונקציה נפרדת לטיפול בקיבוץ
+    //private void SetupGrouping()
+    //{
+    //    var lcv = new ListCollectionView(CallList);
+    //    lcv.GroupDescriptions.Clear();
+
+    //    switch (SelectedGroupField)
+    //    {
+    //        case "CallType":
+    //            lcv.GroupDescriptions.Add(new PropertyGroupDescription("CallType"));
+    //            break;
+    //        case "CallStatus":
+    //            lcv.GroupDescriptions.Add(new PropertyGroupDescription("Status"));
+    //            break;
+    //            // אפשר להוסיף עוד קיבוצים כאן
+    //    }
+
+    //    CallListView = lcv;
+    //}
+
+
+
+    //public IEnumerable<BO.CallInList> GetCalls(
+    //    List<(BO.CallField field, object value)>? filters = null,
+    //    BO.CallField? sortField = null)
+    //{
+    //    try
+    //    {
+    //        IEnumerable<DO.Call> allCalls = _dal.Call.ReadAll().ToList();
+
+    //        // Map calls to BO.CallInList objects
+    //        IEnumerable<BO.CallInList> callList = allCalls.Select(call =>
+    //        {
+    //            var assignments = _dal.Assignment.ReadAll(a => a.CallId == call.Id);
+    //            var latestAssignment = assignments.OrderByDescending(a => a.EntryTime).FirstOrDefault();
+    //            CallStatus status = CallManager.CalculateCallStatus(call, latestAssignment);
+
+    //            return new BO.CallInList
+    //            {
+    //                Id = latestAssignment?.Id,
+    //                CallId = call.Id,
+    //                CallType = (BO.CallType)call.MyCallType,
+    //                OpenTime = call.OpenTime,
+    //                TimeRemaining = call.MaxFinishTime.HasValue ? call.MaxFinishTime.Value - DateTime.Now : null,
+    //                LastVolunteerName = latestAssignment != null
+    //                    ? _dal.Volunteer.Read(latestAssignment.VolunteerId)?.Name : null,
+    //                TreatmentCompletionTime = latestAssignment?.exitTime.HasValue == true
+    //                    ? latestAssignment.exitTime.Value - call.OpenTime
+    //                    : null,
+    //                Status = status,
+    //                AssignmentsCount = assignments.Count(a => a.CallId == call.Id)
+    //            };
+    //        });
+
+    //        // Apply multiple filters
+    //        if (filters != null && filters.Any())
+    //        {
+    //            foreach (var (field, value) in filters)
+    //            {
+    //                callList = CallManager.ApplyFilter(callList, field, value);
+    //            }
+    //        }
+
+    //        // Apply sorting
+    //        return sortField.HasValue
+    //            ? CallManager.ApplySort(callList, sortField.Value)
+    //            : callList.OrderBy(c => c.CallId);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        throw new BO.BlGeneralDatabaseException("Failed to retrieve calls list", ex);
+    //    }
+    //}
     public IEnumerable<BO.CallInList> GetCalls(BO.CallField? filterField, object? filterValue, BO.CallField? sortField)
     {
         try
@@ -297,9 +374,7 @@ internal class CallImplementation : BlApi.ICall
             {
                 var assignments = _dal.Assignment.ReadAll(a => a.CallId == call.Id);
                 var latestAssignment = assignments.OrderByDescending(a => a.EntryTime).FirstOrDefault();
-
                 CallStatus status = CallManager.CalculateCallStatus(call, latestAssignment);
-
                 return new BO.CallInList
                 {
                     Id = latestAssignment?.Id,
@@ -316,15 +391,12 @@ internal class CallImplementation : BlApi.ICall
                     AssignmentsCount = assignments.Count(a => a.CallId == call.Id)
                 };
             });
-
             // Apply filtering
             if (filterField != null && filterValue != null)
             {
                 callList = callList.Where(c => c.GetType().GetProperty(filterField.ToString()!)?.GetValue(c)?.Equals(filterValue) == true);
             }
-
             // Apply sorting
-
             return sortField.HasValue
                 ? callList.OrderBy(c => typeof(BO.CallInList).GetProperty(sortField.ToString())?.GetValue(c))
                 : callList.OrderBy(c => c.CallId);
@@ -334,6 +406,8 @@ internal class CallImplementation : BlApi.ICall
             throw new BO.BlGeneralDatabaseException("Failed to retrieve calls list", ex);
         }
     }
+
+
 
     public IEnumerable<BO.ClosedCallInList> GetClosedCallsByVolunteer(int volunteerId, BO.CallType? callType, BO.CallField? sortField)
     {
@@ -441,16 +515,16 @@ internal class CallImplementation : BlApi.ICall
             updatedCall.Latitude = latitude.Value;
             updatedCall.Longitude = longitude.Value;
 
-
-            // Convert BO.Call to DO.Call for data layer update
-            DO.Call callToUpdate = new DO.Call
+            //DO.Call callToUpdate = CallManager.CreateDoCall(updatedCall);
+           // Convert BO.Call to DO.Call for data layer update
+           DO.Call callToUpdate = new DO.Call
             {
                 Id = updatedCall.Id,
                 MyCallType = (DO.CallType)updatedCall.CallType,
                 Description = updatedCall.Description,
                 Address = updatedCall.FullAddress,
-                Latitude = updatedCall.Latitude,
-                Longitude = updatedCall.Longitude,
+                Latitude = (double)updatedCall.Latitude!,
+                Longitude = (double)updatedCall.Longitude!,
                 OpenTime = updatedCall.OpenTime,
                 MaxFinishTime = updatedCall.MaxEndTime
             };
