@@ -35,13 +35,6 @@ namespace PL
             set { _userId = value; OnPropertyChanged(); }
         }
 
-        private string _userName;
-        public string UserName
-        {
-            get => _userName;
-            set { _userName = value; OnPropertyChanged(); }
-        }
-
         private string _password;
         public string Password
         {
@@ -72,14 +65,10 @@ namespace PL
                     ErrorMessage = "User ID is required.";
                     return;
                 }
-                if (string.IsNullOrWhiteSpace(UserName))
-                {
-                    ErrorMessage = "User name is required.";
-                    return;
-                }
                 App.CurrentUserId = int.Parse(UserId);
+                var Volunteer = s_bl.Volunteer.GetVolunteerDetails(App.CurrentUserId);
 
-                var role = s_bl.Volunteer.Login(UserName, Password);
+                var role = s_bl.Volunteer.Login(Volunteer.FullName, Password);
 
                 Application.Current.Dispatcher.Invoke(() =>
                 {

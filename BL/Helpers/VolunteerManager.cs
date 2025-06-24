@@ -25,7 +25,7 @@ namespace Helpers
                (DO.Role)boVolunteer.role,
                 boVolunteer.IsActive,
                 boVolunteer.MaxDistanceForTask,
-               EncryptPassword(boVolunteer.Password),
+                boVolunteer.Password,
                 boVolunteer.Address,
                 boVolunteer.Longitude,
                 boVolunteer.Latitude
@@ -162,7 +162,7 @@ namespace Helpers
         /// </summary>
         /// <param name="password">The plain text password.</param>
         /// <returns>The hashed password.</returns>
-        private static string EncryptPassword(string password)
+        public static string EncryptPassword(string password)
         {
             using (var sha256 = System.Security.Cryptography.SHA256.Create())
             {

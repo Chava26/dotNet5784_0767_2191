@@ -40,7 +40,6 @@
             <!-- Volunteer Details -->
             <Label Grid.Row="0" Grid.Column="0" Content="id"/>
             <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Volunteer.Id, Mode=TwoWay}" IsReadOnly="True"/>
-           
 
             <Label Grid.Row="1" Grid.Column="0" Content="full name:"/>
             <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Volunteer.FullName, Mode=TwoWay}"/>
@@ -51,9 +50,6 @@
             <Label Grid.Row="3" Grid.Column="0" Content="email:"/>
             <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Volunteer.Email, Mode=TwoWay}"/>
 
-            <!--<Label Grid.Row="4" Grid.Column="0" Content="password:"/>
-            <PasswordBox Grid.Row="4" Grid.Column="1" x:Name="PasswordBox"/>-->
-
             <Label Grid.Row="5" Grid.Column="0" Content="address:"/>
             <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Volunteer.Address, Mode=TwoWay}"/>
 
@@ -63,7 +59,7 @@
                       SelectedItem="{Binding Volunteer.DistanceType, Mode=TwoWay}"/>
 
             <Label Grid.Row="7" Grid.Column="0" Content="max distance:"/>
-            <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding Volunteer.MaxDistance, Mode=TwoWay}"/>
+            <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding Volunteer.MaxDistanceForTask, Mode=TwoWay}"/>
 
             <Label Grid.Row="8" Grid.Column="0" Content="isActive:"/>
             <CheckBox Grid.Row="8" Grid.Column="1"
@@ -82,20 +78,21 @@
             <Label Grid.Row="12" Grid.Column="0" Content="TotalExpiredCalls:"/>
             <TextBox Grid.Row="12" Grid.Column="1" Text="{Binding Volunteer.TotalExpiredCalls}" IsReadOnly="True"/>
 
-
             <Label Content="Password:" Grid.Row="13" Grid.Column="0"/>
             <PasswordBox x:Name="PasswordBox" Grid.Row="13" Grid.Column="1" PasswordChanged="PasswordBox_PasswordChanged" />
+
             <!-- Call In Progress Section -->
             <GroupBox Grid.Row="14" Grid.Column="0" Grid.ColumnSpan="2" Header="Call In Progress" Margin="0,20,0,0"
                       Visibility="{Binding HasCallInProgress, Converter={StaticResource BoolToVisibilityConverter}}">
                 <StackPanel>
-                    <TextBlock Text="{Binding Volunteer.CallInProgress.Verbal_description}" FontWeight="Bold"/>
+                    <TextBlock Text="Description: " FontWeight="Bold"/>
+                    <TextBlock Text="{Binding Volunteer.callInProgress.Description}" FontWeight="Bold"/>
                     <TextBlock Text="addrees: " FontWeight="Bold" />
-                    <TextBlock Text="{Binding Volunteer.CallInProgress.FullAddress}" />
+                    <TextBlock Text="{Binding Volunteer.callInProgress.Address}" />
                     <TextBlock Text="Call status: " FontWeight="Bold"/>
-                    <TextBlock Text="{Binding Volunteer.CallInProgress.CallStatus}" />
+                    <TextBlock Text="{Binding Volunteer.callInProgress.Status}" />
                     <TextBlock Text="Call distance: " FontWeight="Bold"/>
-                    <TextBlock Text="{Binding Volunteer.CallInProgress.CallDistance, StringFormat={}{0:0.##}}"/>
+                    <TextBlock Text="{Binding Volunteer.callInProgress.DistanceFromVolunteer, StringFormat={}{0:0.##}}"/>
                     <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
                         <Button Content="Finish call" Margin="0,0,10,0"
                                 Click="btnFinishCall_Click"/>
@@ -113,13 +110,12 @@
             <!-- Buttons -->
             <Button Grid.Row="16" Grid.Column="0" Content="update" Height="40" Margin="0,20,10,0"
                     Click="btnUpdate_Click"/>
-            <Button Grid.Row="16" Grid.Column="1" Content="History call" Height="40" Margin="10,20,0,0"/>
-            <!--Click="btnHistory_Click"-->
+            <Button Grid.Row="16" Grid.Column="1" Content="History call" Height="40" Margin="10,20,0,0"
+                    Click="btnHistory_Click"/>
             <Button Grid.Row="17" Grid.Column="0" Grid.ColumnSpan="2" Content="Can Select call"
                     Height="40" Margin="0,20,0,0"
-                    
-                    IsEnabled="{Binding CanSelectCall}"/>
-            <!--Click="btnSelectCall_Click"-->
+                    IsEnabled="{Binding CanSelectCall}"
+                    Click="btnSelectCall_Click"/>
         </Grid>
     </ScrollViewer>
 </Window>

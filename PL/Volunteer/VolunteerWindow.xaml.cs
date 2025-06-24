@@ -172,7 +172,7 @@ public partial class VolunteerWindow : Window
             }
             else
             {
-                _bl.Volunteer.UpdateVolunteer(Volunteer.Id, Volunteer);
+                _bl.Volunteer.UpdateVolunteer(App.CurrentUserId, Volunteer);
                 ShowMessageAndClose("Volunteer updated successfully.");
             }
         }

@@ -40,7 +40,8 @@ internal class CallImplementation : BlApi.ICall
             call.Latitude = coordinates.Latitude.Value;
             call.Longitude = coordinates.Longitude.Value;
             DO.Call doCall = CallManager.CreateDoCall(call); // Map BO.Call to DO.Call
-            _dal.Call.Create(doCall);            // Attempt to add the call to the data layer
+            _dal.Call.Create(doCall);
+            // Attempt to add the call to the data layer
             CallManager.Observers.NotifyListUpdated(); //stage 5
 
             CallManager.SendEmailWhenCalOpened(call);
@@ -49,6 +50,14 @@ internal class CallImplementation : BlApi.ICall
         {
             // Handle specific exceptions from the data layer and rethrow if necessary
             throw new BO.BlAlreadyExistsException("Failed to add the call to the system.", ex);
+        }
+        catch (BlInvalidFormatException ex)
+        {
+            throw new BO.BlGeneralDatabaseException("An unexpected error occurred while add.", ex);
+        }
+        catch (BlInvalidOperationException ex)
+        {
+            throw new BO.BlGeneralDatabaseException("An unexpected error occurred while add.", ex);
         }
         catch (Exception ex)
         {
@@ -78,7 +87,9 @@ internal class CallImplementation : BlApi.ICall
                 exitTime: null,
                 TypeOfEndTime: null
             );
+
             _dal.Assignment.Create(newAssignment);
+            CallManager.Observers.NotifyListUpdated(); //stage 5  
         }
         catch (BO.BlInvalidOperationException ex)
         {
@@ -126,7 +137,10 @@ internal class CallImplementation : BlApi.ICall
             };
 
             _dal.Assignment.Update(assignment);
+
             CallManager.SendEmailToVolunteer(volunteer!, assignment);
+            CallManager.Observers.NotifyItemUpdated(assignment.Id);  //stage 5
+            CallManager.Observers.NotifyListUpdated(); //stage 5  
 
         }
         catch (KeyNotFoundException ex)
@@ -175,6 +189,8 @@ internal class CallImplementation : BlApi.ICall
             };
 
             _dal.Assignment.Update(updatedAssignment);
+            CallManager.Observers.NotifyItemUpdated(updatedAssignment.Id);  //stage 5
+            CallManager.Observers.NotifyListUpdated(); //stage 5  
         }
         catch (Exception ex)
         {
@@ -515,7 +531,6 @@ internal class CallImplementation : BlApi.ICall
             updatedCall.Latitude = latitude.Value;
             updatedCall.Longitude = longitude.Value;
 
-            //DO.Call callToUpdate = CallManager.CreateDoCall(updatedCall);
            // Convert BO.Call to DO.Call for data layer update
            DO.Call callToUpdate = new DO.Call
             {

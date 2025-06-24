@@ -25,6 +25,7 @@ internal class VolunteerImplementation : IVolunteer
                 boVolunteer.Longitude = longitude;
             }
             // Prepare DO.Volunteer object 
+            VolunteerManager.EncryptPassword(boVolunteer.Password);
             DO.Volunteer doVolunteer = VolunteerManager.CreateDoVolunteer(boVolunteer);
             _dal.Volunteer.Create(doVolunteer);
             VolunteerManager.Observers.NotifyListUpdated(); //stage 5

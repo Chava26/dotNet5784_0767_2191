@@ -26,42 +26,42 @@
         </Grid.ColumnDefinitions>
 
         <!-- Call Details -->
-        <Label Grid.Row="0" Grid.Column="0" Content="מזהה קריאה:"/>
+        <Label Grid.Row="0" Grid.Column="0" Content="Call id:"/>
         <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Call.Id}" IsReadOnly="True"/>
 
-        <Label Grid.Row="1" Grid.Column="0" Content="סוג קריאה:"/>
-        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding CallTypes}" SelectedItem="{Binding Call.CallType}" IsEnabled="{Binding IsCallTypeEditable}"/>
+        <Label Grid.Row="1" Grid.Column="0" Content="type :"/>
+        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding call.CallType}" SelectedItem="{Binding Call.CallType}" IsEnabled="{Binding IsCallTypeEditable}"/>
 
-        <Label Grid.Row="2" Grid.Column="0" Content="תיאור:"/>
-        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Call.Verbal_description}" IsReadOnly="{Binding IsDescriptionReadOnly}"/>
+        <Label Grid.Row="2" Grid.Column="0" Content="Description:"/>
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Call.Description}" IsReadOnly="{Binding IsDescriptionReadOnly}"/>
 
-        <Label Grid.Row="3" Grid.Column="0" Content="כתובת:"/>
+        <Label Grid.Row="3" Grid.Column="0" Content="address:"/>
         <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Call.FullAddress}" IsReadOnly="{Binding IsAddressReadOnly}"/>
 
-        <Label Grid.Row="4" Grid.Column="0" Content="סטטוס:"/>
-        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Call.CallStatus}" IsReadOnly="True"/>
+        <Label Grid.Row="4" Grid.Column="0" Content="status:"/>
+        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Call.Status}" IsReadOnly="True"/>
 
-        <Label Grid.Row="5" Grid.Column="0" Content="זמן פתיחה:"/>
-        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Call.Opening_time}" IsReadOnly="True"/>
+        <Label Grid.Row="5" Grid.Column="0" Content="opening time:"/>
+        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Call.OpenTime}" IsReadOnly="True"/>
 
-        <Label Grid.Row="6" Grid.Column="0" Content="זמן סיום מקסימלי:"/>
-        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Call.Max_finish_time}" IsReadOnly="{Binding IsMaxFinishTimeReadOnly}"/>
+        <Label Grid.Row="6" Grid.Column="0" Content="Max finish time:"/>
+        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Call.CallAssignments}" IsReadOnly="{Binding IsMaxFinishTimeReadOnly}"/>
 
         <!-- Assignments List -->
-        <Label Grid.Row="7" Grid.Column="0" Content="הקצאות:" VerticalAlignment="Top"/>
-        <ListView Grid.Row="7" Grid.Column="1" ItemsSource="{Binding Call.AssignmentsList}" Height="100">
+        <Label Grid.Row="7" Grid.Column="0" Content="Assignments list:" VerticalAlignment="Top"/>
+        <ListView Grid.Row="7" Grid.Column="1" ItemsSource="{Binding Call.CallAssignments}" Height="100">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="מתנדב" DisplayMemberBinding="{Binding VolunteerFullName}" Width="120"/>
-                    <GridViewColumn Header="התחלה" DisplayMemberBinding="{Binding Start_time}" Width="100"/>
-                    <GridViewColumn Header="סיום" DisplayMemberBinding="{Binding End_time}" Width="100"/>
-                    <GridViewColumn Header="סוג סיום" DisplayMemberBinding="{Binding EndType}" Width="100"/>
+                    <GridViewColumn Header="Volunteer FullName" DisplayMemberBinding="{Binding VolunteerFullName}" Width="120"/>
+                    <GridViewColumn Header="Start time" DisplayMemberBinding="{Binding Start_time}" Width="100"/>
+                    <GridViewColumn Header="End time" DisplayMemberBinding="{Binding End_time}" Width="100"/>
+                    <GridViewColumn Header="End Type" DisplayMemberBinding="{Binding EndType}" Width="100"/>
                 </GridView>
             </ListView.View>
         </ListView>
 
         <!-- Update Button -->
-        <Button Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" Content="עדכן" Height="40" Margin="0,20,0,0"
+        <Button Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" Content="update" Height="40" Margin="0,20,0,0"
                 Click="UpdateButton_Click" IsEnabled="{Binding IsUpdateEnabled}"/>
     </Grid>
 </Window>

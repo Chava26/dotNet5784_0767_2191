@@ -13,7 +13,7 @@ namespace PL.Converters
         {
             if (value is CallInList call)
             {
-                return (call.Status == BO.CallStatus.Open && call.AssignmentsCount == 0)
+                return ((call.Status == BO.CallStatus.Open|| call.Status == BO.CallStatus.OpenRisk) && call.AssignmentsCount == 0)
                     ? Visibility.Visible
                     : Visibility.Collapsed;
             }
@@ -31,12 +31,20 @@ namespace PL.Converters
         {
             if (value is CallInList call)
             {
-                return (call.Status == BO.CallStatus.InProgress && !string.IsNullOrEmpty(call.LastVolunteerName))
+                return ((call.Status == BO.CallStatus.InProgress|| call.Status == BO.CallStatus.InProgressRisk) && !string.IsNullOrEmpty(call.LastVolunteerName))
                     ? Visibility.Visible
                     : Visibility.Collapsed;
             }
             return Visibility.Collapsed;
         }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+    }
+    public class BooleanToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            => value is bool b && b ? Visibility.Visible : Visibility.Collapsed;
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => throw new NotImplementedException();

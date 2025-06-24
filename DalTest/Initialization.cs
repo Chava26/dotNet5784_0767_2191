@@ -1,6 +1,7 @@
 using DalApi; // Using the API for accessing the data layer (DAL)
 using DO; // Using the Data Objects representing the information
 using System.Data; // Provides support for database-related structures
+using System.Net.NetworkInformation;
 using System.Numerics;
 
 using System.Xml.Linq;
@@ -54,20 +55,21 @@ public static class Initialization
          (32.3215, 34.8532), (31.9706, 34.7925), (32.0840, 34.8878), (32.0158, 34.7874),  (32.0809, 34.8333),
           (31.8948, 34.8093), (32.0236, 34.7502), (32.1663, 34.8436), (32.4340, 34.9196),(29.5581, 34.9482)
      };
+        string EncryptPassword(string password)   // Function to encrypt password
+        {
+            using (var sha256 = System.Security.Cryptography.SHA256.Create())
+            {
+                var bytes = System.Text.Encoding.UTF8.GetBytes(password);
+                var hash = sha256.ComputeHash(bytes);
+                return Convert.ToBase64String(hash);
+            }
+        }
         for (int i = 0; i < 15; i++) // Loop to create 15 volunteers
         {
 
-             int id = GenerateValidIsraeliId(s_rand); // Generate a random unique ID
-              
-            string EncryptPassword(string password)   // Function to encrypt password
-            {
-                using (var sha256 = System.Security.Cryptography.SHA256.Create())
-                {
-                    var bytes = System.Text.Encoding.UTF8.GetBytes(password);
-                    var hash = sha256.ComputeHash(bytes);
-                    return Convert.ToBase64String(hash);
-                }
-            }
+            int id = GenerateValidIsraeliId(s_rand); // Generate a random unique ID
+
+           
 
             // Define volunteer data
             string name = names[i];
@@ -81,6 +83,10 @@ public static class Initialization
             // Add the volunteer to the database
             s_dal!.Volunteer.Create(new Volunteer(id, name, email, phone, Role.volunteer, true, MaximumDistance, password, addresses[i], Longitude, Latitude));
         }
+        string mangerPass = EncryptPassword("Bjnh123@@"); // Call the function;
+
+        s_dal!.Volunteer.Create(new Volunteer(326772191, "Nechama", "nechama191@gmail.com" , "0583200806", Role.Manager, true, 23, mangerPass, "Jerusalem, King George St.", 35.2137, 31.7683));
+
     }
     private static int GenerateValidIsraeliId(Random rand)
     {

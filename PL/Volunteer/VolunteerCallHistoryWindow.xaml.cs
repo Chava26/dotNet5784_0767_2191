@@ -13,10 +13,10 @@ namespace PL
     {
         private static readonly IBl s_bl = Factory.Get();
 
-        public VolunteerCallHistoryWindow(int volunteerId)
+        public VolunteerCallHistoryWindow()
         {
             InitializeComponent();
-            VolunteerId = volunteerId;
+            VolunteerId = App.CurrentUserId;
             DataContext = this;
             QueryClosedCalls();
         }

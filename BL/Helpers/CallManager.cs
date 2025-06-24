@@ -80,11 +80,9 @@ internal class CallManager
 
 
         // Validate that the address is a valid address with latitude and longitude
-        if (string.IsNullOrWhiteSpace(call.FullAddress) ||
-            !(call.Latitude >= -90 && call.Latitude <= 90 &&
-              call.Longitude >= -180 && call.Longitude <= 180))
+        if (string.IsNullOrWhiteSpace(call.FullAddress))
         {
-            throw new BlInvalidFormatException("The address must be valid with latitude and longitude.");
+            throw new BlInvalidFormatException("The address must be valid");
         }
 
         // Validate the call type is valid
