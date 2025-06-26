@@ -5,62 +5,471 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PL"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
-        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}">
-    <Grid>
+        Title="Emergency Road Service - Control Center" 
+        Height="800" Width="1400"
+        WindowStartupLocation="CenterScreen"
+        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent">
+
+    <Window.Resources>
+        <!-- Gradient Brushes -->
+        <LinearGradientBrush x:Key="MainGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#1a1a2e" Offset="0"/>
+            <GradientStop Color="#16213e" Offset="0.5"/>
+            <GradientStop Color="#0f3460" Offset="1"/>
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="HeaderGradient" StartPoint="0,0" EndPoint="1,0">
+            <GradientStop Color="#ff6b6b" Offset="0"/>
+            <GradientStop Color="#ee5a24" Offset="0.5"/>
+            <GradientStop Color="#e55039" Offset="1"/>
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="CardGradient" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#2c3e50" Offset="0"/>
+            <GradientStop Color="#34495e" Offset="1"/>
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="BlueCardGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#4834d4" Offset="0"/>
+            <GradientStop Color="#686de0" Offset="1"/>
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="PurpleCardGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#8854d0" Offset="0"/>
+            <GradientStop Color="#a55eea" Offset="1"/>
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="GreenCardGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#26de81" Offset="0"/>
+            <GradientStop Color="#20bf6b" Offset="1"/>
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="RedCardGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#fc5c65" Offset="0"/>
+            <GradientStop Color="#eb3b5a" Offset="1"/>
+        </LinearGradientBrush>
+
+        <!-- Styles -->
+        <Style x:Key="ModernCard" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource CardGradient}"/>
+            <Setter Property="CornerRadius" Value="15"/>
+            <Setter Property="Padding" Value="25"/>
+            <Setter Property="Margin" Value="15"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#000" BlurRadius="20" ShadowDepth="8" Opacity="0.3"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="GlassCard" TargetType="Border">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <SolidColorBrush Color="White" Opacity="0.1"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="BorderBrush">
+                <Setter.Value>
+                    <SolidColorBrush Color="White" Opacity="0.2"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="Padding" Value="30"/>
+            <Setter Property="Margin" Value="15"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#000" BlurRadius="25" ShadowDepth="10" Opacity="0.4"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ModernButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="20,12"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="BorderBrush" Value="White"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="25"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="White"/>
+                                <Setter Property="Foreground" Value="#1a1a2e"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#f0f0f0"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ActionCard" TargetType="Border">
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="Padding" Value="30"/>
+            <Setter Property="Margin" Value="20"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#000" BlurRadius="30" ShadowDepth="12" Opacity="0.5"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" 
+                                             To="1.05" Duration="0:0:0.2"/>
+                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" 
+                                             To="1.05" Duration="0:0:0.2"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" 
+                                             To="1" Duration="0:0:0.2"/>
+                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" 
+                                             To="1" Duration="0:0:0.2"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ModernTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="36"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#000" BlurRadius="5" ShadowDepth="2" Opacity="0.7"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SubTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="Foreground" Value="#ecf0f1"/>
+            <Setter Property="Opacity" Value="0.9"/>
+        </Style>
+
+        <Style x:Key="TimeDisplay" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="32"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#4834d4" BlurRadius="10" ShadowDepth="0" Opacity="0.8"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <!-- Main Border with rounded corners -->
+    <Border Background="{StaticResource MainGradient}" 
+            CornerRadius="20" 
+            BorderThickness="1" 
+            BorderBrush="#4834d4">
+
         <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="25*"/>
-                <ColumnDefinition Width="350*"/>
-                <ColumnDefinition Width="50*"/>
-                <ColumnDefinition Width="350*"/>
-                <ColumnDefinition Width="25*"/>
-            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="31*"/>
-                <RowDefinition Height="165*"/>
-                <RowDefinition Height="41*"/>
-                <RowDefinition Height="80*"/>
-                <RowDefinition Height="80*"/>
-                <RowDefinition Height="31*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Grid Grid.Column="3" Margin="0,0,0,31" Grid.RowSpan="3" Grid.ColumnSpan="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="100*"/>
-                    <RowDefinition Height="50*"/>
-                    <RowDefinition Height="50*"/>
-                    <RowDefinition Height="50*"/>
-                    <RowDefinition Height="50*"/>
-                    <RowDefinition Height="57*"/>
-                </Grid.RowDefinitions>
-            </Grid>
-            <Grid Grid.Column="3" Margin="0,31,0,0" Grid.RowSpan="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="100*"/>
-                    <RowDefinition Height="50*"/>
-                    <RowDefinition Height="50*"/>
-                    <RowDefinition Height="50*"/>
-                    <RowDefinition Height="50*"/>
-                    <RowDefinition Height="50*"/>
-                </Grid.RowDefinitions>
-                <Label HorizontalAlignment="Left" Margin="42,10,0,0" VerticalAlignment="Top" Height="auto" Background="#FFBDBFBD" Content="{Binding CurrentTime}" FontWeight="Bold" FontSize="20"/>
-                <Button Content="Add one minute" HorizontalAlignment="Left" Margin="30,0,0,4" Grid.Row="1" Click="btnAddOneMinute_Click"/>
-                <Button Content="Add one hour" HorizontalAlignment="Left" Margin="30,0,0,0" Grid.Row="2" VerticalAlignment="Top" Click="btnAddOneHour_Click"/>
-                <Button Content="Add one day" HorizontalAlignment="Left" Margin="30,0,0,0" Grid.Row="3" VerticalAlignment="Top"  Click="btnAddOneDay_Click"/>
-                <Button Content="Add one mounth" HorizontalAlignment="Left" Margin="30,0,0,0" Grid.Row="4" VerticalAlignment="Top" Click="btnAddOneMonth_Click"/>
-                <Button Content="Add one year " HorizontalAlignment="Left" Margin="30,0,0,0" Grid.Row="5" VerticalAlignment="Top" Click="btnAddOneYear_Click"/>
 
+            <!-- Custom Title Bar -->
+            <Border Grid.Row="0" 
+                    Background="{StaticResource HeaderGradient}" 
+                    CornerRadius="20,20,0,0" 
+                    Height="80" 
+                    MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                <Grid>
+                    <StackPanel Orientation="Horizontal" 
+                                HorizontalAlignment="Center" 
+                                VerticalAlignment="Center">
+                        <Ellipse Width="40" Height="40" 
+                                 Fill="White" 
+                                 Margin="0,0,15,0"/>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="EMERGENCY ROAD SERVICE" 
+                                       Style="{StaticResource ModernTitle}"/>
+                            <TextBlock Text="Advanced Control Center" 
+                                       Style="{StaticResource SubTitle}"/>
+                        </StackPanel>
+                    </StackPanel>
 
+                    <!-- Window Controls -->
+                    <StackPanel Orientation="Horizontal" 
+                                HorizontalAlignment="Right" 
+                                VerticalAlignment="Top" 
+                                Margin="0,10,20,0">
+                        <Button Content="-" 
+                                Width="30" Height="30" 
+                                Click="Minimize_Click"
+                                Style="{StaticResource ModernButton}"
+                                Margin="5,0"/>
+                        <Button Content="X" 
+                                Width="30" Height="30" 
+                                Click="Close_Click"
+                                Style="{StaticResource ModernButton}"
+                                Margin="5,0"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- System Status Bar -->
+            <Border Grid.Row="1" 
+                    Background="Transparent" 
+                    Padding="20,15">
+                <StackPanel Orientation="Horizontal" 
+                            HorizontalAlignment="Center">
+                    <Border Background="{StaticResource BlueCardGradient}" 
+                            CornerRadius="15" 
+                            Padding="20,10" 
+                            Margin="10,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="SYSTEM TIME" 
+                                       Foreground="White" 
+                                       FontWeight="Bold" 
+                                       VerticalAlignment="Center" 
+                                       Margin="0,0,15,0"/>
+                            <TextBlock Text="{Binding CurrentTime, StringFormat='{}{0:dd/MM/yyyy HH:mm:ss}'}" 
+                                       Style="{StaticResource TimeDisplay}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="{StaticResource GreenCardGradient}" 
+                            CornerRadius="15" 
+                            Padding="20,10" 
+                            Margin="10,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="STATUS" 
+                                       Foreground="White" 
+                                       FontWeight="Bold" 
+                                       VerticalAlignment="Center" 
+                                       Margin="0,0,15,0"/>
+                            <TextBlock Text="ONLINE" 
+                                       Foreground="White" 
+                                       FontSize="18" 
+                                       FontWeight="Bold" 
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- Main Content -->
+            <Grid Grid.Row="2" Margin="20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Left Column - Time Controls -->
+                <Border Grid.Column="0" Style="{StaticResource GlassCard}">
+                    <StackPanel>
+                        <TextBlock Text="TIME CONTROL" 
+                                   Foreground="White" 
+                                   FontSize="20" 
+                                   FontWeight="Bold" 
+                                   HorizontalAlignment="Center" 
+                                   Margin="0,0,0,25"/>
+
+                        <Button Content="+ 1 MINUTE" 
+                                Click="btnAddOneMinute_Click" 
+                                Style="{StaticResource ModernButton}" 
+                                Margin="0,5"/>
+                        <Button Content="+ 1 HOUR" 
+                                Click="btnAddOneHour_Click" 
+                                Style="{StaticResource ModernButton}" 
+                                Margin="0,5"/>
+                        <Button Content="+ 1 DAY" 
+                                Click="btnAddOneDay_Click" 
+                                Style="{StaticResource ModernButton}" 
+                                Margin="0,5"/>
+                        <Button Content="+ 1 MONTH" 
+                                Click="btnAddOneMonth_Click" 
+                                Style="{StaticResource ModernButton}" 
+                                Margin="0,5"/>
+                        <Button Content="+ 1 YEAR" 
+                                Click="btnAddOneYear_Click" 
+                                Style="{StaticResource ModernButton}" 
+                                Margin="0,5"/>
+
+                        <Separator Background="White" 
+                                   Opacity="0.3" 
+                                   Margin="0,20,0,20"/>
+
+                        <TextBlock Text="RISK CONFIG" 
+                                   Foreground="White" 
+                                   FontSize="16" 
+                                   FontWeight="Bold" 
+                                   HorizontalAlignment="Center" 
+                                   Margin="0,0,0,15"/>
+
+                        <TextBox Text="{Binding RiskRange}" 
+                                 Background="Transparent" 
+                                 Foreground="White" 
+                                 BorderBrush="White" 
+                                 BorderThickness="2" 
+                                 Padding="10" 
+                                 FontSize="14" 
+                                 HorizontalAlignment="Stretch" 
+                                 Margin="0,0,0,15"/>
+
+                        <Button Content="UPDATE" 
+                                Click="UpdateButton_Click" 
+                                Style="{StaticResource ModernButton}"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Center Column - Main Actions -->
+                <StackPanel Grid.Column="1" Margin="20,0">
+                    <!-- Service Calls Card -->
+                    <Border Background="{StaticResource BlueCardGradient}" 
+                            Style="{StaticResource ActionCard}"
+                            MouseLeftButtonDown="HandleCalls_Click">
+                        <StackPanel HorizontalAlignment="Center">
+                            <Ellipse Width="80" Height="80" 
+                                     Fill="White" 
+                                     Margin="0,0,0,20"/>
+                            <TextBlock Text="SERVICE CALLS" 
+                                       Foreground="White" 
+                                       FontSize="24" 
+                                       FontWeight="Bold" 
+                                       HorizontalAlignment="Center" 
+                                       Margin="0,0,0,10"/>
+                            <TextBlock Text="Manage emergency service calls and dispatch technicians to customers in need" 
+                                       Foreground="White" 
+                                       FontSize="14" 
+                                       HorizontalAlignment="Center" 
+                                       TextWrapping="Wrap" 
+                                       TextAlignment="Center" 
+                                       Opacity="0.9"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Technicians Card -->
+                    <Border Background="{StaticResource PurpleCardGradient}" 
+                            Style="{StaticResource ActionCard}"
+                            MouseLeftButtonDown="HandleVolunteers_Click">
+                        <StackPanel HorizontalAlignment="Center">
+                            <Ellipse Width="80" Height="80" 
+                                     Fill="White" 
+                                     Margin="0,0,0,20"/>
+                            <TextBlock Text="TECHNICIANS" 
+                                       Foreground="White" 
+                                       FontSize="24" 
+                                       FontWeight="Bold" 
+                                       HorizontalAlignment="Center" 
+                                       Margin="0,0,0,10"/>
+                            <TextBlock Text="Manage technician assignments, availability status, and workforce optimization" 
+                                       Foreground="White" 
+                                       FontSize="14" 
+                                       HorizontalAlignment="Center" 
+                                       TextWrapping="Wrap" 
+                                       TextAlignment="Center" 
+                                       Opacity="0.9"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Right Column - Database Controls -->
+                <Border Grid.Column="2" Style="{StaticResource GlassCard}">
+                    <StackPanel>
+                        <TextBlock Text="DATABASE" 
+                                   Foreground="White" 
+                                   FontSize="20" 
+                                   FontWeight="Bold" 
+                                   HorizontalAlignment="Center" 
+                                   Margin="0,0,0,25"/>
+
+                        <Border Background="{StaticResource GreenCardGradient}" 
+                                CornerRadius="15" 
+                                Padding="20" 
+                                Margin="0,10" 
+                                Cursor="Hand"
+                                MouseLeftButtonDown="InitDB_Click">
+                            <StackPanel>
+                                <TextBlock Text="INITIALIZE" 
+                                           Foreground="White" 
+                                           FontSize="16" 
+                                           FontWeight="Bold" 
+                                           HorizontalAlignment="Center" 
+                                           Margin="0,0,0,5"/>
+                                <TextBlock Text="Setup default data" 
+                                           Foreground="White" 
+                                           FontSize="12" 
+                                           HorizontalAlignment="Center" 
+                                           Opacity="0.8"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="{StaticResource RedCardGradient}" 
+                                CornerRadius="15" 
+                                Padding="20" 
+                                Margin="0,10" 
+                                Cursor="Hand"
+                                MouseLeftButtonDown="ResetDB_Click">
+                            <StackPanel>
+                                <TextBlock Text="RESET" 
+                                           Foreground="White" 
+                                           FontSize="16" 
+                                           FontWeight="Bold" 
+                                           HorizontalAlignment="Center" 
+                                           Margin="0,0,0,5"/>
+                                <TextBlock Text="Clear all data" 
+                                           Foreground="White" 
+                                           FontSize="12" 
+                                           HorizontalAlignment="Center" 
+                                           Opacity="0.8"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
             </Grid>
-            <Button Grid.Column="1" Content="Reast DB" HorizontalAlignment="Left" Margin="178,26,0,0" Grid.Row="3" VerticalAlignment="Top" Click="ResetDatabase_Click" />
-            <Button Grid.Column="1" Content="Init DB" HorizontalAlignment="Left" Margin="82,26,0,0" Grid.Row="3" VerticalAlignment="Top" Click="InitializeDatabase_Click"/>
-            <Button Grid.Column="3" Content="Handle Volunteer" HorizontalAlignment="Left" Margin="178,28,0,0" Grid.Row="3" VerticalAlignment="Top" Click="OnHandleVolunteersButton_Click"/>
-            <!--Button for opening the list view screen.-->
-            <Button Grid.Column="2" Content="Handle Calls" HorizontalAlignment="Left" Margin="0,28,0,0" Grid.Row="3" VerticalAlignment="Top" Grid.ColumnSpan="2" Click="OnHandleCallsButton_Click"/>
-            <TextBox Grid.Column="1" HorizontalAlignment="Left" Margin="128,65,0,0" Grid.Row="1" TextWrapping="Wrap" Text="{Binding RiskRange}" VerticalAlignment="Top" Width="120"/>
-            <Label Grid.Column="1" Content="Max RiskRange:" HorizontalAlignment="Left" Margin="37,60,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-            <Button Grid.Column="1" Content="Update" HorizontalAlignment="Left" Margin="259,65,0,0" Grid.Row="1" VerticalAlignment="Top" Click="UpdateButton_Click"/>
+
+            <!-- Footer -->
+            <Border Grid.Row="3" 
+                    Background="Transparent" 
+                    Padding="30,15" 
+                    CornerRadius="0,0,20,20">
+                <TextBlock Text="Emergency Road Service Control Center - Advanced Management System" 
+                           Foreground="White" 
+                           FontSize="14" 
+                           HorizontalAlignment="Center" 
+                           Opacity="0.7"/>
+            </Border>
         </Grid>
-
-    </Grid>
+    </Border>
 </Window>

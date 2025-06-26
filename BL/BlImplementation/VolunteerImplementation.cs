@@ -245,7 +245,7 @@ internal class VolunteerImplementation : IVolunteer
             BO.Role role = (BO.Role)matchingVolunteer.role;
             return (BO.Role)matchingVolunteer.role;
         }
-        catch (BO.BlDoesNotExistException ex)
+        catch (BO.BlDoesNotExistException)
         {
             throw ;
         }

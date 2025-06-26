@@ -29,9 +29,9 @@
         <Label Grid.Row="0" Grid.Column="0" Content="Call id:"/>
         <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Call.Id}" IsReadOnly="True"/>
 
-        <Label Grid.Row="1" Grid.Column="0" Content="type :"/>
-        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding call.CallType}" SelectedItem="{Binding Call.CallType}" IsEnabled="{Binding IsCallTypeEditable}"/>
-
+        <Label Grid.Row="1" Grid.Column="0" Content="type :" />
+        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding CallTypes }" SelectedItem="{Binding Call.CallType, Mode=TwoWay}" IsEnabled="{Binding IsCallTypeEditable}"/>
+        
         <Label Grid.Row="2" Grid.Column="0" Content="Description:"/>
         <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Call.Description}" IsReadOnly="{Binding IsDescriptionReadOnly}"/>
 
@@ -45,17 +45,17 @@
         <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Call.OpenTime}" IsReadOnly="True"/>
 
         <Label Grid.Row="6" Grid.Column="0" Content="Max finish time:"/>
-        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Call.CallAssignments}" IsReadOnly="{Binding IsMaxFinishTimeReadOnly}"/>
+        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Call.MaxEndTime}" IsReadOnly="{Binding IsMaxFinishTimeReadOnly}"/>
 
         <!-- Assignments List -->
         <Label Grid.Row="7" Grid.Column="0" Content="Assignments list:" VerticalAlignment="Top"/>
         <ListView Grid.Row="7" Grid.Column="1" ItemsSource="{Binding Call.CallAssignments}" Height="100">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Volunteer FullName" DisplayMemberBinding="{Binding VolunteerFullName}" Width="120"/>
-                    <GridViewColumn Header="Start time" DisplayMemberBinding="{Binding Start_time}" Width="100"/>
-                    <GridViewColumn Header="End time" DisplayMemberBinding="{Binding End_time}" Width="100"/>
-                    <GridViewColumn Header="End Type" DisplayMemberBinding="{Binding EndType}" Width="100"/>
+                    <GridViewColumn Header="Volunteer FullName" DisplayMemberBinding="{Binding VolunteerName}" Width="120"/>
+                    <GridViewColumn Header="Start time" DisplayMemberBinding="{Binding TreatmentStartTime}" Width="100"/>
+                    <GridViewColumn Header="End time" DisplayMemberBinding="{Binding TreatmentEndTime}" Width="100"/>
+                    <GridViewColumn Header="End Type" DisplayMemberBinding="{Binding TypeOfEndTreatment }" Width="100"/>
                 </GridView>
             </ListView.View>
         </ListView>

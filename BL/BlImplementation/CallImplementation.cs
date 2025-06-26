@@ -4,7 +4,7 @@ namespace BlImplementation;
 using BO;
 using DalApi;
 using DO;
-using global::BO;
+//using global::BO;
 using Helpers;
 using System.Collections.Generic;
 using System.Data;

@@ -9,8 +9,10 @@
 		<OutputPath>$(SolutionDir)\bin\</OutputPath>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-		<UseCommonOutputDirectory>true</UseCommonOutputDirectory>
 	</PropertyGroup>
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2651.64" />
+	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\BL\BL.csproj" />
 	</ItemGroup>

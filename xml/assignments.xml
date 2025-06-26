@@ -400,4 +400,20 @@
     <exitTime>2025-06-23T19:04:12</exitTime>
     <Id>2049</Id>
   </Assignment>
+  <Assignment>
+    <CallId>1058</CallId>
+    <VolunteerId>326772191</VolunteerId>
+    <EntryTime>2025-06-23T19:04:12</EntryTime>
+    <TypeOfEndTime>selfCancel</TypeOfEndTime>
+    <exitTime>2025-06-23T19:04:12</exitTime>
+    <Id>2050</Id>
+  </Assignment>
+  <Assignment>
+    <CallId>1059</CallId>
+    <VolunteerId>326772191</VolunteerId>
+    <EntryTime>2025-06-23T19:04:12</EntryTime>
+    <TypeOfEndTime>selfCancel</TypeOfEndTime>
+    <exitTime>2025-06-23T19:04:12</exitTime>
+    <Id>2051</Id>
+  </Assignment>
 </ArrayOfAssignment>

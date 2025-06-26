@@ -1,147 +1,4 @@
-//using BO;
-//using System.Collections.ObjectModel;
-//using System.Linq;
-//using System.Windows;
-//using System.Windows.Controls;
 
-//namespace PL.Call
-//{
-//    public partial class SelectCallForTreatmentWindow : Window
-//    {
-//        public ObservableCollection<OpenCallInList> OpenCalls { get; set; }
-//        public BO.Volunteer CurrentVolunteer { get; set; }
-
-//        public SelectCallForTreatmentWindow()
-//        {
-//            InitializeComponent();
-//            CurrentVolunteer = BlApi.Factory.Get().Volunteer.GetVolunteerDetails(App.CurrentUserId);
-//            OpenCalls = new ObservableCollection<OpenCallInList>(GetFilteredOpenCalls());
-//            DataContext = this;
-//        }
-//        /// <summary>
-//        /// Gets filtered open calls for a volunteer within specified distance.
-//        /// </summary>
-//        /// <param name="volunteerId">The volunteer's ID</param>
-//        /// <param name="maxDistance">Maximum distance from volunteer</param>
-//        /// <param name="callType">Optional call type filter</param>
-//        /// <param name="sortField">Optional sort field</param>
-//        /// <returns>Filtered list of open calls</returns>
-//        private IEnumerable<BO.OpenCallInList> GetFilteredOpenCalls(BO.CallType? callType = null, BO.CallField? sortField = null)
-//        {
-//            try
-//            {
-//                // Use the BL method to get open calls for volunteer
-//                var openCalls = BlApi.Factory.Get().Call.GetOpenCallsForVolunteer(CurrentVolunteer.Id, callType, sortField);
-
-//                // Filter by distance
-//                return openCalls.Where(call => call.DistanceFromVolunteer <= CurrentVolunteer.MaxDistanceForTask);
-//            }
-//            catch (Exception ex)
-//            {
-//                // Handle or log the exception as needed
-//                throw new Exception($"Error retrieving filtered open calls for volunteer {CurrentVolunteer.FullName}: {ex.Message}", ex);
-//            }
-//        }
-//        private void OnSelectCall(object sender, RoutedEventArgs e)
-//        {
-//            if (sender is Button button && button.DataContext is OpenCallInList selectedCall)
-//            {
-//                // Update call status to "In Treatment" and assign to the volunteer
-//                BlApi.Factory.Get().Call.UpdateCallDetails(new BO.Call
-//                {
-//                    Id = selectedCall.Id,
-//                    CallType = selectedCall.CallType,
-//                    Description = selectedCall.Description,
-//                    FullAddress = selectedCall.FullAddress,
-//                    OpenTime = selectedCall.OpenTime, // Correct property mapping
-//                    MaxEndTime = selectedCall.MaxEndTime ?? DateTime.Now, // Handle nullable DateTime
-//                    Status = BO.CallStatus.InProgress, // Update status
-//                    CallAssignments = new List<BO.CallAssignInList> // Simulate assignment
-//                    {
-//                        new BO.CallAssignInList
-//                        {
-//                            VolunteerId = CurrentVolunteer.Id
-//                        }
-//                    }
-//                });
-//                OpenCalls.Remove(selectedCall);
-//            }
-//        }
-
-//        private void OnUpdateAddress(object sender, RoutedEventArgs e)
-//        {
-//            // Allow volunteer to update their address
-//            var newAddress = ShowAddressInputDialog(CurrentVolunteer.Address);
-//            if (newAddress != null)
-//            {
-//                CurrentVolunteer.Address = newAddress;
-//                BlApi.Factory.Get().Volunteer.UpdateVolunteer(CurrentVolunteer.Id, CurrentVolunteer);
-
-//                // Refresh the list of open calls based on the new address
-//                OpenCalls.Clear();
-//                foreach (var call in GetFilteredOpenCalls())
-//                {
-//                    OpenCalls.Add(call);
-//                }
-//            }
-//        }
-
-//        private string ShowAddressInputDialog(string currentAddress)
-//        {
-//            var inputDialog = new Window
-//            {
-//                Title = "Update Address",
-//                Width = 300,
-//                Height = 150,
-//                WindowStartupLocation = WindowStartupLocation.CenterScreen
-//            };
-
-//            var stackPanel = new StackPanel { Margin = new Thickness(10) };
-//            var textBox = new TextBox { Text = currentAddress, Margin = new Thickness(0, 0, 0, 10) };
-//            var button = new Button { Content = "OK", Width = 100, HorizontalAlignment = HorizontalAlignment.Center };
-
-//            stackPanel.Children.Add(textBox);
-//            stackPanel.Children.Add(button);
-//            inputDialog.Content = stackPanel;
-
-//            string newAddress = "";
-//            button.Click += (s, e) =>
-//            {
-//                newAddress = textBox.Text;
-//                inputDialog.Close();
-//            };
-
-//            inputDialog.ShowDialog();
-//            return newAddress;
-//        }
-
-//        private double CalculateDistance(string address1, string address2)
-//        {
-//            // Simulate distance calculation
-//            return new Random().NextDouble() * 10; // Random distance in kilometers
-//        }
-
-//        private void OnClose(object sender, RoutedEventArgs e)
-//        {
-//            this.Close();
-//        }
-//        private OpenCallInList CreateOpenCallInList(CallInList call, string volunteerAddress)
-//        {
-//            return new OpenCallInList
-//            {
-//                Id = call.CallId, // Use CallId as the unique identifier
-//                CallType = call.CallType, // Map CallType directly
-//                Description = call.LastVolunteerName ?? "No description available", // Use LastVolunteerName or default value
-//                FullAddress = volunteerAddress, // Use volunteer's address as a placeholder
-//                OpenTime = call.OpenTime, // Map Opening_time to Start_time
-//                MaxEndTime = call.TreatmentCompletionTime.HasValue ? call.OpenTime.Add(call.TreatmentCompletionTime.Value) : (DateTime?)null, // Calculate Max_finish_time
-//                DistanceFromVolunteer = CalculateDistance(volunteerAddress, volunteerAddress) // Simulate distance calculation
-//            };
-//        }
-
-
-//    }
-//}
 using BO;
 using System;
 using System.Collections.Generic;
@@ -353,7 +210,7 @@ namespace PL.Call
 
                     MessageBox.Show($"Call {selectedCall.Id} has been assigned to you.", "Success",
                                    MessageBoxButton.OK, MessageBoxImage.Information);
-
+                    Close();
                     // List will refresh automatically via observers
                 }
                 catch (Exception ex)
@@ -435,7 +292,7 @@ namespace PL.Call
                 inputDialog.Close();
             };
 
-            inputDialog.ShowDialog();
+            inputDialog.Show();
             return dialogResult ? newAddress : null;
         }
 

@@ -452,11 +452,11 @@ namespace DalTest
                                 int second = int.Parse(timesArray[5]);
                                 s_dal.Config.Clock = new DateTime(year, month, day, hour, minute, second);
                             }
-                            catch (FormatException ex)
+                            catch (FormatException)
                             {
                                 Console.WriteLine("Error: Invalid date format. Please ensure you enter the values correctly (YY MM DD HH MM SS).");
                             }
-                            catch (ArgumentOutOfRangeException ex)
+                            catch (ArgumentOutOfRangeException)
                             {
                                 Console.WriteLine("Error: One or more values are out of range. Please check the values you entered.");
                             }

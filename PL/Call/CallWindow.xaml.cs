@@ -15,11 +15,11 @@ namespace PL.Call
         public IEnumerable<BO.CallType> CallTypes => Enum.GetValues(typeof(BO.CallType)).Cast<CallType>();
 
         // Properties for UI logic
-        public bool IsCallTypeEditable => Call.Status == BO.CallStatus.Open || Call.Status == BO.CallStatus.Open;
-        public bool IsDescriptionReadOnly => !(Call.Status == BO.CallStatus.Open || Call.Status == BO.CallStatus.Open);
-        public bool IsAddressReadOnly => !(Call.Status == BO.CallStatus.Open || Call.Status == BO.CallStatus.Open);
-        public bool IsMaxFinishTimeReadOnly => !(Call.Status == BO.CallStatus.Open || Call.Status == BO.CallStatus.Open || Call.Status == BO.CallStatus.Open || Call.Status == BO.CallStatus.Open);
-        public bool IsUpdateEnabled => Call.Status == BO.CallStatus.Open || Call.Status == BO.CallStatus.Open || Call.Status == BO.CallStatus.Open || Call.Status == BO.CallStatus.Open;
+        public bool IsCallTypeEditable => Call.Status == BO.CallStatus.OpenRisk || Call.Status == BO.CallStatus.Open;
+        public bool IsDescriptionReadOnly => !(Call.Status == BO.CallStatus.OpenRisk || Call.Status == BO.CallStatus.Open);
+        public bool IsAddressReadOnly => !(Call.Status == BO.CallStatus.OpenRisk || Call.Status == BO.CallStatus.Open);
+        public bool IsMaxFinishTimeReadOnly => !(Call.Status == BO.CallStatus.OpenRisk || Call.Status == BO.CallStatus.Open || Call.Status == BO.CallStatus.InProgressRisk || Call.Status == BO.CallStatus.InProgress);
+        public bool IsUpdateEnabled => Call.Status == BO.CallStatus.Open || Call.Status == BO.CallStatus.OpenRisk || Call.Status == BO.CallStatus.InProgressRisk || Call.Status == BO.CallStatus.InProgress;
 
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

@@ -261,16 +261,6 @@
     <Id>1025</Id>
   </Call>
   <Call>
-    <MyCallType>CheckEngineLight</MyCallType>
-    <Address>HaGalil, Metula</Address>
-    <Latitude>35.496</Latitude>
-    <Longitude>32.9646</Longitude>
-    <OpenTime>2025-06-23T20:04:12</OpenTime>
-    <MaxFinishTime>2025-06-23T20:04:12</MaxFinishTime>
-    <Description>Broken timing belt</Description>
-    <Id>1026</Id>
-  </Call>
-  <Call>
     <MyCallType>AlternatorFailure</MyCallType>
     <Address>HaTomer, Dimona</Address>
     <Latitude>35.5773</Latitude>
@@ -499,5 +489,105 @@
     <MaxFinishTime>2025-06-23T20:04:12</MaxFinishTime>
     <Description>Dashboard lights flickering</Description>
     <Id>1049</Id>
+  </Call>
+  <Call>
+    <MyCallType>CheckEngineLight</MyCallType>
+    <Address>HaGalil, Metula</Address>
+    <Latitude>32.971134</Latitude>
+    <Longitude>35.505177</Longitude>
+    <OpenTime>2025-06-23T20:04:12</OpenTime>
+    <MaxFinishTime>2025-06-24T20:04:12</MaxFinishTime>
+    <Description>Broken timing belt</Description>
+    <Id>1026</Id>
+  </Call>
+  <Call>
+    <MyCallType>FlatTire</MyCallType>
+    <Address>Tel Aviv, Rothschild Blvd</Address>
+    <Latitude>32.071428</Latitude>
+    <Longitude>34.778882</Longitude>
+    <OpenTime>2025-06-24T16:54:37.5600547+03:00</OpenTime>
+    <MaxFinishTime>2025-06-26T00:00:00</MaxFinishTime>
+    <Description>bbbb</Description>
+    <Id>1052</Id>
+  </Call>
+  <Call>
+    <MyCallType>FlatTire</MyCallType>
+    <Address>Tel Aviv, Rothschild Blvd</Address>
+    <Latitude>32.071428</Latitude>
+    <Longitude>34.778882</Longitude>
+    <OpenTime>2025-06-24T16:55:42.983118+03:00</OpenTime>
+    <MaxFinishTime>2025-06-28T00:00:00</MaxFinishTime>
+    <Description>bbbb</Description>
+    <Id>1053</Id>
+  </Call>
+  <Call>
+    <MyCallType>None</MyCallType>
+    <Address>Tel Aviv, Rothschild Blvd</Address>
+    <Latitude>32.071428</Latitude>
+    <Longitude>34.778882</Longitude>
+    <OpenTime>2025-06-24T17:00:34.0931775+03:00</OpenTime>
+    <MaxFinishTime>2025-06-27T00:00:00</MaxFinishTime>
+    <Description>vv</Description>
+    <Id>1054</Id>
+  </Call>
+  <Call>
+    <MyCallType>None</MyCallType>
+    <Address>Tel Aviv, Rothschild Blvd</Address>
+    <Latitude>32.071428</Latitude>
+    <Longitude>34.778882</Longitude>
+    <OpenTime>2025-06-24T17:09:25.6117532+03:00</OpenTime>
+    <MaxFinishTime>2025-06-27T00:00:00</MaxFinishTime>
+    <Description>vv</Description>
+    <Id>1055</Id>
+  </Call>
+  <Call>
+    <MyCallType>None</MyCallType>
+    <Address>Tel Aviv, Rothschild Blvd</Address>
+    <Latitude>32.071428</Latitude>
+    <Longitude>34.778882</Longitude>
+    <OpenTime>2025-06-24T17:09:38.5384394+03:00</OpenTime>
+    <MaxFinishTime>2025-06-27T00:00:00</MaxFinishTime>
+    <Description>vv</Description>
+    <Id>1056</Id>
+  </Call>
+  <Call>
+    <MyCallType>None</MyCallType>
+    <Address>Tel Aviv, Rothschild Blvd</Address>
+    <Latitude>32.071428</Latitude>
+    <Longitude>34.778882</Longitude>
+    <OpenTime>2025-06-24T17:15:53.3855005+03:00</OpenTime>
+    <MaxFinishTime>2025-06-26T00:00:00</MaxFinishTime>
+    <Description>fff</Description>
+    <Id>1057</Id>
+  </Call>
+  <Call>
+    <MyCallType>FlatTire</MyCallType>
+    <Address>Jerusalem, King George St.</Address>
+    <Latitude>-31.897354</Latitude>
+    <Longitude>115.792619</Longitude>
+    <OpenTime>2025-06-24T17:21:15.6657994+03:00</OpenTime>
+    <MaxFinishTime>2025-06-26T00:00:00</MaxFinishTime>
+    <Description>xxxx</Description>
+    <Id>1058</Id>
+  </Call>
+  <Call>
+    <MyCallType>EngineFailure</MyCallType>
+    <Address>Jerusalem, King George St.</Address>
+    <Latitude>-31.897354</Latitude>
+    <Longitude>115.792619</Longitude>
+    <OpenTime>2025-06-24T17:40:23.967331+03:00</OpenTime>
+    <MaxFinishTime>2025-06-26T00:00:00</MaxFinishTime>
+    <Description>ggggg</Description>
+    <Id>1059</Id>
+  </Call>
+  <Call>
+    <MyCallType>FlatTire</MyCallType>
+    <Address>Jerusalem, King George St.</Address>
+    <Latitude>-31.897354</Latitude>
+    <Longitude>115.792619</Longitude>
+    <OpenTime>2025-06-25T12:17:53.9445977+03:00</OpenTime>
+    <MaxFinishTime>2025-06-26T00:00:00</MaxFinishTime>
+    <Description>fffffffffffffffffffff</Description>
+    <Id>1060</Id>
   </Call>
 </ArrayOfCall>

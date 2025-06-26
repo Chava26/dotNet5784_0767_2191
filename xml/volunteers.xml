@@ -43,20 +43,6 @@
     <DistanceType>airDistance</DistanceType>
   </Volunteer>
   <Volunteer>
-    <Id>163153893</Id>
-    <Name>Tamar</Name>
-    <Email>Tamar@gmail.com</Email>
-    <Phone>0541123345</Phone>
-    <IsActive>true</IsActive>
-    <Role>volunteer</Role>
-    <MaximumDistance>8</MaximumDistance>
-    <Password>sqVt60IKxIal2bIeicMvUinzrxy0SM+wxoyc7yzwIBg=</Password>
-    <Adress>Rishon LeZion, Neot Afeka St.</Adress>
-    <Longitude>34.7925</Longitude>
-    <Latitude>31.9706</Latitude>
-    <DistanceType>airDistance</DistanceType>
-  </Volunteer>
-  <Volunteer>
     <Id>975223181</Id>
     <Name>Eli</Name>
     <Email>Eli@gmail.com</Email>
@@ -219,6 +205,34 @@
     <Role>Manager</Role>
     <MaximumDistance>23</MaximumDistance>
     <Password>EK/dwUdU1PYI2Np9NLgnc9HcOWznnicz35NdhZymJdg=</Password>
+    <Adress>Jerusalem, King George St.</Adress>
+    <Longitude>115.792619</Longitude>
+    <Latitude>-31.897354</Latitude>
+    <DistanceType>airDistance</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>163153893</Id>
+    <Name>Tamar</Name>
+    <Email>Tamar@gmail.com</Email>
+    <Phone>0541123345</Phone>
+    <IsActive>false</IsActive>
+    <Role>volunteer</Role>
+    <MaximumDistance>8</MaximumDistance>
+    <Password>sqVt60IKxIal2bIeicMvUinzrxy0SM+wxoyc7yzwIBg=</Password>
+    <Adress>Rishon LeZion, Neot Afeka St.</Adress>
+    <Longitude>151.224995</Longitude>
+    <Latitude>-33.867596</Latitude>
+    <DistanceType>airDistance</DistanceType>
+  </Volunteer>
+  <Volunteer>
+    <Id>40640732</Id>
+    <Name>BBBB</Name>
+    <Email>gity@gmail.com</Email>
+    <Phone>0548458571</Phone>
+    <IsActive>true</IsActive>
+    <Role>volunteer</Role>
+    <MaximumDistance>19</MaximumDistance>
+    <Password>AAeeeee45#</Password>
     <Adress>Jerusalem, King George St.</Adress>
     <Longitude>115.792619</Longitude>
     <Latitude>-31.897354</Latitude>
