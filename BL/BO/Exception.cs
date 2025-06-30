@@ -14,6 +14,10 @@ public class InvalidOperationException : Exception
 {
     public InvalidOperationException(string message) : base(message) { }
 }
+public class BLTemporaryNotAvailableException : Exception
+{
+    public BLTemporaryNotAvailableException(string message) : base(message) { }
+}
 public class BlGeneralDatabaseException : Exception
 {
     public BlGeneralDatabaseException(string? message) : base(message) { }

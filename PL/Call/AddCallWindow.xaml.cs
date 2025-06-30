@@ -1,306 +1,81 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using BlApi;
+//using static BO.Enums;
 
 namespace PL
 {
-    public partial class AddCallWindow : Window, INotifyPropertyChanged
+    public partial class AddCallWindow : Window
     {
         private static readonly IBl s_bl = Factory.Get();
 
         public IEnumerable<BO.CallType> CallTypeCollection =>
-            Enum.GetValues(typeof(BO.CallType)).Cast<BO.CallType>()
-                .Where(ct => ct != BO.CallType.None); // Remove "None" from selection
-
-        // Basic call properties
-        private BO.CallType _selectedCallType = BO.CallType.General;
-        public BO.CallType SelectedCallType
-        {
-            get => _selectedCallType;
-            set
-            {
-                _selectedCallType = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private string _description = string.Empty;
-        public string Description
-        {
-            get => _description;
-            set
-            {
-                _description = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private string _fullAddress = string.Empty;
-        public string FullAddress
-        {
-            get => _fullAddress;
-            set
-            {
-                _fullAddress = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private DateTime _openTime = DateTime.Now;
-        public DateTime OpenTime
-        {
-            get => _openTime;
-            set
-            {
-                _openTime = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private DateTime? _maxFinishTime;
-        public DateTime? MaxFinishTime
-        {
-            get => _maxFinishTime;
-            set
-            {
-                _maxFinishTime = value;
-                OnPropertyChanged();
-            }
-        }
-
-        // Vehicle information properties
-        private string _vehicleModel = string.Empty;
-        public string VehicleModel
-        {
-            get => _vehicleModel;
-            set
-            {
-                _vehicleModel = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private string _licensePlate = string.Empty;
-        public string LicensePlate
-        {
-            get => _licensePlate;
-            set
-            {
-                _licensePlate = value;
-                OnPropertyChanged();
-            }
-        }
-
-        // Customer information properties
-        private string _customerName = string.Empty;
-        public string CustomerName
-        {
-            get => _customerName;
-            set
-            {
-                _customerName = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private string _customerPhone = string.Empty;
-        public string CustomerPhone
-        {
-            get => _customerPhone;
-            set
-            {
-                _customerPhone = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private string _statusMessage = string.Empty;
-        public string StatusMessage
-        {
-            get => _statusMessage;
-            set
-            {
-                _statusMessage = value;
-                OnPropertyChanged();
-            }
-        }
+            Enum.GetValues(typeof(BO.CallType)).Cast<BO.CallType>();
 
         public AddCallWindow()
         {
             InitializeComponent();
             DataContext = this;
-
-            // Set default values
-            SelectedCallType = BO.CallType.General;
-            MaxFinishTime = DateTime.Now.AddHours(4); // Default 4 hours for completion
         }
 
-        /// <summary>
-        /// Handles adding a new automotive service call with auto-close functionality
-        /// </summary>
-        private async void AddButton_Click(object sender, RoutedEventArgs e)
+        private void AddButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                // Validate required fields
-                if (SelectedCallType == BO.CallType.None)
+                var grid = (Grid)this.Content;
+
+                if (grid.Children.Count < 6)
                 {
-                    ShowErrorMessage("Please select a call type.");
+                    MessageBox.Show("Missing details", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
-                if (string.IsNullOrWhiteSpace(Description))
-                {
-                    ShowErrorMessage("Please provide a detailed description of the issue.");
-                    return;
-                }
+                var stack1 = (StackPanel)grid.Children[0]; // ??? º????
+                var stack2 = (StackPanel)grid.Children[1]; // ?????
+                var stack3 = (StackPanel)grid.Children[2]; // ?????
+                var stack4 = (StackPanel)grid.Children[3]; // ????? ?????
+                var stack5 = (StackPanel)grid.Children[4]; // ????? ???
 
-                if (string.IsNullOrWhiteSpace(FullAddress))
-                {
-                    ShowErrorMessage("Please provide the full address of the vehicle location.");
-                    return;
-                }
-
-                // Build comprehensive description including vehicle and customer info
-                string fullDescription = BuildFullDescription();
+                var callTypeComboBox = (ComboBox)stack1.Children[1];
+                var descriptionTextBox = (TextBox)stack2.Children[1];
+                var addressTextBox = (TextBox)stack3.Children[1];
+                var openingDatePicker = (DatePicker)stack4.Children[1];
+                var maxFinishDatePicker = (DatePicker)stack5.Children[1];
 
                 var newCall = new BO.Call
                 {
-                    CallType = SelectedCallType,
-                    Description = fullDescription,
-                    FullAddress = FullAddress.Trim(),
-                    Latitude = null, // Can be enhanced with GPS coordinates
+                    CallType = (BO.CallType)callTypeComboBox.SelectedItem,
+                    Description = descriptionTextBox.Text,
+                    FullAddress = addressTextBox.Text,
+                    Latitude = null,
                     Longitude = null,
-                    OpenTime = OpenTime,
-                    MaxEndTime = MaxFinishTime ?? DateTime.Now.AddHours(4),
-                    Status = DetermineInitialStatus()
+                    OpenTime = DateTime.Now,
+                    MaxEndTime = maxFinishDatePicker.SelectedDate ?? DateTime.Now,
+                    Status = BO.CallStatus.Open
                 };
 
-                // Add the call to the system
                 s_bl.Call.AddCall(newCall);
-
-                // Show success message
-                StatusMessage = "Service call successfully added to the system!";
-
-                // Show success dialog with call details
-                string successMessage = $"Service call created successfully!\n" +
-                                      $"Issue Type: {SelectedCallType}\n" +
-                                      $"Location: {FullAddress}\n" +
-                                      $"The nearest technician will be notified.";
-
-                MessageBox.Show(successMessage, "Call Created Successfully",
-                               MessageBoxButton.OK, MessageBoxImage.Information);
-
-                // Auto-close after brief delay
-                await Task.Delay(300);
-
-                DialogResult = true;
-                Close();
+                MessageBox.Show("Call added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                this.Close();
             }
             catch (Exception ex)
             {
-                string fullMessage = $"Error creating service call: {ex.Message}";
+                string fullMessage = $"Error adding call: {ex.Message}";
                 if (ex.InnerException != null)
                 {
-                    fullMessage += $"\nAdditional details: {ex.InnerException.Message}";
+                    fullMessage += $"\nInner exception: {ex.InnerException.Message}";
                 }
-
-                StatusMessage = "Error creating service call";
                 MessageBox.Show(fullMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        /// <summary>
-        /// Builds a comprehensive description including all relevant information
-        /// </summary>
-        private string BuildFullDescription()
-        {
-            var descriptionParts = new List<string>
-            {
-                $"Issue Description: {Description.Trim()}"
-            };
 
-            if (!string.IsNullOrWhiteSpace(VehicleModel))
-                descriptionParts.Add($"Vehicle Model: {VehicleModel.Trim()}");
 
-            if (!string.IsNullOrWhiteSpace(LicensePlate))
-                descriptionParts.Add($"License Plate: {LicensePlate.Trim()}");
-
-            if (!string.IsNullOrWhiteSpace(CustomerName))
-                descriptionParts.Add($"Customer Name: {CustomerName.Trim()}");
-
-            if (!string.IsNullOrWhiteSpace(CustomerPhone))
-                descriptionParts.Add($"Contact Phone: {CustomerPhone.Trim()}");
-
-            return string.Join("\n", descriptionParts);
-        }
-
-        /// <summary>
-        /// Determines initial status based on call type severity
-        /// </summary>
-        private BO.CallStatus DetermineInitialStatus()
-        {
-            // Critical calls that need immediate attention
-            var criticalTypes = new[]
-            {
-                BO.CallType.EngineFailure,
-                BO.CallType.BrakeFailure,
-                BO.CallType.Overheating,
-                BO.CallType.TransmissionIssue
-            };
-
-            if (criticalTypes.Contains(SelectedCallType))
-            {
-                return BO.CallStatus.OpenRisk; // High priority
-            }
-
-            return BO.CallStatus.Open; // Normal priority
-        }
-
-        /// <summary>
-        /// Shows error message in a user-friendly way
-        /// </summary>
-        private void ShowErrorMessage(string message)
-        {
-            MessageBox.Show(message, "Input Error",
-                           MessageBoxButton.OK, MessageBoxImage.Warning);
-        }
-
-        /// <summary>
-        /// Clears all input fields (not used due to auto-close, but kept for future use)
-        /// </summary>
-        private void ClearAllFields()
-        {
-            SelectedCallType = BO.CallType.General;
-            Description = string.Empty;
-            FullAddress = string.Empty;
-            VehicleModel = string.Empty;
-            LicensePlate = string.Empty;
-            CustomerName = string.Empty;
-            CustomerPhone = string.Empty;
-            OpenTime = DateTime.Now;
-            MaxFinishTime = DateTime.Now.AddHours(4);
-            StatusMessage = string.Empty;
-        }
-
-        /// <summary>
-        /// Closes the window without saving
-        /// </summary>
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            DialogResult = false;
-            Close();
-        }
+            this.Close();
 
-        // INotifyPropertyChanged implementation
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
     }
 }
 //using System;

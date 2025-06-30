@@ -78,6 +78,7 @@ namespace PL.Call
             }
             s_bl.Call.RemoveObserver(RefreshOpenCalls);
             UnregisterCallObservers();
+            Close();
         }
 
         /// <summary>

@@ -371,16 +371,6 @@
     <Id>1037</Id>
   </Call>
   <Call>
-    <MyCallType>CheckEngineLight</MyCallType>
-    <Address>Givat Yoav, Golan Heights</Address>
-    <Latitude>35.3047</Latitude>
-    <Longitude>32.917</Longitude>
-    <OpenTime>2025-06-23T20:04:12</OpenTime>
-    <MaxFinishTime>2025-06-23T20:04:12</MaxFinishTime>
-    <Description>Damaged side mirror</Description>
-    <Id>1038</Id>
-  </Call>
-  <Call>
     <MyCallType>TimingBeltFailure</MyCallType>
     <Address>Ginosar, Sea of Galilee</Address>
     <Latitude>35.7496</Latitude>
@@ -589,5 +579,25 @@
     <MaxFinishTime>2025-06-26T00:00:00</MaxFinishTime>
     <Description>fffffffffffffffffffff</Description>
     <Id>1060</Id>
+  </Call>
+  <Call>
+    <MyCallType>DeadBattery</MyCallType>
+    <Address>Jerusalem, King George St</Address>
+    <Latitude>-1.843725</Latitude>
+    <Longitude>31.653788</Longitude>
+    <OpenTime>2025-06-30T04:22:10.1846358+03:00</OpenTime>
+    <MaxFinishTime>2025-07-01T00:00:00</MaxFinishTime>
+    <Description>bbb</Description>
+    <Id>1062</Id>
+  </Call>
+  <Call>
+    <MyCallType>CheckEngineLight</MyCallType>
+    <Address>Givat Yoav, Golan Heights</Address>
+    <Latitude>32.756512</Latitude>
+    <Longitude>35.144102</Longitude>
+    <OpenTime>2025-06-23T20:04:12</OpenTime>
+    <MaxFinishTime>2026-06-23T20:04:12</MaxFinishTime>
+    <Description>Damaged side mirror</Description>
+    <Id>1038</Id>
   </Call>
 </ArrayOfCall>

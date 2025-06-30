@@ -1,4 +1,4 @@
-﻿
+
 
 namespace DO;
 /// <summary>
@@ -18,7 +18,6 @@ public record Assignment
     int VolunteerId,
     DateTime EntryTime,
     EndOfTreatment? TypeOfEndTime = null,
-
     DateTime? exitTime = null,
     int Id=0
 )

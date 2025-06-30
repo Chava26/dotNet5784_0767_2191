@@ -122,6 +122,6 @@
             Visibility="{Binding ButtonText, Converter={StaticResource IdToVisibilityConverter}}"/>-->
         <!-- Button -->
         <Button Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2" Content="{Binding ButtonText}"
-                Click="AddOrUpdate_Click" HorizontalAlignment="Center" Width="120" Height="30" Margin="10"/>
+                Click="AddOrUpdate_Click" HorizontalAlignment="Center" Width="120" Height="30" Margin="10"  Background="LightCoral" />
     </Grid>
 </Window>

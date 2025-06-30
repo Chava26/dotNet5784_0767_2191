@@ -1,4 +1,4 @@
-﻿
+
 namespace BlApi
 {
     /// <summary>
@@ -46,6 +46,8 @@ namespace BlApi
         /// Initializes the database with default data.
         /// </summary>
         void InitializeDatabase();
+        void StartSimulator(int interval); //stage 7
+        void StopSimulator(); //stage 7
     }
 
 }

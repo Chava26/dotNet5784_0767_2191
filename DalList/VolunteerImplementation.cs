@@ -1,9 +1,10 @@
-﻿namespace Dal;
+namespace Dal;
 
-using System.Collections.Generic;
 using DalApi;
 using DO;
 using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 internal class VolunteerImplementation : IVolunteer
 {
@@ -12,6 +13,7 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     /// <param name="item"></param>
     /// <exception cref="InvalidOperationException"></exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Create(Volunteer item)
     {
         if(Read(item.Id)!=null)
@@ -23,6 +25,7 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     /// <param name="id"></param>
     /// <exception cref="DalDoesNotExistException"></exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Delete(int id)
     {
         Volunteer matchingObject = Read(id) ?? throw new DalDoesNotExistException($"Volunteer with ID={id}is not exists ");
@@ -33,6 +36,7 @@ internal class VolunteerImplementation : IVolunteer
     /// <summary>
     /// The faction deletes the entire list of volunteers
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void DeleteAll()
     {
         DataSource.Volunteers.Clear();
@@ -42,10 +46,12 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Volunteer? Read(int id)
     {
           return DataSource.Volunteers.FirstOrDefault(volunteer => volunteer.Id == id);
     }
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Volunteer? Read(Func<Volunteer, bool> filter)
     {
         return DataSource.Volunteers.FirstOrDefault(filter);
@@ -56,6 +62,7 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     /// <returns></returns>
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public IEnumerable<Volunteer> ReadAll(Func<Volunteer, bool>? filter = null) //stage 2
          => filter == null
           ? DataSource.Volunteers.Select(item => item)
@@ -67,6 +74,7 @@ internal class VolunteerImplementation : IVolunteer
     /// </summary>
     /// <param name="item"></param>
     /// <exception cref="InvalidOperationException"></exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Update(Volunteer item)
     {
         Volunteer matchingObject = Read(item.Id) ?? throw new DalDoesNotExistException($"Volunteer with ID={item.Id}is not exists");

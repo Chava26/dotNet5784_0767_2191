@@ -1,6 +1,8 @@
-﻿namespace Dal;
+namespace Dal;
 using DalApi;
 using DO;
+using System.Runtime.CompilerServices;
+
 /// <summary>
 /// This class implements the ICall interface, providing CRUD operations (Create, Read, Update, Delete) for the 'Call' entity.
 /// It interacts with an XML data source for storing call-related data.
@@ -13,6 +15,7 @@ internal class CallImplementation : ICall
     /// The new call gets the next available Call ID from the Config class.
     /// </summary>
     /// <param name="call">The call object to be created.</param>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Create(Call call)
     {
         Call newCall = call with { Id = Config.NextCallId };
@@ -25,12 +28,14 @@ internal class CallImplementation : ICall
     /// </summary>
     /// <param name="id">The ID of the call to be read.</param>
     /// <returns>The call with the specified ID, or null if not found.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Call? Read(int id)
     {
         List<Call> Calls = XMLTools.LoadListFromXMLSerializer<Call>(Config.s_calls_xml);
         return Calls.FirstOrDefault(Call => Call.Id == id);
     }
     /// Reads a Call by a filter from the XML data source.
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Call? Read(Func<Call, bool> filter)
     {
         List<Call> calls = XMLTools.LoadListFromXMLSerializer<Call>(Config.s_calls_xml);
@@ -41,6 +46,7 @@ internal class CallImplementation : ICall
     /// </summary>
     /// <param name="filter">An optional filter to apply to the list of calls.</param>
     /// <returns>An IEnumerable collection of calls matching the filter criteria.</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public IEnumerable<Call> ReadAll(Func<Call, bool>? filter = null)
     {
         return XMLTools.LoadListFromXMLSerializer<Call>(Config.s_calls_xml);
@@ -50,6 +56,7 @@ internal class CallImplementation : ICall
     /// If the call does not exist, throws a DalDoesNotExistException.
     /// </summary>
     /// <param name="Call">The updated call object.</param>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Update(Call Call)
     {
         List<Call> Calls = XMLTools.LoadListFromXMLSerializer<Call>(Config.s_calls_xml);
@@ -63,6 +70,7 @@ internal class CallImplementation : ICall
     /// If the call does not exist, throws a DalDoesNotExistException.
     /// </summary>
     /// <param name="id">The ID of the call to be deleted.</param>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Delete(int id)
     {
         List<Call> Calls = XMLTools.LoadListFromXMLSerializer<Call>(Config.s_calls_xml);
@@ -73,6 +81,7 @@ internal class CallImplementation : ICall
     /// <summary>
     /// Deletes all calls from the XML data source.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void DeleteAll()
     {
         XMLTools.SaveListToXMLSerializer(new List<Call>(), Config.s_calls_xml);

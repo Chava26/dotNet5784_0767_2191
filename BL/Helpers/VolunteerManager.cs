@@ -2,6 +2,7 @@ using BO;
 using DalApi;
 using DO;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 namespace Helpers
 {
     internal class VolunteerManager
@@ -38,7 +39,11 @@ namespace Helpers
         /// <returns>A BO.Volunteer object.</returns>
         internal static BO.Volunteer CreateBoVolunteer(DO.Volunteer doVolunteer, BO.CallInProgress? boCallInProgress)
         {
-            var assigments = s_dal.Assignment.ReadAll(a => a.VolunteerId == doVolunteer.Id);
+            IEnumerable<DO.Assignment> assigments;
+
+            lock (AdminManager.BlMutex) //stage 7
+                assigments = s_dal.Assignment.ReadAll(a => a.VolunteerId == doVolunteer.Id);
+
 
             return new BO.Volunteer
             {
@@ -208,6 +213,116 @@ namespace Helpers
             }
 
         }
+        #region Stage 7 - Simulation
+        private static readonly Random s_rand = new();
+        private static int s_simulatorCounter = 0;
+
+        /// <summary>
+        /// Simulates volunteer activity throughout the system lifecycle.
+        /// This method simulates volunteers taking calls and completing treatments.
+        /// </summary>
+        internal static void SimulateVolunteerActivity() //stage 7
+        {
+            Thread.CurrentThread.Name = $"Simulator{++s_simulatorCounter}";
+
+            LinkedList<int> volunteersToUpdate = new(); //stage 7
+            List<DO.Volunteer> doVolunteerList;
+
+            lock (AdminManager.BlMutex) //stage 7
+                doVolunteerList = s_dal.Volunteer.ReadAll(v => v.IsActive == true).ToList();
+
+            foreach (var doVolunteer in doVolunteerList)
+            {
+                int volunteerId = 0;
+                lock (AdminManager.BlMutex) //stage 7
+                {
+                    // Check if volunteer has an active assignment
+                    var activeAssignment = s_dal.Assignment.ReadAll(a => a.VolunteerId == doVolunteer.Id && a.exitTime == null).FirstOrDefault();
+
+                    if (activeAssignment == null)
+                    {
+                        // Volunteer has no active call - try to assign one with 20% probability
+                        if (s_rand.NextDouble() < 0.20) // 20% chance to take a call
+                        {
+                            // Get available open calls within volunteer's maximum distance
+                            var availableCalls = CallManager.GetOpenCalls(volunteerId, null, null);
+
+                            int availableCallsCount = availableCalls.Count();
+                            if (availableCallsCount > 0)
+                            {
+                                int selectedCallId = availableCalls.Skip(s_rand.Next(0, availableCallsCount)).First().Id;
+
+                                // Create new assignment
+                                s_dal.Assignment.Create(new DO.Assignment(
+                                    CallId: selectedCallId,
+                                    VolunteerId: doVolunteer.Id,
+                                    EntryTime: ClockManager.Now,
+                                    exitTime: null,
+                                    TypeOfEndTime: null
+                                ));
+
+                                volunteerId = doVolunteer.Id;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Volunteer has an active call
+                        var call = s_dal.Call.Read(activeAssignment.CallId);
+                        if (call != null)
+                        {
+                            // Calculate if enough time has passed based on distance and random factor
+                            double distanceToCall = Tools.CalculateDistance(
+                                doVolunteer.Latitude ?? 0,
+                                doVolunteer.Longitude ?? 0,
+                                call.Latitude,
+                                call.Longitude
+                            );
+
+                            // Base time: 2 minutes per km + random 5-15 minutes
+                            TimeSpan requiredTime = TimeSpan.FromMinutes(distanceToCall * 2 + s_rand.Next(5, 16));
+                            TimeSpan elapsedTime = ClockManager.Now - activeAssignment.EntryTime;
+
+                            if (elapsedTime >= requiredTime)
+                            {
+                                // Complete the call successfully
+                                s_dal.Assignment.Update(activeAssignment with
+                                {
+                                    exitTime = ClockManager.Now,
+                                    TypeOfEndTime = DO.EndOfTreatment.treated
+                                });
+
+                                volunteerId = doVolunteer.Id;
+                            }
+                            else
+                            {
+                                // 10% chance to cancel the call if not enough time has passed
+                                if (s_rand.NextDouble() < 0.10) // 10% chance to cancel
+                                {
+                                    s_dal.Assignment.Update(activeAssignment with
+                                    {
+                                        exitTime = ClockManager.Now,
+                                        TypeOfEndTime = DO.EndOfTreatment.selfCancel
+                                    });
+
+                                    volunteerId = doVolunteer.Id;
+                                }
+                            }
+                        }
+                    }
+
+                    if (volunteerId != 0)
+                        volunteersToUpdate.AddLast(doVolunteer.Id);
+                } 
+            }
+
+            foreach (int id in volunteersToUpdate)
+                Observers.NotifyItemUpdated(id);
+        }
+        #endregion Stage 7 - Simulation
     }
 }
+
+
+   
 

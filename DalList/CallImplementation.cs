@@ -1,9 +1,10 @@
-﻿namespace Dal;
+namespace Dal;
 
-using System.Collections.Generic;
 using DalApi;
 using DO;
 using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 internal class CallImplementation : ICall
 {
@@ -11,6 +12,7 @@ internal class CallImplementation : ICall
     ///  Adds a call
     /// </summary>
     /// <param name="call"></param>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Create(Call call)
     {
         Call newCall = call with { Id = Config.NextCallId };
@@ -24,6 +26,7 @@ internal class CallImplementation : ICall
     /// </summary>
     /// <param name="id"></param>
     /// <exception cref="DalDoesNotExistException"></exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Delete(int id)
     {
         Call matchingObject = Read(id) ?? throw new DalDoesNotExistException($"Call with ID={id}is not exists");
@@ -33,6 +36,7 @@ internal class CallImplementation : ICall
     /// <summary>
     /// The faction deletes the entire list of Calls
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void DeleteAll()
     {
         DataSource.Calls.Clear();
@@ -42,20 +46,23 @@ internal class CallImplementation : ICall
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Call? Read(int id)
     {
         return DataSource.Calls.FirstOrDefault(Call => Call.Id == id);
     }
     /// <summary>Reads the first Call that matches a filter.</summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Call? Read(Func<Call, bool> filter)
     {
         return DataSource.Calls.FirstOrDefault(filter);
     }
-    
+
     /// <summary>
     /// The function returns to the entire IEnumerable of Calls
     /// </summary>
     /// <returns></returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
 
     public IEnumerable<Call> ReadAll(Func<Call, bool>? filter = null) //stage 2
          => filter == null
@@ -67,6 +74,7 @@ internal class CallImplementation : ICall
     /// </summary>
     /// <param name="item"></param>
     /// <exception cref="DalDoesNotExistException"></exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Update(Call call)
     {
         Call matchingObject = Read(call.Id) ?? throw new DalDoesNotExistException($"call with ID={call.Id}is not exists");

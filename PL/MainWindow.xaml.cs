@@ -262,7 +262,6 @@ public partial class MainWindow : Window
         try
         {
             new CallListWindow().Show();
-            ShowSuccessNotification("Service Calls window opened");
         }
         catch (Exception ex)
         {
@@ -278,7 +277,6 @@ public partial class MainWindow : Window
         try
         {
             new VolunteerListWindow().Show();
-            ShowSuccessNotification("Technicians window opened");
         }
         catch (Exception ex)
         {

@@ -128,6 +128,6 @@
         </DataGrid>
 
         <!-- add button -->
-        <Button Grid.Row="2" Content="Add" HorizontalAlignment="Center" Margin="10" Width="150" Height="40" Click="btnAdd_Click"/>
+        <Button Grid.Row="2" Content="Add" HorizontalAlignment="Center" Margin="10" Width="150" Height="40" Click="btnAdd_Click"  Background="LightCoral" />
     </Grid>
 </Window>

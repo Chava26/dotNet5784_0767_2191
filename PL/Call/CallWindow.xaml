@@ -1,3 +1,70 @@
+<!--<Window x:Class="PL.Call.CallWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PL.Call"
+        mc:Ignorable="d"
+        Title="SingleCallWindow" Height="600" Width="600"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        --><!-- Call Details --><!--
+        <Label Grid.Row="0" Grid.Column="0" Content="Call id:"/>
+        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Call.Id}" IsReadOnly="True"/>
+
+        <Label Grid.Row="1" Grid.Column="0" Content="type :" />
+        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding CallTypes }" SelectedItem="{Binding Call.CallType, Mode=TwoWay}" IsEnabled="{Binding IsCallTypeEditable}"/>
+        
+        <Label Grid.Row="2" Grid.Column="0" Content="Description:"/>
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Call.Description}" IsReadOnly="{Binding IsDescriptionReadOnly}"/>
+
+        <Label Grid.Row="3" Grid.Column="0" Content="address:"/>
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Call.FullAddress}" IsReadOnly="{Binding IsAddressReadOnly}"/>
+
+        <Label Grid.Row="4" Grid.Column="0" Content="status:"/>
+        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Call.Status}" IsReadOnly="True"/>
+
+        <Label Grid.Row="5" Grid.Column="0" Content="opening time:"/>
+        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Call.OpenTime}" IsReadOnly="True"/>
+
+        <Label Grid.Row="6" Grid.Column="0" Content="Max finish time:"/>
+        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Call.MaxEndTime}" IsReadOnly="{Binding IsMaxFinishTimeReadOnly}"/>
+
+        --><!-- Assignments List --><!--
+        <Label Grid.Row="7" Grid.Column="0" Content="Assignments list:" VerticalAlignment="Top"/>
+        <ListView Grid.Row="7" Grid.Column="1" ItemsSource="{Binding Call.CallAssignments}" Height="100">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Volunteer FullName" DisplayMemberBinding="{Binding VolunteerName}" Width="120"/>
+                    <GridViewColumn Header="Start time" DisplayMemberBinding="{Binding TreatmentStartTime}" Width="100"/>
+                    <GridViewColumn Header="End time" DisplayMemberBinding="{Binding TreatmentEndTime}" Width="100"/>
+                    <GridViewColumn Header="End Type" DisplayMemberBinding="{Binding TypeOfEndTreatment }" Width="100"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        --><!-- Update Button --><!--
+        <Button Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" Content="update" Height="40" Margin="0,20,0,0"
+                Click="UpdateButton_Click" IsEnabled="{Binding IsUpdateEnabled}" Background="LightBlue"/>
+    </Grid>
+</Window>-->
 <Window x:Class="PL.Call.CallWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -30,13 +97,20 @@
         <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Call.Id}" IsReadOnly="True"/>
 
         <Label Grid.Row="1" Grid.Column="0" Content="type :" />
-        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding CallTypes }" SelectedItem="{Binding Call.CallType, Mode=TwoWay}" IsEnabled="{Binding IsCallTypeEditable}"/>
-        
+        <ComboBox Grid.Row="1" Grid.Column="1" 
+                  ItemsSource="{Binding CallTypes}" 
+                  SelectedItem="{Binding Call.CallType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                  IsEnabled="{Binding IsCallTypeEditable}"/>
+
         <Label Grid.Row="2" Grid.Column="0" Content="Description:"/>
-        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Call.Description}" IsReadOnly="{Binding IsDescriptionReadOnly}"/>
+        <TextBox Grid.Row="2" Grid.Column="1" 
+                 Text="{Binding Call.Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                 IsReadOnly="{Binding IsDescriptionReadOnly}"/>
 
         <Label Grid.Row="3" Grid.Column="0" Content="address:"/>
-        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Call.FullAddress}" IsReadOnly="{Binding IsAddressReadOnly}"/>
+        <TextBox Grid.Row="3" Grid.Column="1" 
+                 Text="{Binding Call.FullAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                 IsReadOnly="{Binding IsAddressReadOnly}"/>
 
         <Label Grid.Row="4" Grid.Column="0" Content="status:"/>
         <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Call.Status}" IsReadOnly="True"/>
@@ -45,23 +119,38 @@
         <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Call.OpenTime}" IsReadOnly="True"/>
 
         <Label Grid.Row="6" Grid.Column="0" Content="Max finish time:"/>
-        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Call.MaxEndTime}" IsReadOnly="{Binding IsMaxFinishTimeReadOnly}"/>
+        <TextBox Grid.Row="6" Grid.Column="1" 
+                 Text="{Binding Call.MaxEndTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                 IsReadOnly="{Binding IsMaxFinishTimeReadOnly}"/>
 
         <!-- Assignments List -->
         <Label Grid.Row="7" Grid.Column="0" Content="Assignments list:" VerticalAlignment="Top"/>
-        <ListView Grid.Row="7" Grid.Column="1" ItemsSource="{Binding Call.CallAssignments}" Height="100">
+        <ListView Grid.Row="7" Grid.Column="1" 
+                  ItemsSource="{Binding Call.CallAssignments}" 
+                  Height="100">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Volunteer FullName" DisplayMemberBinding="{Binding VolunteerName}" Width="120"/>
-                    <GridViewColumn Header="Start time" DisplayMemberBinding="{Binding TreatmentStartTime}" Width="100"/>
-                    <GridViewColumn Header="End time" DisplayMemberBinding="{Binding TreatmentEndTime}" Width="100"/>
-                    <GridViewColumn Header="End Type" DisplayMemberBinding="{Binding TypeOfEndTreatment }" Width="100"/>
+                    <GridViewColumn Header="Volunteer FullName" 
+                                    DisplayMemberBinding="{Binding VolunteerName}" 
+                                    Width="120"/>
+                    <GridViewColumn Header="Start time" 
+                                    DisplayMemberBinding="{Binding TreatmentStartTime}" 
+                                    Width="100"/>
+                    <GridViewColumn Header="End time" 
+                                    DisplayMemberBinding="{Binding TreatmentEndTime}" 
+                                    Width="100"/>
+                    <GridViewColumn Header="End Type" 
+                                    DisplayMemberBinding="{Binding TypeOfEndTreatment}" 
+                                    Width="100"/>
                 </GridView>
             </ListView.View>
         </ListView>
 
         <!-- Update Button -->
-        <Button Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" Content="update" Height="40" Margin="0,20,0,0"
-                Click="UpdateButton_Click" IsEnabled="{Binding IsUpdateEnabled}"/>
+        <Button Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" 
+                Content="update" Height="40" Margin="0,20,0,0"
+                Click="UpdateButton_Click" 
+                IsEnabled="{Binding IsUpdateEnabled}" 
+                Background="LightBlue"/>
     </Grid>
 </Window>

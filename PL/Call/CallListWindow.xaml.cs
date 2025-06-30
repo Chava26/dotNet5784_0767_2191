@@ -582,7 +582,6 @@ namespace PL
                     try
                     {
                         s_bl.Call.DeleteCall(call.CallId);
-                        // הרשימה תתעדכן אוטומטית דרך המשקיף
                     }
                     catch (Exception ex)
                     {
@@ -653,7 +652,6 @@ namespace PL
                     try
                     {
                         s_bl.Call.CancelAssignment(currentUserId, assignmentId.Value);
-                        // הרשימה תתעדכן אוטומטית דרך המשקיף
                     }
                     catch (Exception ex)
                     {

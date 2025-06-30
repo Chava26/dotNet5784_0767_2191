@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+using System.Runtime.CompilerServices;
+using System.Xml.Linq;
 namespace Dal;
 /// <summary>
 /// This class handles configuration settings related to calls, assignments, risk range, and the clock. 
@@ -19,7 +20,9 @@ internal static class Config
     /// </summary>
     internal static int NextCallId
     {
+        [MethodImpl(MethodImplOptions.Synchronized)]
         get => XMLTools.GetAndIncreaseConfigIntVal(s_data_config_xml, "NextCallId");
+        [MethodImpl(MethodImplOptions.Synchronized)]
         private set => XMLTools.SetConfigIntVal(s_data_config_xml, "NextCalld", value);
     }
     /// <summary>
@@ -27,7 +30,9 @@ internal static class Config
     /// </summary>
     internal static DateTime Clock
     {
+        [MethodImpl(MethodImplOptions.Synchronized)]
         get => XMLTools.GetConfigDateVal(s_data_config_xml, "Clock");
+        [MethodImpl(MethodImplOptions.Synchronized)]
         set => XMLTools.SetConfigDateVal(s_data_config_xml, "Clock", value);
     }
     /// <summary>
@@ -35,17 +40,19 @@ internal static class Config
     /// </summary>
     internal static int NextAssignmentId
     {
+        [MethodImpl(MethodImplOptions.Synchronized)]
         get => XMLTools.GetAndIncreaseConfigIntVal(s_data_config_xml, "NextAssignmentId");
-       private set => XMLTools.SetConfigIntVal(s_data_config_xml, "NextAssignmentId", value);
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        private set => XMLTools.SetConfigIntVal(s_data_config_xml, "NextAssignmentId", value);
     }
     /// <summary>
     /// Gets and sets the risk range (TimeSpan) from the configuration.
     /// </summary>
     internal static TimeSpan RiskRange
     {
-
+        [MethodImpl(MethodImplOptions.Synchronized)]
         get => XMLTools.GetConfigTimeSpanVal(s_data_config_xml, "RiskRange");
-
+        [MethodImpl(MethodImplOptions.Synchronized)]
         set => XMLTools.SetConfigTimeSpanVal(s_data_config_xml, "RiskRange", value);
 
     }
@@ -53,6 +60,7 @@ internal static class Config
     /// Resets the configuration values to their default settings.
     /// Resets NextAssignmentId, NextCallId, Clock, and RiskRange.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     internal static void Reset()
     {
         RiskRange = TimeSpan.FromHours(1);

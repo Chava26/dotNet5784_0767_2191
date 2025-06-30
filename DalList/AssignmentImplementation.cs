@@ -1,8 +1,9 @@
-﻿namespace Dal;
+namespace Dal;
 
-using System.Collections.Generic;
 using DalApi;
 using DO;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 internal class AssignmentImplementation : IAssignment
 {
@@ -11,6 +12,7 @@ internal class AssignmentImplementation : IAssignment
     /// </summary>
     /// <param name="assignment"></param>
     /// <exception cref="InvalidOperationException"></exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Create(Assignment assignment)
     {
         Assignment newAssignment = assignment with { Id = Config.NextAssignmentId };
@@ -22,6 +24,7 @@ internal class AssignmentImplementation : IAssignment
     /// </summary>
     /// <param name="id"></param>
     /// <exception cref="DalDeletionImpossible"></exception>
+    [MethodImpl(MethodImplOptions.Synchronized)] 
     public void Delete(int id)
     {
         Assignment matchingObject = Read(id) ?? throw new DalDoesNotExistException($"Assignment with ID={id}is not exists ");
@@ -32,6 +35,7 @@ internal class AssignmentImplementation : IAssignment
     /// <summary>
     /// The faction deletes the entire list of Assignments
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void DeleteAll()
     {
         DataSource.Assignments.Clear();
@@ -41,6 +45,7 @@ internal class AssignmentImplementation : IAssignment
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Assignment? Read(int Id)
     {
         return DataSource.Assignments.FirstOrDefault(Assignment => Assignment.Id == Id);
@@ -50,6 +55,7 @@ internal class AssignmentImplementation : IAssignment
     /// </summary>
     /// <param name="filter">filter what need to search</param>
     /// <returns></returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Assignment? Read(Func<Assignment, bool> filter)
     {
         return DataSource.Assignments.FirstOrDefault(filter);
@@ -60,6 +66,7 @@ internal class AssignmentImplementation : IAssignment
     /// </summary>
     /// <param name="filter"></param>
     /// <returns></returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
 
     public IEnumerable<Assignment> ReadAll(Func<Assignment, bool>? filter = null) //stage 2
         => filter == null
@@ -71,6 +78,7 @@ internal class AssignmentImplementation : IAssignment
     /// </summary>
     /// <param name="item"></param>
     /// <exception cref="DalDoesNotExistException"></exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Update(Assignment item)
     {
         Assignment matchingObject   = Read(item.Id) ?? throw new DalDoesNotExistException($"Assignment with ID={item.Id}is not exists");

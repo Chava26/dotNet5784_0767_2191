@@ -37,7 +37,14 @@ public enum CallType
     HeadlightFailure,
     SensorMalfunction
 };
-public enum EndOfTreatment { treated, selfCancel, administratorCancel, expired };
+public enum EndOfTreatment
+{
+    Completed,
+    treated,
+    selfCancel,
+    administratorCancel,
+    expired
+};
 
 
 /// <summary>

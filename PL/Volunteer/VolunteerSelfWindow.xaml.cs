@@ -241,7 +241,10 @@ namespace PL.Volunteer
             if (Volunteer != null)
             {
                 s_bl.Volunteer.AddObserver(Volunteer.Id, RefreshVolunteer);
+                s_bl.Call.AddObserver(RefreshVolunteer);
+
             }
+          
 
             // Subscribe to window closed event to clean up observer
             Closed += Window_Closed;
@@ -257,11 +260,12 @@ namespace PL.Volunteer
         {
             try
             {
-                await MapWebView.EnsureCoreWebView2Async();
+                //לסדר את המפה!!
+                //await MapWebView.EnsureCoreWebView2Async();
 
-                // Load the HTML map
-                var htmlMap = GenerateMapHtml();
-                MapWebView.NavigateToString(htmlMap);
+                //// Load the HTML map
+                //var htmlMap = GenerateMapHtml();
+                //MapWebView.NavigateToString(htmlMap);
             }
             catch (Exception ex)
             {
@@ -441,7 +445,7 @@ namespace PL.Volunteer
                 var callData = HasCallInProgress ? CreateCallJavaScriptObject() : "null";
 
                 var script = $"updateMap({volunteerData}, {callData});";
-                await MapWebView.ExecuteScriptAsync(script);
+                //await MapWebView.ExecuteScriptAsync(script);
             }
             catch (Exception ex)
             {
@@ -496,7 +500,10 @@ namespace PL.Volunteer
         private void Window_Closed(object? sender, EventArgs e)
         {
             if (Volunteer != null)
+            {
                 s_bl.Volunteer.RemoveObserver(Volunteer.Id, RefreshVolunteer);
+                s_bl.Call.RemoveObserver(RefreshVolunteer);
+            }
         }
 
         /// <summary>
@@ -563,7 +570,7 @@ namespace PL.Volunteer
             {
                 s_bl.Call.CancelAssignment(Volunteer.Id, Volunteer.callInProgress.Id);
                 MessageBox.Show("הטיפול בקריאה בוטל.", "הצלחה", MessageBoxButton.OK, MessageBoxImage.Information);
-                RefreshVolunteer();
+                //RefreshVolunteer();
             }
             catch (Exception ex)
             {
@@ -580,8 +587,8 @@ namespace PL.Volunteer
         private void btnSelectCall_Click(object sender, RoutedEventArgs e)
         {
             var SelectCallForTreatmentWindow = new SelectCallForTreatmentWindow();
-            SelectCallForTreatmentWindow.ShowDialog();
-            RefreshVolunteer();
+            SelectCallForTreatmentWindow.Show();
+            //RefreshVolunteer();
         }
     }
 }

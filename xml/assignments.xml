@@ -378,42 +378,98 @@
   </Assignment>
   <Assignment>
     <CallId>1031</CallId>
-    <VolunteerId>326772191</VolunteerId>
-    <EntryTime>2025-06-23T20:04:12</EntryTime>
-    <TypeOfEndTime>selfCancel</TypeOfEndTime>
-    <exitTime>2025-06-23T19:04:12</exitTime>
-    <Id>2031</Id>
+    <VolunteerId>0</VolunteerId>
+    <EntryTime>2028-01-24T19:06:12</EntryTime>
+    <TypeOfEndTime>expired</TypeOfEndTime>
+    <exitTime>2028-01-24T19:06:12</exitTime>
+    <Id>2056</Id>
   </Assignment>
   <Assignment>
     <CallId>1048</CallId>
-    <VolunteerId>326772191</VolunteerId>
-    <EntryTime>2025-06-23T20:04:12</EntryTime>
-    <TypeOfEndTime>selfCancel</TypeOfEndTime>
-    <exitTime>2025-06-23T19:04:12</exitTime>
-    <Id>2048</Id>
+    <VolunteerId>0</VolunteerId>
+    <EntryTime>2028-01-24T19:06:12</EntryTime>
+    <TypeOfEndTime>expired</TypeOfEndTime>
+    <exitTime>2028-01-24T19:06:12</exitTime>
+    <Id>2057</Id>
   </Assignment>
   <Assignment>
     <CallId>1049</CallId>
-    <VolunteerId>326772191</VolunteerId>
-    <EntryTime>2025-06-23T20:04:12</EntryTime>
-    <TypeOfEndTime>selfCancel</TypeOfEndTime>
-    <exitTime>2025-06-23T19:04:12</exitTime>
-    <Id>2049</Id>
+    <VolunteerId>0</VolunteerId>
+    <EntryTime>2028-01-24T19:06:12</EntryTime>
+    <TypeOfEndTime>expired</TypeOfEndTime>
+    <exitTime>2028-01-24T19:06:12</exitTime>
+    <Id>2058</Id>
+  </Assignment>
+  <Assignment>
+    <CallId>1052</CallId>
+    <VolunteerId>0</VolunteerId>
+    <EntryTime>2028-01-24T19:06:12</EntryTime>
+    <TypeOfEndTime>expired</TypeOfEndTime>
+    <exitTime>2028-01-24T19:06:12</exitTime>
+    <Id>2059</Id>
+  </Assignment>
+  <Assignment>
+    <CallId>1053</CallId>
+    <VolunteerId>0</VolunteerId>
+    <EntryTime>2028-01-24T19:06:12</EntryTime>
+    <TypeOfEndTime>expired</TypeOfEndTime>
+    <exitTime>2028-01-24T19:06:12</exitTime>
+    <Id>2060</Id>
+  </Assignment>
+  <Assignment>
+    <CallId>1054</CallId>
+    <VolunteerId>0</VolunteerId>
+    <EntryTime>2028-01-24T19:06:12</EntryTime>
+    <TypeOfEndTime>expired</TypeOfEndTime>
+    <exitTime>2028-01-24T19:06:12</exitTime>
+    <Id>2061</Id>
+  </Assignment>
+  <Assignment>
+    <CallId>1055</CallId>
+    <VolunteerId>0</VolunteerId>
+    <EntryTime>2028-01-24T19:06:12</EntryTime>
+    <TypeOfEndTime>expired</TypeOfEndTime>
+    <exitTime>2028-01-24T19:06:12</exitTime>
+    <Id>2062</Id>
+  </Assignment>
+  <Assignment>
+    <CallId>1056</CallId>
+    <VolunteerId>0</VolunteerId>
+    <EntryTime>2028-01-24T19:06:12</EntryTime>
+    <TypeOfEndTime>expired</TypeOfEndTime>
+    <exitTime>2028-01-24T19:06:12</exitTime>
+    <Id>2063</Id>
+  </Assignment>
+  <Assignment>
+    <CallId>1057</CallId>
+    <VolunteerId>0</VolunteerId>
+    <EntryTime>2028-01-24T19:06:12</EntryTime>
+    <TypeOfEndTime>expired</TypeOfEndTime>
+    <exitTime>2028-01-24T19:06:12</exitTime>
+    <Id>2064</Id>
   </Assignment>
   <Assignment>
     <CallId>1058</CallId>
-    <VolunteerId>326772191</VolunteerId>
-    <EntryTime>2025-06-23T19:04:12</EntryTime>
-    <TypeOfEndTime>selfCancel</TypeOfEndTime>
-    <exitTime>2025-06-23T19:04:12</exitTime>
-    <Id>2050</Id>
+    <VolunteerId>0</VolunteerId>
+    <EntryTime>2028-01-24T19:06:12</EntryTime>
+    <TypeOfEndTime>expired</TypeOfEndTime>
+    <exitTime>2028-01-24T19:06:12</exitTime>
+    <Id>2065</Id>
   </Assignment>
   <Assignment>
     <CallId>1059</CallId>
-    <VolunteerId>326772191</VolunteerId>
-    <EntryTime>2025-06-23T19:04:12</EntryTime>
-    <TypeOfEndTime>selfCancel</TypeOfEndTime>
-    <exitTime>2025-06-23T19:04:12</exitTime>
-    <Id>2051</Id>
+    <VolunteerId>0</VolunteerId>
+    <EntryTime>2028-01-24T19:06:12</EntryTime>
+    <TypeOfEndTime>expired</TypeOfEndTime>
+    <exitTime>2028-01-24T19:06:12</exitTime>
+    <Id>2066</Id>
+  </Assignment>
+  <Assignment>
+    <CallId>1060</CallId>
+    <VolunteerId>0</VolunteerId>
+    <EntryTime>2028-01-24T19:06:12</EntryTime>
+    <TypeOfEndTime>expired</TypeOfEndTime>
+    <exitTime>2028-01-24T19:06:12</exitTime>
+    <Id>2067</Id>
   </Assignment>
 </ArrayOfAssignment>

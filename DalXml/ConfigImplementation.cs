@@ -1,4 +1,5 @@
-﻿using DalApi;
+using DalApi;
+using System.Runtime.CompilerServices;
 
 namespace Dal;
 /// <summary>
@@ -12,7 +13,6 @@ internal class ConfigImplementation : IConfig
     /// </summary>
     public DateTime Clock
     {
-
         get => Config.Clock;
         set => Config.Clock = value;
     }

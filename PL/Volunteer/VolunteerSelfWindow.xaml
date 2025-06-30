@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"  
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"  
         xmlns:local="clr-namespace:PL.Volunteer"  
-        xmlns:webview2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"  
         mc:Ignorable="d"  
         Title="VolunteerSelfWindow" Height="850" Width="800"  
         WindowStartupLocation="CenterScreen">  
@@ -104,11 +103,11 @@
             </GroupBox>  
 
             <!-- Map Section -->  
-            <GroupBox Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="2" Header="Location Map" Margin="0,20,0,0" Height="250">  
+            <!--<GroupBox Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="2" Header="Location Map" Margin="0,20,0,0" Height="250">  
                 <Grid>  
-                    <webview2:WebView2 x:Name="MapWebView" NavigationCompleted="MapWebView_NavigationCompleted"/>  
+                    <webview2:WebView2 x:Name="MapWebView"  NavigationCompleted="MapWebView_NavigationCompleted"/>  
 
-                    <!-- Map Legend -->  
+                    --><!-- Map Legend --><!--  
                     <StackPanel VerticalAlignment="Top" HorizontalAlignment="Right"   
                                 Background="White" Opacity="0.9" Margin="10">  
                         <TextBlock Text="Map Legend:" FontWeight="Bold" Margin="5"/>  
@@ -123,14 +122,14 @@
                         </StackPanel>  
                     </StackPanel>  
                 </Grid>  
-            </GroupBox>  
+            </GroupBox>-->  
 
-            <!-- Buttons -->  
-            <Button Grid.Row="16" Grid.Column="0" Content="update" Height="40" Margin="0,20,10,0"  
-                    Click="btnUpdate_Click"/>  
-            <Button Grid.Row="16" Grid.Column="1" Content="History call" Height="40" Margin="10,20,0,0"  
-                    Click="btnHistory_Click"/>  
-            <Button Grid.Row="17" Grid.Column="0" Grid.ColumnSpan="2" Content="Can Select call"  
+            <!-- Buttons -->
+            <Button Grid.Row="16" Grid.Column="0" Content="update" Height="40" Margin="0,20,10,0"   Background="LightCoral" 
+                    Click="btnUpdate_Click"/>
+            <Button Grid.Row="16" Grid.Column="1" Content="History call" Height="40" Margin="10,20,0,0"   Background="LightCoral" 
+                    Click="btnHistory_Click"/>
+            <Button Grid.Row="17" Grid.Column="0" Grid.ColumnSpan="2" Content="Can Select call"  Background="LightBlue"
                     Height="40" Margin="0,20,0,0"  
                     IsEnabled="{Binding CanSelectCall}"  
                     Click="btnSelectCall_Click"/>  
