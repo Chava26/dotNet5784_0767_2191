@@ -2,16 +2,16 @@
 <Window x:Class="PL.Call.SelectCallForTreatmentWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Select Call for Treatment" Height="450" Width="800"
+        Title="Select Call for Treatment" Height="500" Width="900"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Loaded="Window_Loaded"
         Closed="Window_Closed"
         WindowStartupLocation="CenterScreen">
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
@@ -32,12 +32,12 @@
                   CanUserReorderColumns="False"
                   CanUserResizeColumns="True"
                   GridLinesVisibility="Horizontal"
-                  AlternatingRowBackground="LightGray">
+                  AlternatingRowBackground="LightGray"
+                  SelectionChanged="DataGrid_SelectionChanged">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="80" />
                 <DataGridTextColumn Header="Type" Binding="{Binding CallType}" Width="120" />
                 <DataGridTextColumn Header="Address" Binding="{Binding FullAddress}" Width="200" />
-                <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="250" />
                 <DataGridTextColumn Header="Distance (km)" Binding="{Binding DistanceFromVolunteer, StringFormat=F2}" Width="100" />
                 <DataGridTextColumn Header="Open Time" Binding="{Binding OpenTime, StringFormat=dd/MM/yyyy HH:mm}" Width="130" />
                 <DataGridTemplateColumn Header="Actions" Width="100">
@@ -55,8 +55,20 @@
             </DataGrid.Columns>
         </DataGrid>
 
+        <!-- Call Description -->
+        <GroupBox Grid.Row="2" 
+                  Header="Call Description" 
+                  Margin="10,0,10,10"
+                  Height="100">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <TextBlock Text="{Binding CallDescription}" 
+                          TextWrapping="Wrap"
+                          Margin="5"/>
+            </ScrollViewer>
+        </GroupBox>
+
         <!-- Bottom Panel with Buttons -->
-        <StackPanel Grid.Row="2" 
+        <StackPanel Grid.Row="3" 
                     Orientation="Horizontal" 
                     HorizontalAlignment="Center" 
                     Margin="10">

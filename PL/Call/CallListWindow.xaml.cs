@@ -443,7 +443,6 @@ namespace PL
             }
         }
 
-        // הקריאה הנבחרת
         private CallInList? _selectedCall;
         public CallInList? SelectedCall
         {

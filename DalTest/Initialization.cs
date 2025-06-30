@@ -168,16 +168,27 @@ public static class Initialization
 
             CallType _callType = (CallType)s_rand.Next(1, Enum.GetValues(typeof(CallType)).Length); // Random call type
             DateTime TimeOfOpen = s_dal!.Config.Clock.AddHours(1); // Call open time
-            DateTime MaxTimeToFinish = TimeOfOpen.AddDays(s_rand.Next((s_dal!.Config.Clock - TimeOfOpen).Days)); // Maximum finish time
-
+            DateTime MaxTimeToFinish ; // Maximum finish time
+            if (i<25)
+            {
+                // זמן סיום עתידי בין עכשיו לעוד יומיים
+                MaxTimeToFinish = s_dal.Config.Clock.AddHours(s_rand.Next(1, 48));
+            }
+            else
+            {
+                // זמן סיום עבר, כלומר הקריאה כבר הסתיימה
+                MaxTimeToFinish = TimeOfOpen.AddHours(s_rand.Next(1, 24));
+                if (MaxTimeToFinish > s_dal.Config.Clock)
+                    MaxTimeToFinish = s_dal.Config.Clock.AddMinutes(-s_rand.Next(10, 60)); // לוודא שהסתיימה בעבר
+            }
             // Define call data
             double Longitude = longitudes[i];
             double Latitude = latitudes[i];
             string? Address = addresses[i];
             string? Description = issues[i];
-
             // Add the call to the database
-            s_dal!.Call.Create(new Call(_callType, Address, Longitude, Latitude, TimeOfOpen, MaxTimeToFinish, Description));
+               s_dal!.Call.Create(new Call(_callType, Address, Longitude, Latitude, TimeOfOpen, MaxTimeToFinish, Description));
+        
         }
     }
 
@@ -197,17 +208,16 @@ public static class Initialization
             int validDifference = (int)Math.Max(difference.TotalMinutes, 0);
             DateTime randomTime = minTime.AddMinutes(s_rand.Next(validDifference));
             //אני רוצה בשביל ההמשך שחלק עדין לא יקבלו זמן סיום
-            if (i < 25)
+            if (i < 15)
             {
                 //calls.ElementAt(s_rand.Next(calls.Count() - 15)).Id;
                 // Create the assignment
                 s_dal!.Assignment.Create(new Assignment(calls.ElementAt(i).Id, volunteers[s_rand.Next(volunteers.Count)].Id, randomTime, (EndOfTreatment)
                     s_rand.Next(Enum.GetValues(typeof(EndOfTreatment)).Length - 1), randomTime.AddHours(2)));
             }
-            else{
+            else if(i<35){
                 // Create the assignment
-                s_dal!.Assignment.Create(new Assignment(calls.ElementAt(i).Id, volunteers[s_rand.Next(volunteers.Count)].Id, randomTime, (EndOfTreatment)
-                    s_rand.Next(Enum.GetValues(typeof(EndOfTreatment)).Length - 1)));
+                s_dal!.Assignment.Create(new Assignment(calls.ElementAt(i).Id, volunteers[s_rand.Next(volunteers.Count)].Id, randomTime));
             }
         }
      }

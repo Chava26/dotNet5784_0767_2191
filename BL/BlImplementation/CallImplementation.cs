@@ -147,7 +147,7 @@ internal class CallImplementation : BlApi.ICall
                volunteer = _dal.Volunteer.Read(requesterId) ?? throw new KeyNotFoundException($"Volunteer with ID {requesterId} not found.");
                call = _dal.Call.Read(assignment.CallId) ?? throw new KeyNotFoundException($"Call with ID {assignment.CallId} not found.");
             }
-            if (volunteer.role != DO.Role.Manager || assignment.VolunteerId != requesterId)
+            if (volunteer.role != DO.Role.Manager && assignment.VolunteerId != requesterId)
             {
                 throw new BO.BlUnauthorizedAccessException("You do not have permission to cancel this assignment.");
             }
