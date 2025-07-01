@@ -1,6 +1,7 @@
 
 namespace BlImplementation;
 
+using BlApi;
 using BO;
 using DalApi;
 using DO;
@@ -30,23 +31,26 @@ internal class CallImplementation : BlApi.ICall
             // Validate call details
             Helpers.CallManager.ValidateCallDetails(call);
             // Calculate latitude and longitude based on the address
-            var coordinates = Helpers.Tools.GetCoordinatesFromAddress(call.FullAddress);
-            Helpers.CallManager.logicalChecking(call);
-            if (!coordinates.Latitude.HasValue || !coordinates.Longitude.HasValue)
-            {
-                throw new BO.BlInvalidFormatException("The address must be valid and resolvable to latitude and longitude.");
-            }
+            //var coordinates = Helpers.Tools.GetCoordinatesFromAddress(call.FullAddress);
+            //Helpers.CallManager.logicalChecking(call);
+            //if (!coordinates.Latitude.HasValue || !coordinates.Longitude.HasValue)
+            //{
+            //    throw new BO.BlInvalidFormatException("The address must be valid and resolvable to latitude and longitude.");
+            //}
 
             // Assign calculated latitude and longitude to the call
-            call.Latitude = coordinates.Latitude.Value;
-            call.Longitude = coordinates.Longitude.Value;
+            //call.Latitude = coordinates.Latitude.Value;
+            //call.Longitude = coordinates.Longitude.Value;
             DO.Call doCall = CallManager.CreateDoCall(call); // Map BO.Call to DO.Call
             lock (AdminManager.BlMutex) //stage 7
                 _dal.Call.Create(doCall);
+            // Compute the coordinates asynchronously without waiting for the results
             // Attempt to add the call to the data layer
+            DO.Call call1 = _dal.Call.Read(c => (doCall.Address == c.Address && doCall.Description == c.Description && doCall.MaxFinishTime == c.MaxFinishTime && doCall.OpenTime == c.OpenTime && doCall.Latitude == c.Latitude && doCall.Longitude == c.Longitude && doCall.MyCallType == c.MyCallType))!;
             CallManager.Observers.NotifyListUpdated(); //stage 5
 
-            CallManager.SendEmailWhenCalOpened(call);
+            _ = UpdateCoordinatesForCallAsync(call1, call);
+
         }
 
         catch (BLTemporaryNotAvailableException)
@@ -73,6 +77,28 @@ internal class CallImplementation : BlApi.ICall
         }
 
     }
+    private async Task UpdateCoordinatesForCallAsync(DO.Call doCall,BO.Call? boCall=null)
+    {
+       
+            if (!string.IsNullOrEmpty(doCall.Address))
+            {
+                var (lat, lon) = await Tools.GetCoordinatesFromAddressAsync(doCall.Address);
+                if (lat is not null && lon is not null)
+                {
+                    doCall = doCall with { Latitude = lat.Value, Longitude = lon.Value };
+                    lock (AdminManager.BlMutex)
+                        _dal.Call.Update(doCall);
+
+                }
+                if (boCall is not null)
+                    CallManager.SendEmailWhenCalOpened(boCall);
+                CallManager.Observers.NotifyListUpdated();
+                CallManager.Observers.NotifyItemUpdated(doCall.Id);
+
+            }
+      
+
+        }
 
     public void SelectCallForTreatment(int volunteerId, int callId)
     {
@@ -377,6 +403,11 @@ internal class CallImplementation : BlApi.ICall
                         var assignments = _dal.Assignment.ReadAll(a => a.CallId == call.Id);
                         var latestAssignment = assignments.OrderByDescending(a => a.EntryTime).FirstOrDefault();
                         CallStatus status = Tools.CalculateCallStatus(call, latestAssignment);
+                        if (status == CallStatus.Open)
+                        {
+                            int i=1;
+                            i++;
+                        }
                         return new BO.CallInList
                         {
                             Id = latestAssignment?.Id,
@@ -526,16 +557,25 @@ internal class CallImplementation : BlApi.ICall
             // Validate the input data (check for format and logical consistency)
             Helpers.CallManager.ValidateCallDetails(updatedCall);
             Helpers.CallManager.logicalChecking(updatedCall);
-            var (latitude, longitude) = Tools.GetCoordinatesFromAddress(updatedCall.FullAddress);
-            // Check if either latitude or longitude is null
-            if (latitude is null || longitude is null)
+            bool addreesUpdated = false;
+            DO.Call? realyCall;
+            lock (AdminManager.BlMutex)
+                realyCall = _dal.Call.Read(updatedCall.Id);
+            
+            if (realyCall!.Address != updatedCall.FullAddress)
             {
-                throw new ArgumentException("The address must be valid and resolvable to latitude and longitude.");
+                addreesUpdated = true;
             }
+            //var (latitude, longitude) = Tools.GetCoordinatesFromAddress(updatedCall.FullAddress);
+            //// Check if either latitude or longitude is null
+            //if (latitude is null || longitude is null)
+            //{
+            //    throw new ArgumentException("The address must be valid and resolvable to latitude and longitude.");
+            //}
 
-            // Update the properties of the updatedCall instance
-            updatedCall.Latitude = latitude.Value;
-            updatedCall.Longitude = longitude.Value;
+            ////Update the properties of the updatedCall instance
+            //updatedCall.Latitude = latitude.Value;
+            //updatedCall.Longitude = longitude.Value;
             DO.Call callToUpdate;
             lock (AdminManager.BlMutex)
             {
@@ -546,8 +586,8 @@ internal class CallImplementation : BlApi.ICall
                     MyCallType = (DO.CallType)updatedCall.CallType,
                     Description = updatedCall.Description,
                     Address = updatedCall.FullAddress,
-                    Latitude = (double)updatedCall.Latitude!,
-                    Longitude = (double)updatedCall.Longitude!,
+                    Latitude = updatedCall.Latitude,
+                    Longitude = updatedCall.Longitude,
                     OpenTime = updatedCall.OpenTime,
                     MaxFinishTime = updatedCall.MaxEndTime
                 };
@@ -558,6 +598,11 @@ internal class CallImplementation : BlApi.ICall
             }
             CallManager.Observers.NotifyListUpdated(); //stage 5
             CallManager.Observers.NotifyItemUpdated(callToUpdate.Id); //stage 5
+            if (addreesUpdated)
+            {
+                // If the address was updated, recalculate latitude and longitude
+                _ = UpdateCoordinatesForCallAsync(callToUpdate);
+            }
 
         }
         catch (BLTemporaryNotAvailableException)
@@ -571,7 +616,7 @@ internal class CallImplementation : BlApi.ICall
         catch (Exception ex)
         {
             // Catch the data layer exception and rethrow a custom exception to the UI layer
-            throw new BO.BlGeneralDatabaseException("An unexpected error occurred while update.", ex);
+            throw new BO.BlGeneralDatabaseException("An unexpected error occurred while updating.", ex);
         }
     }
 

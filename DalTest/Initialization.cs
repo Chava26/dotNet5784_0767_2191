@@ -168,8 +168,8 @@ public static class Initialization
         {
 
             CallType _callType = (CallType)s_rand.Next(1, Enum.GetValues(typeof(CallType)).Length); // Random call type
-            DateTime TimeOfOpen = s_dal!.Config.Clock.AddHours(1); // Call open time
-                                                                   //DateTime MaxTimeToFinish; // Maximum finish time
+            DateTime TimeOfOpen = s_dal!.Config.Clock.AddMinutes(-s_rand.Next(10, 120)); // פתיחה בעשר הדקות האחרונות עד שעתיים אחורה
+                                                                                         //DateTime MaxTimeToFinish; // Maximum finish time
             DateTime MaxTimeToFinish;
             if (i < 25)
             {
@@ -178,10 +178,8 @@ public static class Initialization
             }
             else
             {
-                // זמן סיום עבר, כלומר הקריאה כבר הסתיימה
-                MaxTimeToFinish = TimeOfOpen.AddHours(s_rand.Next(1, 24));
-                if (MaxTimeToFinish > s_dal.Config.Clock)
-                    MaxTimeToFinish = s_dal.Config.Clock.AddMinutes(-s_rand.Next(10, 60)); // לוודא שהסתיימה בעבר
+                // סיום בעבר – לאחר זמן הפתיחה
+                MaxTimeToFinish = TimeOfOpen.AddHours(s_rand.Next(1, 4)); // עד 4 שעות אחרי פתיחה
             }
             //DateTime MaxTimeToFinish = TimeOfOpen.AddDays(s_rand.Next((s_dal!.Config.Clock - TimeOfOpen).Days) + 1);
 
@@ -190,7 +188,7 @@ public static class Initialization
             double Latitude = latitudes[i];
             string? Address = addresses[i];
             string? Description = issues[i];
-
+           
             // Add the call to the database
             s_dal!.Call.Create(new Call(_callType, Address, Latitude,Longitude, TimeOfOpen, MaxTimeToFinish, Description));
         

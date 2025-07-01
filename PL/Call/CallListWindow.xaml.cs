@@ -126,7 +126,7 @@ namespace PL
         {
             // רישום למשקיפים ברמת הלוגיקה
             s_bl.Call.AddObserver(RefreshCallList);
-
+            s_bl.Admin.AddConfigObserver(RefreshCallList);
             // טעינה ראשונית של הרשימה
             UpdateCallList();
         }
@@ -138,6 +138,8 @@ namespace PL
         {
             // ביטול רישום למשקיפים
             s_bl.Call.RemoveObserver(RefreshCallList);
+            s_bl.Admin.RemoveConfigObserver(RefreshCallList);
+
         }
 
         /// <summary>
@@ -183,7 +185,7 @@ namespace PL
                     "CallType" => BO.CallField.CallType,
                     "CallStatus" => BO.CallField.Status,
                     "TotalAssignments" => BO.CallField.AssignmentsCount,
-                    _ => BO.CallField.OpenTime // ברירת מחדל
+                    _ => BO.CallField.OpenTime 
                 };
 
                 // קריאה לפונקציה המקורית עם הפרמטרים

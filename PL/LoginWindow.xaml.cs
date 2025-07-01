@@ -146,8 +146,7 @@ namespace PL
                 var role = s_bl.Volunteer.Login(volunteer.FullName, Password);
 
                 // Success - handle based on role
-                Application.Current.Dispatcher.Invoke(() =>
-                {
+                
                     StatusMessage = $"Welcome, {volunteer.FullName}!";
 
                     if (role == BO.Role.Volunteer)
@@ -166,7 +165,7 @@ namespace PL
 
                     // Clear form for next login but keep success message briefly
                     ClearForm();
-                });
+                
             }
             catch (BO.BlDoesNotExistException)
             {
@@ -269,7 +268,7 @@ namespace PL
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        protected void OnPropertyChanged([CallerMemberName] string?name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 

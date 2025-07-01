@@ -11,6 +11,7 @@ namespace Helpers;
 using DalApi;
 using System.Net;
 using System.Net.Mail;
+using System.Web;
 
 
 
@@ -68,8 +69,8 @@ using System.Net.Mail;
                 latestAssignment = s_dal.Assignment.ReadAll().FirstOrDefault(a => a.CallId == call.Id);
         }
 
-        TimeSpan riskThreshold = TimeSpan.FromMinutes(30); // Risk threshold configuration
-
+        //TimeSpan riskThreshold = TimeSpan.FromMinutes(30); // Risk threshold configuration
+        TimeSpan riskThreshold = AdminManager.MaxRange;
         // If no assignment exists, determine if the call is open or expired
         if (latestAssignment == null)
         {
@@ -140,6 +141,8 @@ using System.Net.Mail;
         }
 
 
+
+
         /// <summary>
         /// Retrieves coordinates (latitude and longitude) for a given address.
         /// If the address is invalid or the API request fails, an appropriate exception is thrown.
@@ -174,15 +177,46 @@ using System.Net.Mail;
         }
 
 
-            
-        /// <summary>
-        /// Sends an email using an SMTP server.
-        /// </summary>
-        /// <param name="toEmail">The recipient's email address.</param>
-        /// <param name="subject">The subject of the email.</param>
-        /// <param name="body">The body of the email.</param>
-        /// <exception cref="Exception">Thrown when the email cannot be sent.</exception>
-        public static void SendEmail(string toEmail, string subject, string body)
+    /// <summary>
+    /// Gets the latitude and longitude coordinates for a given address using the OpenRouteService API asynchronously.
+    /// </summary>
+    /// <param name="address">The address to geocode.</param>
+    /// <returns>A tuple containing the latitude and longitude of the address, or null if not found.</returns>
+    public static async Task<(double?, double?)> GetCoordinatesFromAddressAsync(string? address)
+    {
+        if (string.IsNullOrEmpty(address))
+        {
+            return (null, null);
+        }
+        string apiKey = "PK.83B935C225DF7E2F9B1ee90A6B46AD86";
+        using var client = new HttpClient();
+        string url = $"https://us1.locationiq.com/v1/search.php?key={apiKey}&q={Uri.EscapeDataString(address)}&format=json";
+        var response = await client.GetAsync(url);
+        if (!response.IsSuccessStatusCode)
+            return (null, null);
+
+        var json = await response.Content.ReadAsStringAsync();
+        using var doc = JsonDocument.Parse(json);
+
+        if (doc.RootElement.ValueKind != JsonValueKind.Array || doc.RootElement.GetArrayLength() == 0)
+            return (null, null);
+
+        var root = doc.RootElement[0];
+
+        // המרת הערכים ל-double
+        double latitude = double.Parse(root.GetProperty("lat").GetString()!);
+        double longitude = double.Parse(root.GetProperty("lon").GetString()!);
+
+        return (latitude, longitude);
+    }
+    /// <summary>
+    /// Sends an email using an SMTP server.
+    /// </summary>
+    /// <param name="toEmail">The recipient's email address.</param>
+    /// <param name="subject">The subject of the email.</param>
+    /// <param name="body">The body of the email.</param>
+    /// <exception cref="Exception">Thrown when the email cannot be sent.</exception>
+    public static void SendEmail(string toEmail, string subject, string body)
         {
             var fromAddress = new MailAddress("yedidimorganization@gmail.com", "Yedidim");
             var toAddress = new MailAddress(toEmail);

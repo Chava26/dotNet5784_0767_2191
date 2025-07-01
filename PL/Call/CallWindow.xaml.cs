@@ -52,6 +52,8 @@ namespace PL.Call
             {
                 s_bl.Call.AddObserver(Call.Id, RefreshCall);
             }
+            s_bl.Admin.AddConfigObserver(RefreshCall);
+
         }
 
         /// <summary>
@@ -63,6 +65,7 @@ namespace PL.Call
             {
                 s_bl.Call.RemoveObserver(Call.Id, RefreshCall);
             }
+            s_bl.Admin.RemoveConfigObserver(RefreshCall);
         }
 
         /// <summary>
@@ -106,7 +109,12 @@ namespace PL.Call
             }
             catch (Exception ex)
             {
-                MessageBox.Show("שגיאה בעדכון הקריאה: " + ex.Message, "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
+                string fullMessage = $"Error: {ex.Message}";
+                if (ex.InnerException != null)
+                {
+                    fullMessage += $"\nInner exception: {ex.InnerException.Message}";
+                }
+                MessageBox.Show("שגיאה בעדכון הקריאה: " + fullMessage, "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

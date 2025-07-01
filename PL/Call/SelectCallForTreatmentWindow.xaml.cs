@@ -16,6 +16,8 @@ namespace PL.Call
         private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         private volatile DispatcherOperation? _observerOperation = null; //stage 7
         private volatile DispatcherOperation? _observerOperation2 = null; //stage 7
+        private volatile DispatcherOperation? _observerOperation3 = null; //stage 7
+        private volatile DispatcherOperation? _observerOperation4 = null; //stage 7
 
         private ObservableCollection<OpenCallInList>? _openCalls;
         private string _callDescription = "בחר קריאה כדי לראות את התיאור המפורט";
@@ -70,12 +72,14 @@ namespace PL.Call
                 // Register observers for automatic updates
                 s_bl.Volunteer.AddObserver(CurrentVolunteer.Id, RefreshVolunteer);
                 s_bl.Call.AddObserver(RefreshOpenCalls);
+                s_bl.Admin.AddConfigObserver(RefreshOpenCalls);
 
                 // Load initial data and register observers for each call
                 RefreshOpenCalls();
             }
             catch (Exception ex)
             {
+
                 MessageBox.Show($"Error loading data: {ex.Message}", "Error",
                                MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -91,6 +95,8 @@ namespace PL.Call
                 s_bl.Volunteer.RemoveObserver(CurrentVolunteer.Id, RefreshVolunteer);
             }
             s_bl.Call.RemoveObserver(RefreshOpenCalls);
+            s_bl.Admin.RemoveConfigObserver(RefreshOpenCalls);
+
             Close();
         }
 
@@ -105,7 +111,7 @@ namespace PL.Call
                 {
 
                     CurrentVolunteer = s_bl.Volunteer.GetVolunteerDetails(CurrentVolunteer.Id);
-                    RefreshOpenCalls(); 
+                    RefreshOpenCalls();
                 }
             );
         }
@@ -118,25 +124,24 @@ namespace PL.Call
             if (_observerOperation2 is null || _observerOperation2.Status == DispatcherOperationStatus.Completed)
                 _observerOperation2 = Dispatcher.BeginInvoke(() =>
                 {
-
                     try
                     {
-                    // Unregister observers for old calls
+                        // Unregister observers for old calls
 
-                    var filteredCalls = GetFilteredOpenCalls();
-                    OpenCalls = new ObservableCollection<OpenCallInList>(filteredCalls);
+                        var filteredCalls = GetFilteredOpenCalls();
+                        OpenCalls = new ObservableCollection<OpenCallInList>(filteredCalls);
 
-                    // Register observers for new calls
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error refreshing open calls: {ex.Message}", "Error",
-                                   MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            });
+                        // Register observers for new calls
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error refreshing open calls: {ex.Message}", "Error",
+                                       MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                });
         }
 
-   
+
 
         /// <summary>
         /// Gets filtered open calls for the current volunteer within their maximum distance.
@@ -174,12 +179,17 @@ namespace PL.Call
                 try
                 {
                     // Get full call details to access the description
-                    var fullCall = s_bl.Call.GetCallDetails(selectedCall.Id);
-                    CallDescription = fullCall?.Description ?? "אין תיאור זמין";
+                    CallDescription = selectedCall?.Description ?? "אין תיאור זמין";
                 }
                 catch (Exception ex)
                 {
-                    CallDescription = $"שגיאה בקבלת תיאור הקריאה: {ex.Message}";
+                    string fullMessage = $"Error: {ex.Message}";
+                    if (ex.InnerException != null)
+                    {
+                        fullMessage += $"\nInner exception: {ex.InnerException.Message}";
+                    }
+                    
+                    CallDescription = $"שגיאה בקבלת תיאור הקריאה: {fullMessage}";
                 }
             }
             else
@@ -244,7 +254,7 @@ namespace PL.Call
         /// </summary>
         /// <param name="currentAddress">Current volunteer address</param>
         /// <returns>New address or null if cancelled</returns>
-        private string ShowAddressInputDialog(string currentAddress)
+        private string? ShowAddressInputDialog(string currentAddress)
         {
             var inputDialog = new Window
             {
@@ -268,7 +278,7 @@ namespace PL.Call
             stackPanel.Children.Add(buttonPanel);
             inputDialog.Content = stackPanel;
 
-            string newAddress = null;
+            string? newAddress = null;
             bool dialogResult = false;
 
             okButton.Click += (s, e) =>

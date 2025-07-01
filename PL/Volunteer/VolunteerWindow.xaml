@@ -107,19 +107,7 @@
         <!-- Password -->
         <Label Content="Password:" Grid.Row="9" Grid.Column="0" Style="{StaticResource LabelStyle}" Visibility="{Binding ButtonText}"/>
         <PasswordBox x:Name="PasswordBox" Grid.Row="9" Grid.Column="1" PasswordChanged="PasswordBox_PasswordChanged" />
-        <!-- Password -->
-        <!--<PasswordBox Grid.Row="9" Grid.Column="1">
-            <i:Interaction.Behaviors>
-                <behaviors:PasswordBehavior Password="{Binding Password, Mode=TwoWay}" />
-            </i:Interaction.Behaviors>
-        </PasswordBox>-->
-
-        <!--<Label Content="Password:" Grid.Row="9" Grid.Column="0" Style="{StaticResource LabelStyle}" Visibility="{Binding ButtonText}"/>
-        <PasswordBox x:Name="PasswordBox" Grid.Row="9" Grid.Column="1" PasswordChanged="PasswordBox_PasswordChanged" />-->
-        <!--<Label Content="Password:" Grid.Row="11" Style="{StaticResource LabelStyle}"/>
-        <PasswordBox x:Name="passwordBox" Grid.Row="11" Grid.Column="1" 
-             PasswordChanged="PasswordBox_PasswordChanged"
-            Visibility="{Binding ButtonText, Converter={StaticResource IdToVisibilityConverter}}"/>-->
+       
         <!-- Button -->
         <Button Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2" Content="{Binding ButtonText}"
                 Click="AddOrUpdate_Click" HorizontalAlignment="Center" Width="120" Height="30" Margin="10"  Background="LightCoral" />

@@ -417,6 +417,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace PL;
 
@@ -426,6 +427,9 @@ namespace PL;
 public partial class MainWindow : Window
 {
     static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+    private volatile DispatcherOperation? _observerOperation = null; //stage 7
+    private volatile DispatcherOperation? _observerOperation2 = null; //stage 7
+
 
     public MainWindow()
     {
@@ -574,10 +578,12 @@ public partial class MainWindow : Window
     private void ClockObserver()
     {
         // Update the CurrentTime property by fetching the clock value from the BL
-        Dispatcher.Invoke(() =>
-        {
-            CurrentTime = s_bl.Admin.GetSystemClock();
-        });
+        if (_observerOperation is null || _observerOperation.Status == DispatcherOperationStatus.Completed)
+            _observerOperation = Dispatcher.BeginInvoke(() =>
+            {
+
+                CurrentTime = s_bl.Admin.GetSystemClock();
+            });
     }
 
     /// <summary>
@@ -586,10 +592,12 @@ public partial class MainWindow : Window
     private void ConfigObserver()
     {
         // Update configuration-related dependency properties by fetching values from the BL
-        Dispatcher.Invoke(() =>
-        {
-            RiskRange = s_bl.Admin.GetRiskTimeRange();
-        });
+        if (_observerOperation2 is null || _observerOperation2.Status == DispatcherOperationStatus.Completed)
+            _observerOperation2 = Dispatcher.BeginInvoke(() =>
+            {
+
+                RiskRange = s_bl.Admin.GetRiskTimeRange();
+             });
     }
 
     #endregion

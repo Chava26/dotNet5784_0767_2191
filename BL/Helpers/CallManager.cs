@@ -154,7 +154,7 @@ internal class CallManager
             foreach (var item in volunteer)
             {
 
-                if (item.MaximumDistance >= Tools.CalculateDistance((double)item.Latitude!, (double)item.Longitude!, (double)call.Latitude!, (double)call.Longitude!))
+                if (item.MaximumDistance >= Tools.CalculateDistance(item.Latitude ?? 0, item.Longitude ?? 0, call.Latitude ?? 0, call.Longitude ?? 0))
                 {
                     string subject = "Openning call";
                     string body = $@"
@@ -220,8 +220,8 @@ internal class CallManager
             MyCallType = (DO.CallType)call.CallType,
             Description = call.Description,
             Address = call.FullAddress,
-            Latitude = (double)call.Latitude!,
-            Longitude = (double)call.Longitude!,
+            Latitude = null,
+            Longitude = null,
             OpenTime = call.OpenTime,
             MaxFinishTime = call.MaxEndTime
         };
@@ -266,7 +266,7 @@ internal class CallManager
 
         // רשימות לצבירת הודעות Observer
         bool shouldNotifyListUpdated = false;
-        List<int> updatedAssignmentIds = new List<int>();
+        List<DO.Assignment> updatedAssignmentIds = new List<DO.Assignment>();
 
         expiredCalls.ForEach(call =>
         {
@@ -299,8 +299,8 @@ internal class CallManager
                             TypeOfEndTime = (DO.EndOfTreatment)BO.EndOfTreatment.expired
                         });
                     }
-
-                    updatedAssignmentIds.Add(assignment.Id);
+                    shouldNotifyListUpdated = true;
+                    updatedAssignmentIds.Add(assignment);
 
                     var volunteer = allVolunteers.FirstOrDefault(v => v.Id == assignment.VolunteerId);
                     if (volunteer != null)
@@ -313,8 +313,11 @@ internal class CallManager
         if (shouldNotifyListUpdated)
             CallManager.Observers.NotifyListUpdated();
 
-        foreach (int assignmentId in updatedAssignmentIds)
-            Observers.NotifyItemUpdated(assignmentId);
+        foreach (DO.Assignment assignmentId in updatedAssignmentIds)
+        {
+            Observers.NotifyItemUpdated(assignmentId.CallId);
+            VolunteerManager.Observers.NotifyItemUpdated(assignmentId.VolunteerId);
+        }
     }
 
     // פונקציות עזר לסינון ומיון
@@ -330,7 +333,9 @@ internal class CallManager
             _ => callList
         };
     }
-   static public IEnumerable<BO.OpenCallInList> GetOpenCalls(int volunteerId, BO.CallType? callType, BO.CallField? sortField)
+
+  
+    static public IEnumerable<BO.OpenCallInList> GetOpenCalls(int volunteerId, BO.CallType? callType, BO.CallField? sortField)
     {
         DO.Volunteer volunteer;
         lock (AdminManager.BlMutex)

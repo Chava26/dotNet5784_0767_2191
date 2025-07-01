@@ -24,7 +24,6 @@ namespace PL.Volunteer
         private string _password = string.Empty;
         private int? _lastCallId = null; // Track last call ID to detect changes
         private volatile DispatcherOperation? _observerOperation = null; //stage 7
-        private volatile DispatcherOperation? _observerOperation2 = null; //stage 7
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -104,7 +103,8 @@ namespace PL.Volunteer
             if (Volunteer != null)
             {
                 s_bl.Volunteer.AddObserver(Volunteer.Id, OnVolunteerChanged);
-                s_bl.Call.AddObserver(OnVolunteerChanged);
+                s_bl.Admin.AddConfigObserver(OnVolunteerChanged);
+
             }
 
             // Subscribe to window closed event to clean up observer
@@ -144,11 +144,13 @@ namespace PL.Volunteer
             }
             catch (Exception ex)
             {
-                Dispatcher.Invoke(() =>
+                
+                string fullMessage = $"Error: {ex.Message}";
+                if (ex.InnerException != null)
                 {
-                    MessageBox.Show($"Error refreshing volunteer data: {ex.Message}", "Error",
-                                   MessageBoxButton.OK, MessageBoxImage.Warning);
-                });
+                    fullMessage += $"\nInner exception: {ex.InnerException.Message}";
+                }
+                MessageBox.Show(fullMessage);
             }
         }
 
@@ -446,7 +448,12 @@ namespace PL.Volunteer
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error updating map: {ex.Message}", "Map Error",
+                string fullMessage = $"Error: {ex.Message}";
+                if (ex.InnerException != null)
+                {
+                    fullMessage += $"\nInner exception: {ex.InnerException.Message}";
+                }
+                MessageBox.Show($"Error updating map: {fullMessage}", "Map Error",
                                MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
@@ -482,7 +489,7 @@ namespace PL.Volunteer
         /// </summary>
         private string CreateCallJavaScriptObject()
         {
-            var call = s_bl.Call.GetCallDetails(Volunteer?.callInProgress?.Id ?? 0);
+            var call = s_bl.Call.GetCallDetails(Volunteer?.callInProgress?.CallId ?? 0);
             if (call?.Latitude == null || call?.Longitude == null)
                 return "null";
 
@@ -510,8 +517,8 @@ namespace PL.Volunteer
             if (Volunteer != null)
             {
                 s_bl.Volunteer.RemoveObserver(Volunteer.Id, OnVolunteerChanged);
-                s_bl.Call.RemoveObserver(OnVolunteerChanged);
             }
+            s_bl.Admin.RemoveConfigObserver(OnVolunteerChanged);
         }
 
         /// <summary>
