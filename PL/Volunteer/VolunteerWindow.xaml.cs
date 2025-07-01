@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace PL.Volunteer;
 
@@ -27,6 +28,8 @@ public partial class VolunteerWindow : Window
 
     private readonly bool _isUpdate;
     private readonly int _volunteerId;
+    private volatile DispatcherOperation? _observerOperation = null; //stage 7
+
 
     /// <summary>
     /// The volunteer object being created or edited.
@@ -203,14 +206,18 @@ public partial class VolunteerWindow : Window
     /// </summary>
     private void RefreshVolunteer()
     {
-        if (Volunteer == null) return;
+        if (_observerOperation is null || _observerOperation.Status == DispatcherOperationStatus.Completed)
+            _observerOperation = Dispatcher.BeginInvoke(() =>
+            {
+                if (Volunteer == null) return;
 
-        int id = Volunteer.Id;
-        Volunteer = null;
-        Volunteer = _bl.Volunteer.GetVolunteerDetails(id);
-        DataContext = null;
-        DataContext = this;
-    }
+                int id = Volunteer.Id;
+                Volunteer = null;
+                Volunteer = _bl.Volunteer.GetVolunteerDetails(id);
+                DataContext = null;
+                DataContext = this;
+            });
+      }
 
     /// <summary>
     /// Handles selection change in combo box (currently unused).

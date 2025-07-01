@@ -50,7 +50,7 @@ namespace PL
                     Latitude = null,
                     Longitude = null,
                     OpenTime = DateTime.Now,
-                    MaxEndTime = maxFinishDatePicker.SelectedDate ?? DateTime.Now,
+                    MaxEndTime = maxFinishDatePicker.SelectedDate ?? null,
                     Status = BO.CallStatus.Open
                 };
 

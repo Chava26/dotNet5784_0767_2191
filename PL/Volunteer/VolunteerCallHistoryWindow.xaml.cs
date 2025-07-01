@@ -178,19 +178,22 @@
 //        }
 //    }
 //}
+using BlApi;
+using BO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using BlApi;
-using BO;
+using System.Windows.Threading;
 
 namespace PL
 {
     public partial class VolunteerCallHistoryWindow : Window, INotifyPropertyChanged
     {
         private static readonly IBl s_bl = Factory.Get();
+
+        private volatile DispatcherOperation? _observerOperation = null; //stage 7
 
         public VolunteerCallHistoryWindow()
         {
@@ -272,8 +275,14 @@ namespace PL
         /// </summary>
         private void RefreshCallHistory()
         {
-            // Refresh the call history when notified of changes
-            QueryClosedCalls();
+            if (_observerOperation is null || _observerOperation.Status == DispatcherOperationStatus.Completed)
+                _observerOperation = Dispatcher.BeginInvoke(() =>
+                {
+
+                    // Refresh the call history when notified of changes
+                    QueryClosedCalls();
+
+                });
         }
 
         private void QueryClosedCalls()

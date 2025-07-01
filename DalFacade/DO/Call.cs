@@ -17,8 +17,8 @@ public record Call
 (
     CallType MyCallType,
     string Address,
-    double Latitude,
-    double Longitude,
+    double? Latitude,
+    double? Longitude,
     DateTime OpenTime,
     DateTime? MaxFinishTime = null,
     string? Description = null,

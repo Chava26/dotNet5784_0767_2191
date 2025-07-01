@@ -1,3 +1,4 @@
+using BlImplementation;
 using BO;
 using DalApi;
 using DO;
@@ -224,6 +225,7 @@ namespace Helpers
         internal static void SimulateVolunteerActivity() //stage 7
         {
             Thread.CurrentThread.Name = $"Simulator{++s_simulatorCounter}";
+            LinkedList<int> callsToUpdate = new(); 
 
             LinkedList<int> volunteersToUpdate = new(); //stage 7
             List<DO.Volunteer> doVolunteerList;
@@ -233,7 +235,7 @@ namespace Helpers
 
             foreach (var doVolunteer in doVolunteerList)
             {
-                int volunteerId = 0;
+                int volunteerId = doVolunteer.Id;
                 lock (AdminManager.BlMutex) //stage 7
                 {
                     // Check if volunteer has an active assignment
@@ -246,6 +248,8 @@ namespace Helpers
                         {
                             // Get available open calls within volunteer's maximum distance
                             var availableCalls = CallManager.GetOpenCalls(volunteerId, null, null);
+                          
+                            availableCalls = availableCalls.Where(call =>  call.DistanceFromVolunteer <= doVolunteer.MaximumDistance);
 
                             int availableCallsCount = availableCalls.Count();
                             if (availableCallsCount > 0)
@@ -262,6 +266,8 @@ namespace Helpers
                                 ));
 
                                 volunteerId = doVolunteer.Id;
+                                callsToUpdate.AddLast(selectedCallId);
+
                             }
                         }
                     }
@@ -275,8 +281,8 @@ namespace Helpers
                             double distanceToCall = Tools.CalculateDistance(
                                 doVolunteer.Latitude ?? 0,
                                 doVolunteer.Longitude ?? 0,
-                                call.Latitude,
-                                call.Longitude
+                                call.Latitude ?? 0,
+                                call.Longitude ?? 0
                             );
 
                             // Base time: 2 minutes per km + random 5-15 minutes
@@ -285,27 +291,31 @@ namespace Helpers
 
                             if (elapsedTime >= requiredTime)
                             {
+                               
                                 // Complete the call successfully
                                 s_dal.Assignment.Update(activeAssignment with
                                 {
                                     exitTime = ClockManager.Now,
                                     TypeOfEndTime = DO.EndOfTreatment.treated
                                 });
+                                callsToUpdate.AddLast(activeAssignment.CallId);
 
                                 volunteerId = doVolunteer.Id;
                             }
                             else
                             {
                                 // 10% chance to cancel the call if not enough time has passed
-                                if (s_rand.NextDouble() < 0.10) // 10% chance to cancel
+                                if (s_rand.NextDouble() < 0.01) // 10% chance to cancel
                                 {
                                     s_dal.Assignment.Update(activeAssignment with
                                     {
                                         exitTime = ClockManager.Now,
-                                        TypeOfEndTime = DO.EndOfTreatment.selfCancel
+                                        TypeOfEndTime = DO.EndOfTreatment.administratorCancel
                                     });
 
                                     volunteerId = doVolunteer.Id;
+                                    callsToUpdate.AddLast(activeAssignment.CallId);
+
                                 }
                             }
                         }
@@ -318,6 +328,11 @@ namespace Helpers
 
             foreach (int id in volunteersToUpdate)
                 Observers.NotifyItemUpdated(id);
+            foreach (int callId in callsToUpdate.Distinct()) 
+                CallManager.Observers.NotifyItemUpdated(callId); 
+            VolunteerManager.Observers.NotifyListUpdated();
+            CallManager.Observers.NotifyListUpdated();
+
         }
         #endregion Stage 7 - Simulation
     }

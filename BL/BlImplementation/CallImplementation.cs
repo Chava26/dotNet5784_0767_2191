@@ -86,7 +86,7 @@ internal class CallImplementation : BlApi.ICall
                 call = _dal.Call.Read(callId) ?? throw new BO.BlInvalidOperationException($"Call with ID {callId} not found.");
             
 
-            var status = CallManager.CalculateCallStatus(call);
+            var status = Tools.CalculateCallStatus(call);
 
             if (status == CallStatus.Expired || status == CallStatus.Closed || (status == CallStatus.InProgress && _dal.Assignment.Read(callId) != null))
             {
@@ -99,12 +99,13 @@ internal class CallImplementation : BlApi.ICall
                 VolunteerId: volunteerId,
                 EntryTime: AdminManager.Now,
                 TypeOfEndTime: null,
-
                 exitTime: null
             );
             lock (AdminManager.BlMutex) //stage 7
                 _dal.Assignment.Create(newAssignment);
 
+            VolunteerManager.Observers.NotifyItemUpdated(volunteerId);  //stage 5
+            VolunteerManager.Observers.NotifyListUpdated();  //stage 5
             CallManager.Observers.NotifyListUpdated(); //stage 5  
         }
 
@@ -151,7 +152,7 @@ internal class CallImplementation : BlApi.ICall
             {
                 throw new BO.BlUnauthorizedAccessException("You do not have permission to cancel this assignment.");
             }
-            CallStatus status = CallManager.CalculateCallStatus(call, assignment);
+            CallStatus status = Tools.CalculateCallStatus(call, assignment);
 
             if (status == CallStatus.Expired || status == CallStatus.Closed)
             {
@@ -167,9 +168,11 @@ internal class CallImplementation : BlApi.ICall
                 _dal.Assignment.Update(assignment);
 
             CallManager.SendEmailToVolunteer(volunteer!, assignment);
-            CallManager.Observers.NotifyItemUpdated(assignment.Id);  //stage 5
-            CallManager.Observers.NotifyListUpdated(); //stage 5  
 
+            CallManager.Observers.NotifyItemUpdated(assignment.CallId);  //stage 5
+            VolunteerManager.Observers.NotifyItemUpdated(assignment.VolunteerId);  //stage 5
+            VolunteerManager.Observers.NotifyListUpdated();
+            CallManager.Observers.NotifyListUpdated(); 
         }
 
         catch (BLTemporaryNotAvailableException)
@@ -225,7 +228,10 @@ internal class CallImplementation : BlApi.ICall
             };
             lock (AdminManager.BlMutex) //stage 7
                 _dal.Assignment.Update(updatedAssignment);
-            CallManager.Observers.NotifyItemUpdated(updatedAssignment.Id);  //stage 5
+
+            VolunteerManager.Observers.NotifyItemUpdated(updatedAssignment.VolunteerId);  //stage 5
+            VolunteerManager.Observers.NotifyListUpdated();  //stage 5
+            CallManager.Observers.NotifyItemUpdated(updatedAssignment.CallId);  //stage 5
             CallManager.Observers.NotifyListUpdated(); //stage 5  
         }
 
@@ -269,7 +275,7 @@ internal class CallImplementation : BlApi.ICall
             }
 
             // Step 3: Calculate the status using the helper method
-            CallStatus status = CallManager.CalculateCallStatus(call);
+            CallStatus status = Tools.CalculateCallStatus(call);
 
             // Step 4: Check if the call can be deleted
             if (status != CallStatus.Open)
@@ -370,7 +376,7 @@ internal class CallImplementation : BlApi.ICall
                     {
                         var assignments = _dal.Assignment.ReadAll(a => a.CallId == call.Id);
                         var latestAssignment = assignments.OrderByDescending(a => a.EntryTime).FirstOrDefault();
-                        CallStatus status = CallManager.CalculateCallStatus(call, latestAssignment);
+                        CallStatus status = Tools.CalculateCallStatus(call, latestAssignment);
                         return new BO.CallInList
                         {
                             Id = latestAssignment?.Id,
@@ -491,7 +497,7 @@ internal class CallImplementation : BlApi.ICall
 
             // Group calls by status and count them
             var groupedCalls = from call in calls
-                               group call by CallManager.CalculateCallStatus(call) into grouped
+                               group call by Tools.CalculateCallStatus(call) into grouped
                                select new { Status = grouped.Key, Count = grouped.Count() };
 
             // For each status in the enum, retrieve the c

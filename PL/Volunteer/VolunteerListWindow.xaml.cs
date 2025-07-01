@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace PL.Volunteer
 {
@@ -12,6 +13,9 @@ namespace PL.Volunteer
         /// Access to the business logic layer.
         /// </summary>
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+        private volatile DispatcherOperation? _observerOperation = null; //stage 7
+
+
 
         /// <summary>
         /// The currently selected volunteer from the list view.
@@ -25,7 +29,6 @@ namespace PL.Volunteer
         {
             InitializeComponent();
             GetVolunteerList();
-            s_bl?.Volunteer.AddObserver(GetVolunteerList);
         }
 
         /// <summary>
@@ -33,11 +36,16 @@ namespace PL.Volunteer
         /// </summary>
         private void GetVolunteerList()
         {
-            VolunteerList = s_bl.Volunteer.GetVolunteersList(
+            if (_observerOperation is null || _observerOperation.Status == DispatcherOperationStatus.Completed)
+                _observerOperation = Dispatcher.BeginInvoke(() =>
+                {
+
+                    VolunteerList = s_bl.Volunteer.GetVolunteersList(
                 isActive: null,
                 sortBy: SelectedSortField == BO.VolunteerSortField.None ? null : SelectedSortField,
                 filterField: SelectedCallType == BO.CallType.None ? null : SelectedCallType);
-        }
+                });
+                }
 
         /// <summary>
         /// The list of volunteers displayed in the UI.
@@ -127,12 +135,14 @@ namespace PL.Volunteer
         /// <summary>
         /// Registers the observer when the window is loaded.
         /// </summary>
-        private void Window_Loaded(object sender, RoutedEventArgs e) => s_bl?.Volunteer.AddObserver(GetVolunteerList);
+        private void Window_Loaded(object sender, RoutedEventArgs e) { s_bl?.Volunteer.AddObserver(GetVolunteerList);
+        }
 
         /// <summary>
         /// Unregisters the observer when the window is closed.
         /// </summary>
-        private void Window_Closed(object sender, EventArgs e) => s_bl?.Volunteer.RemoveObserver(GetVolunteerList);
+        private void Window_Closed(object sender, EventArgs e) { s_bl?.Volunteer.RemoveObserver(GetVolunteerList);
+        }
 
         /// <summary>
         /// Opens a window for adding a new volunteer.
@@ -202,6 +212,11 @@ namespace PL.Volunteer
                 MessageBox.Show($"Error:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             return false;
+        }
+
+        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

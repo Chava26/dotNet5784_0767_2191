@@ -1,523 +1,503 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfCall xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Call>
-    <MyCallType>TransmissionIssue</MyCallType>
+    <MyCallType>WornBrakePads</MyCallType>
     <Address>Highway 2, Central Israel</Address>
-    <Latitude>34.8697</Latitude>
-    <Longitude>32.3488</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-07-01T07:08:51</MaxFinishTime>
+    <Latitude>32.3488</Latitude>
+    <Longitude>34.8697</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-02T06:54:21</MaxFinishTime>
     <Description>Flat tire</Description>
     <Id>1000</Id>
   </Call>
   <Call>
-    <MyCallType>Overheating</MyCallType>
+    <MyCallType>SuspensionProblem</MyCallType>
     <Address>Highway 6, Central Israel</Address>
-    <Latitude>34.8951</Latitude>
-    <Longitude>31.9575</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-07-01T00:08:51</MaxFinishTime>
+    <Latitude>31.9575</Latitude>
+    <Longitude>34.8951</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-02T00:54:21</MaxFinishTime>
     <Description>Engine failure</Description>
     <Id>1001</Id>
   </Call>
   <Call>
-    <MyCallType>OilLeak</MyCallType>
+    <MyCallType>CloggedFuelFilter</MyCallType>
     <Address>Begin Boulevard, Jerusalem</Address>
-    <Latitude>35.2105</Latitude>
-    <Longitude>31.7781</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-07-01T08:08:51</MaxFinishTime>
+    <Latitude>31.7781</Latitude>
+    <Longitude>35.2105</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-02T17:54:21</MaxFinishTime>
     <Description>Battery is dead</Description>
     <Id>1002</Id>
   </Call>
   <Call>
-    <MyCallType>FlatTire</MyCallType>
+    <MyCallType>ExhaustLeak</MyCallType>
     <Address>Glilot Interchange, Tel Aviv</Address>
-    <Latitude>34.8048</Latitude>
-    <Longitude>32.125</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-07-01T16:08:51</MaxFinishTime>
+    <Latitude>32.125</Latitude>
+    <Longitude>34.8048</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-02T17:54:21</MaxFinishTime>
     <Description>Ran out of fuel</Description>
     <Id>1003</Id>
   </Call>
   <Call>
-    <MyCallType>FuelPumpFailure</MyCallType>
+    <MyCallType>ExhaustLeak</MyCallType>
     <Address>HaTmarim, Eilat</Address>
-    <Latitude>34.8708</Latitude>
-    <Longitude>32.0004</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-07-01T20:08:51</MaxFinishTime>
+    <Latitude>32.0004</Latitude>
+    <Longitude>34.8708</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-03T14:54:21</MaxFinishTime>
     <Description>Locked keys inside the car</Description>
     <Id>1004</Id>
   </Call>
   <Call>
-    <MyCallType>OilLeak</MyCallType>
+    <MyCallType>PowerSteeringFailure</MyCallType>
     <Address>Ein Gedi, Dead Sea</Address>
-    <Latitude>34.9482</Latitude>
-    <Longitude>29.558</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-07-01T22:08:51</MaxFinishTime>
+    <Latitude>29.558</Latitude>
+    <Longitude>34.9482</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T19:54:21</MaxFinishTime>
     <Description>Brake system malfunction</Description>
     <Id>1005</Id>
   </Call>
   <Call>
-    <MyCallType>TransmissionIssue</MyCallType>
+    <MyCallType>BatteryCorrosion</MyCallType>
     <Address>Rothschild Blvd, Tel Aviv</Address>
-    <Latitude>35.4732</Latitude>
-    <Longitude>31.559</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-07-02T07:08:51</MaxFinishTime>
+    <Latitude>31.559</Latitude>
+    <Longitude>35.4732</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-03T01:54:21</MaxFinishTime>
     <Description>Overheated engine</Description>
     <Id>1006</Id>
   </Call>
   <Call>
-    <MyCallType>DeadBattery</MyCallType>
+    <MyCallType>EngineFailure</MyCallType>
     <Address>Carmel Beach, Haifa</Address>
-    <Latitude>34.7746</Latitude>
-    <Longitude>32.0628</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-07-02T08:08:51</MaxFinishTime>
+    <Latitude>32.0628</Latitude>
+    <Longitude>34.7746</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T19:54:21</MaxFinishTime>
     <Description>Warning light is on</Description>
     <Id>1007</Id>
   </Call>
   <Call>
-    <MyCallType>AlternatorFailure</MyCallType>
+    <MyCallType>FlatTire</MyCallType>
     <Address>Soroka Hospital, Beer Sheva</Address>
-    <Latitude>34.964</Latitude>
-    <Longitude>32.798</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-07-02T17:08:51</MaxFinishTime>
+    <Latitude>32.798</Latitude>
+    <Longitude>34.964</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T23:54:21</MaxFinishTime>
     <Description>Strange noise from the engine</Description>
     <Id>1008</Id>
   </Call>
   <Call>
-    <MyCallType>TimingBeltFailure</MyCallType>
+    <MyCallType>SuspensionProblem</MyCallType>
     <Address>El-Rama, Nazareth</Address>
-    <Latitude>34.7915</Latitude>
-    <Longitude>31.2525</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-07-01T09:08:51</MaxFinishTime>
+    <Latitude>31.2525</Latitude>
+    <Longitude>34.7915</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-03T09:54:21</MaxFinishTime>
     <Description>Headlights are not working</Description>
     <Id>1009</Id>
   </Call>
   <Call>
-    <MyCallType>General</MyCallType>
+    <MyCallType>StarterMotorFailure</MyCallType>
     <Address>Kinneret, Tiberias</Address>
-    <Latitude>35.3035</Latitude>
-    <Longitude>32.6996</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-07-02T08:08:51</MaxFinishTime>
+    <Latitude>32.6996</Latitude>
+    <Longitude>35.3035</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-03T09:54:21</MaxFinishTime>
     <Description>Power steering failure</Description>
     <Id>1010</Id>
   </Call>
   <Call>
-    <MyCallType>AirConditionerFailure</MyCallType>
+    <MyCallType>CoolantLeak</MyCallType>
     <Address>Port Road, Ashdod</Address>
-    <Latitude>35.5312</Latitude>
-    <Longitude>32.7922</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-07-01T15:08:51</MaxFinishTime>
+    <Latitude>32.7922</Latitude>
+    <Longitude>35.5312</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-02T19:54:21</MaxFinishTime>
     <Description>Transmission problem</Description>
     <Id>1011</Id>
   </Call>
   <Call>
-    <MyCallType>General</MyCallType>
+    <MyCallType>TimingBeltFailure</MyCallType>
     <Address>Herzl, Ashkelon</Address>
-    <Latitude>34.6499</Latitude>
-    <Longitude>31.8014</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-06-30T22:08:51</MaxFinishTime>
+    <Latitude>31.8014</Latitude>
+    <Longitude>34.6499</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T18:54:21</MaxFinishTime>
     <Description>Exhaust system damage</Description>
     <Id>1012</Id>
   </Call>
   <Call>
-    <MyCallType>WornBrakePads</MyCallType>
+    <MyCallType>AlternatorFailure</MyCallType>
     <Address>Jabotinsky, Rishon Lezion</Address>
-    <Latitude>34.5743</Latitude>
-    <Longitude>31.6693</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-06-30T23:08:51</MaxFinishTime>
+    <Latitude>31.6693</Latitude>
+    <Longitude>34.5743</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-02T09:54:21</MaxFinishTime>
     <Description>Car won’t start</Description>
     <Id>1013</Id>
   </Call>
   <Call>
-    <MyCallType>ExhaustLeak</MyCallType>
+    <MyCallType>General</MyCallType>
     <Address>Ben Gurion, Netanya</Address>
-    <Latitude>34.8043</Latitude>
-    <Longitude>31.9648</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-07-02T15:08:51</MaxFinishTime>
+    <Latitude>31.9648</Latitude>
+    <Longitude>34.8043</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-03T13:54:21</MaxFinishTime>
     <Description>Tire tread is worn out</Description>
     <Id>1014</Id>
   </Call>
   <Call>
     <MyCallType>HeadlightFailure</MyCallType>
     <Address>Shderot HaMeginim, Acre (Akko)</Address>
-    <Latitude>34.85</Latitude>
-    <Longitude>32.3329</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-07-01T00:08:51</MaxFinishTime>
+    <Latitude>32.3329</Latitude>
+    <Longitude>34.85</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-03T03:54:21</MaxFinishTime>
     <Description>Leaking oil</Description>
     <Id>1015</Id>
   </Call>
   <Call>
-    <MyCallType>CloggedFuelFilter</MyCallType>
+    <MyCallType>CoolantLeak</MyCallType>
     <Address>Sokolov, Herzliya</Address>
-    <Latitude>35.0738</Latitude>
-    <Longitude>32.9234</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-07-02T09:08:51</MaxFinishTime>
+    <Latitude>32.9234</Latitude>
+    <Longitude>35.0738</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-02T10:54:21</MaxFinishTime>
     <Description>Windshield wipers are broken</Description>
     <Id>1016</Id>
   </Call>
   <Call>
-    <MyCallType>PowerSteeringFailure</MyCallType>
+    <MyCallType>General</MyCallType>
     <Address>Weizmann Institute, Rehovot</Address>
-    <Latitude>34.8447</Latitude>
-    <Longitude>32.1663</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-07-02T14:08:51</MaxFinishTime>
+    <Latitude>32.1663</Latitude>
+    <Longitude>34.8447</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T20:54:21</MaxFinishTime>
     <Description>Clutch is slipping</Description>
     <Id>1017</Id>
   </Call>
   <Call>
-    <MyCallType>AlternatorFailure</MyCallType>
+    <MyCallType>TimingBeltFailure</MyCallType>
     <Address>Haatzmaut, Arad</Address>
-    <Latitude>34.8111</Latitude>
-    <Longitude>31.8941</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-07-02T02:08:51</MaxFinishTime>
+    <Latitude>31.8941</Latitude>
+    <Longitude>34.8111</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T22:54:21</MaxFinishTime>
     <Description>Car stuck in gear</Description>
     <Id>1018</Id>
   </Call>
   <Call>
-    <MyCallType>PowerSteeringFailure</MyCallType>
+    <MyCallType>BlownFuse</MyCallType>
     <Address>Jabotinsky, Caesarea</Address>
-    <Latitude>35.2137</Latitude>
-    <Longitude>31.2586</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-07-01T23:08:51</MaxFinishTime>
+    <Latitude>31.2586</Latitude>
+    <Longitude>35.2137</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-03T12:54:21</MaxFinishTime>
     <Description>AC is not working</Description>
     <Id>1019</Id>
   </Call>
   <Call>
-    <MyCallType>General</MyCallType>
+    <MyCallType>StarterMotorFailure</MyCallType>
     <Address>HaMeyasdim, Zikhron Ya'akov</Address>
-    <Latitude>34.8925</Latitude>
-    <Longitude>32.5113</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-07-01T18:08:51</MaxFinishTime>
+    <Latitude>32.5113</Latitude>
+    <Longitude>34.8925</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-03T02:54:21</MaxFinishTime>
     <Description>Heater is not functioning</Description>
     <Id>1020</Id>
   </Call>
   <Call>
-    <MyCallType>General</MyCallType>
+    <MyCallType>CoolantLeak</MyCallType>
     <Address>Ahuza, Raanana</Address>
-    <Latitude>34.9537</Latitude>
-    <Longitude>32.5726</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-07-01T03:08:51</MaxFinishTime>
+    <Latitude>32.5726</Latitude>
+    <Longitude>34.9537</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-02T12:54:21</MaxFinishTime>
     <Description>Radiator is leaking</Description>
     <Id>1021</Id>
   </Call>
   <Call>
-    <MyCallType>HeadlightFailure</MyCallType>
+    <MyCallType>OilLeak</MyCallType>
     <Address>Jabotinsky, Kiryat Gat</Address>
-    <Latitude>34.8703</Latitude>
-    <Longitude>32.1847</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-07-01T17:08:51</MaxFinishTime>
+    <Latitude>32.1847</Latitude>
+    <Longitude>34.8703</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-02T09:54:21</MaxFinishTime>
     <Description>Alternator failure</Description>
     <Id>1022</Id>
   </Call>
   <Call>
-    <MyCallType>ExhaustLeak</MyCallType>
+    <MyCallType>BrakeFailure</MyCallType>
     <Address>Golan, Kiryat Shmona</Address>
-    <Latitude>34.764</Latitude>
-    <Longitude>31.6096</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-07-02T10:08:51</MaxFinishTime>
+    <Latitude>31.6096</Latitude>
+    <Longitude>34.764</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-02T22:54:21</MaxFinishTime>
     <Description>Starter motor failure</Description>
     <Id>1023</Id>
   </Call>
   <Call>
-    <MyCallType>WornBrakePads</MyCallType>
+    <MyCallType>HeadlightFailure</MyCallType>
     <Address>Ze'ev Jabotinsky, Modiin</Address>
-    <Latitude>35.5683</Latitude>
-    <Longitude>33.2082</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-07-02T20:08:51</MaxFinishTime>
+    <Latitude>33.2082</Latitude>
+    <Longitude>35.5683</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-03T07:54:21</MaxFinishTime>
     <Description>Car is vibrating while driving</Description>
     <Id>1024</Id>
   </Call>
   <Call>
-    <MyCallType>EngineFailure</MyCallType>
+    <MyCallType>PowerSteeringFailure</MyCallType>
     <Address>HaRabbanim, Safed (Tzfat)</Address>
-    <Latitude>35.0063</Latitude>
-    <Longitude>31.8996</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-06-30T20:12:51</MaxFinishTime>
+    <Latitude>31.8996</Latitude>
+    <Longitude>35.0063</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T16:13:21</MaxFinishTime>
     <Description>Brake pads are worn out</Description>
     <Id>1025</Id>
   </Call>
   <Call>
-    <MyCallType>AlternatorFailure</MyCallType>
+    <MyCallType>HeadlightFailure</MyCallType>
     <Address>HaGalil, Metula</Address>
-    <Latitude>35.496</Latitude>
-    <Longitude>32.9646</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-06-30T20:11:51</MaxFinishTime>
+    <Latitude>32.9646</Latitude>
+    <Longitude>35.496</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T16:33:21</MaxFinishTime>
     <Description>Broken timing belt</Description>
     <Id>1026</Id>
   </Call>
   <Call>
     <MyCallType>FlatTire</MyCallType>
     <Address>HaTomer, Dimona</Address>
-    <Latitude>35.5773</Latitude>
-    <Longitude>33.279</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-06-30T20:24:51</MaxFinishTime>
+    <Latitude>33.279</Latitude>
+    <Longitude>35.5773</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T16:26:21</MaxFinishTime>
     <Description>Suspension problem</Description>
     <Id>1027</Id>
   </Call>
   <Call>
-    <MyCallType>FlatTire</MyCallType>
+    <MyCallType>TransmissionIssue</MyCallType>
     <Address>HaGilboa, Yokneam</Address>
-    <Latitude>35.0345</Latitude>
-    <Longitude>31.0707</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-06-30T20:58:51</MaxFinishTime>
+    <Latitude>31.0707</Latitude>
+    <Longitude>35.0345</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T16:30:21</MaxFinishTime>
     <Description>Check engine light is blinking</Description>
     <Id>1028</Id>
   </Call>
   <Call>
-    <MyCallType>EngineFailure</MyCallType>
+    <MyCallType>ExhaustLeak</MyCallType>
     <Address>Ben Gurion, Bat Yam</Address>
-    <Latitude>35.1047</Latitude>
-    <Longitude>32.6672</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-06-30T20:18:51</MaxFinishTime>
+    <Latitude>32.6672</Latitude>
+    <Longitude>35.1047</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T16:33:21</MaxFinishTime>
     <Description>Fuel pump failure</Description>
     <Id>1029</Id>
   </Call>
   <Call>
-    <MyCallType>General</MyCallType>
+    <MyCallType>FuelPumpFailure</MyCallType>
     <Address>Jabotinsky, Ramat Gan</Address>
-    <Latitude>34.7443</Latitude>
-    <Longitude>32.0171</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-06-30T20:20:51</MaxFinishTime>
+    <Latitude>32.0171</Latitude>
+    <Longitude>34.7443</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T16:07:21</MaxFinishTime>
     <Description>Spark plugs need replacement</Description>
     <Id>1030</Id>
   </Call>
   <Call>
-    <MyCallType>CoolantLeak</MyCallType>
+    <MyCallType>AirConditionerFailure</MyCallType>
     <Address>Herzl, Kfar Saba</Address>
-    <Latitude>34.8248</Latitude>
-    <Longitude>32.0684</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-06-30T20:49:51</MaxFinishTime>
+    <Latitude>32.0684</Latitude>
+    <Longitude>34.8248</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T15:56:21</MaxFinishTime>
     <Description>Catalytic converter issue</Description>
     <Id>1031</Id>
   </Call>
   <Call>
-    <MyCallType>AirConditionerFailure</MyCallType>
+    <MyCallType>HeadlightFailure</MyCallType>
     <Address>Rothschild Blvd, Petah Tikva</Address>
-    <Latitude>34.9065</Latitude>
-    <Longitude>32.1782</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-06-30T20:53:51</MaxFinishTime>
+    <Latitude>32.1782</Latitude>
+    <Longitude>34.9065</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T16:17:21</MaxFinishTime>
     <Description>Car pulling to one side while driving</Description>
     <Id>1032</Id>
   </Call>
   <Call>
-    <MyCallType>BlownFuse</MyCallType>
+    <MyCallType>StarterMotorFailure</MyCallType>
     <Address>Shderot HaMeginim, Afula</Address>
-    <Latitude>34.8878</Latitude>
-    <Longitude>32.084</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-06-30T20:27:51</MaxFinishTime>
+    <Latitude>32.084</Latitude>
+    <Longitude>34.8878</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T16:16:21</MaxFinishTime>
     <Description>Broken fan belt</Description>
     <Id>1033</Id>
   </Call>
   <Call>
-    <MyCallType>EngineFailure</MyCallType>
+    <MyCallType>CoolantLeak</MyCallType>
     <Address>HaBanim, Hadera</Address>
-    <Latitude>35.2854</Latitude>
-    <Longitude>32.6082</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-06-30T20:56:51</MaxFinishTime>
+    <Latitude>32.6082</Latitude>
+    <Longitude>35.2854</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T16:26:21</MaxFinishTime>
     <Description>Electric window not working</Description>
     <Id>1034</Id>
   </Call>
   <Call>
-    <MyCallType>TimingBeltFailure</MyCallType>
+    <MyCallType>Overheating</MyCallType>
     <Address>Eilat, Mitzpe Ramon</Address>
-    <Latitude>34.9197</Latitude>
-    <Longitude>32.434</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-06-30T20:48:51</MaxFinishTime>
+    <Latitude>32.434</Latitude>
+    <Longitude>34.9197</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T16:33:21</MaxFinishTime>
     <Description>Central locking system failure</Description>
     <Id>1035</Id>
   </Call>
   <Call>
-    <MyCallType>FlatTire</MyCallType>
+    <MyCallType>CloggedFuelFilter</MyCallType>
     <Address>Rabbi Akiva, Bnei Brak</Address>
-    <Latitude>34.8019</Latitude>
-    <Longitude>30.61</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-06-30T20:18:51</MaxFinishTime>
+    <Latitude>30.61</Latitude>
+    <Longitude>34.8019</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T16:03:21</MaxFinishTime>
     <Description>Flat spare tire</Description>
     <Id>1036</Id>
   </Call>
   <Call>
-    <MyCallType>TransmissionIssue</MyCallType>
+    <MyCallType>SparkPlugIssue</MyCallType>
     <Address>HaMeyasdim, Karmiel</Address>
-    <Latitude>34.8383</Latitude>
-    <Longitude>32.0853</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-06-30T20:45:51</MaxFinishTime>
+    <Latitude>32.0853</Latitude>
+    <Longitude>34.8383</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T15:59:21</MaxFinishTime>
     <Description>Key fob is not functioning</Description>
     <Id>1037</Id>
   </Call>
   <Call>
-    <MyCallType>CoolantLeak</MyCallType>
+    <MyCallType>TimingBeltFailure</MyCallType>
     <Address>Givat Yoav, Golan Heights</Address>
-    <Latitude>35.3047</Latitude>
-    <Longitude>32.917</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-06-30T20:41:51</MaxFinishTime>
+    <Latitude>32.917</Latitude>
+    <Longitude>35.3047</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T16:21:21</MaxFinishTime>
     <Description>Damaged side mirror</Description>
     <Id>1038</Id>
   </Call>
   <Call>
-    <MyCallType>FuelPumpFailure</MyCallType>
+    <MyCallType>EngineFailure</MyCallType>
     <Address>Ginosar, Sea of Galilee</Address>
-    <Latitude>35.7496</Latitude>
-    <Longitude>33.0622</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-06-30T20:58:51</MaxFinishTime>
+    <Latitude>33.0622</Latitude>
+    <Longitude>35.7496</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T16:13:21</MaxFinishTime>
     <Description>Tail lights are not working</Description>
     <Id>1039</Id>
   </Call>
   <Call>
-    <MyCallType>TimingBeltFailure</MyCallType>
+    <MyCallType>Overheating</MyCallType>
     <Address>HaNegev, Maale Adumim</Address>
-    <Latitude>35.5833</Latitude>
-    <Longitude>32.8333</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-06-30T20:14:51</MaxFinishTime>
+    <Latitude>32.8333</Latitude>
+    <Longitude>35.5833</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T16:08:21</MaxFinishTime>
     <Description>Hood won’t close</Description>
     <Id>1040</Id>
   </Call>
   <Call>
-    <MyCallType>CheckEngineLight</MyCallType>
+    <MyCallType>TransmissionIssue</MyCallType>
     <Address>HaTamar, Qiryat Shemona</Address>
-    <Latitude>35.294</Latitude>
-    <Longitude>31.7768</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-06-30T20:27:51</MaxFinishTime>
+    <Latitude>31.7768</Latitude>
+    <Longitude>35.294</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T16:07:21</MaxFinishTime>
     <Description>Trunk won’t open</Description>
     <Id>1041</Id>
   </Call>
   <Call>
-    <MyCallType>SensorMalfunction</MyCallType>
+    <MyCallType>AirConditionerFailure</MyCallType>
     <Address>Sderot HaGalil, Nahariya</Address>
-    <Latitude>35.5683</Latitude>
-    <Longitude>33.2082</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-06-30T20:37:51</MaxFinishTime>
+    <Latitude>33.2082</Latitude>
+    <Longitude>35.5683</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T16:29:21</MaxFinishTime>
     <Description>Excessive smoke from exhaust</Description>
     <Id>1042</Id>
   </Call>
   <Call>
-    <MyCallType>SuspensionProblem</MyCallType>
+    <MyCallType>CheckEngineLight</MyCallType>
     <Address>Hachalutzim, Yavne</Address>
-    <Latitude>35.0944</Latitude>
-    <Longitude>33.0044</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-06-30T20:31:51</MaxFinishTime>
+    <Latitude>33.0044</Latitude>
+    <Longitude>35.0944</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T16:42:21</MaxFinishTime>
     <Description>Battery terminals are corroded</Description>
     <Id>1043</Id>
   </Call>
   <Call>
-    <MyCallType>PowerSteeringFailure</MyCallType>
+    <MyCallType>TimingBeltFailure</MyCallType>
     <Address>Ein Esariya, Jericho Area</Address>
-    <Latitude>34.7383</Latitude>
-    <Longitude>31.8775</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-06-30T20:17:51</MaxFinishTime>
+    <Latitude>31.8775</Latitude>
+    <Longitude>34.7383</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T16:17:21</MaxFinishTime>
     <Description>Parking brake is stuck</Description>
     <Id>1044</Id>
   </Call>
   <Call>
-    <MyCallType>AirConditionerFailure</MyCallType>
+    <MyCallType>SuspensionProblem</MyCallType>
     <Address>Sokolov, Holon</Address>
-    <Latitude>35.45</Latitude>
-    <Longitude>31.8667</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-06-30T20:34:51</MaxFinishTime>
+    <Latitude>31.8667</Latitude>
+    <Longitude>35.45</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T16:29:21</MaxFinishTime>
     <Description>Fuel gauge is not accurate</Description>
     <Id>1045</Id>
   </Call>
   <Call>
-    <MyCallType>ExhaustLeak</MyCallType>
+    <MyCallType>HeadlightFailure</MyCallType>
     <Address>Harish Boulevard, Harish</Address>
-    <Latitude>34.7872</Latitude>
-    <Longitude>32.0158</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-06-30T20:38:51</MaxFinishTime>
+    <Latitude>32.0158</Latitude>
+    <Longitude>34.7872</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T16:43:21</MaxFinishTime>
     <Description>Airbag warning light is on</Description>
     <Id>1046</Id>
   </Call>
   <Call>
-    <MyCallType>CheckEngineLight</MyCallType>
+    <MyCallType>General</MyCallType>
     <Address>Bar Ilan, Bnei Brak</Address>
-    <Latitude>35.0247</Latitude>
-    <Longitude>32.4746</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-06-30T20:38:51</MaxFinishTime>
+    <Latitude>32.4746</Latitude>
+    <Longitude>35.0247</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T16:28:21</MaxFinishTime>
     <Description>Steering wheel is stiff</Description>
     <Id>1047</Id>
   </Call>
   <Call>
-    <MyCallType>CloggedFuelFilter</MyCallType>
+    <MyCallType>StarterMotorFailure</MyCallType>
     <Address>Eilat, Machtesh Rimon</Address>
-    <Latitude>34.3233</Latitude>
-    <Longitude>31.2334</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-06-30T20:43:51</MaxFinishTime>
+    <Latitude>31.2334</Latitude>
+    <Longitude>34.3233</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T16:41:21</MaxFinishTime>
     <Description>Horn is not working</Description>
     <Id>1048</Id>
   </Call>
   <Call>
-    <MyCallType>FlatTire</MyCallType>
+    <MyCallType>SparkPlugIssue</MyCallType>
     <Address>Geha Highway</Address>
-    <Latitude>35.4545</Latitude>
-    <Longitude>32.4554</Longitude>
-    <OpenTime>2025-06-30T22:08:51</OpenTime>
-    <MaxFinishTime>2025-06-30T20:42:51</MaxFinishTime>
+    <Latitude>32.4554</Latitude>
+    <Longitude>35.4545</Longitude>
+    <OpenTime>2025-07-01T17:54:21</OpenTime>
+    <MaxFinishTime>2025-07-01T16:30:21</MaxFinishTime>
     <Description>Dashboard lights flickering</Description>
     <Id>1049</Id>
-  </Call>
-  <Call>
-    <MyCallType>General</MyCallType>
-    <Address>3 HaNevi'im St, Jerusalem</Address>
-    <Latitude>31.78168</Latitude>
-    <Longitude>35.220332</Longitude>
-    <OpenTime>2025-06-30T21:12:17.7128978+03:00</OpenTime>
-    <MaxFinishTime>2025-07-02T00:00:00</MaxFinishTime>
-    <Description>mmmm</Description>
-    <Id>1050</Id>
-  </Call>
-  <Call>
-    <MyCallType>None</MyCallType>
-    <Address>3 HaNevi'im St, Jerusalem</Address>
-    <Latitude>31.78168</Latitude>
-    <Longitude>35.220332</Longitude>
-    <OpenTime>2025-06-30T21:12:41.1597704+03:00</OpenTime>
-    <MaxFinishTime>2025-07-02T00:00:00</MaxFinishTime>
-    <Description>fff</Description>
-    <Id>1051</Id>
   </Call>
 </ArrayOfCall>

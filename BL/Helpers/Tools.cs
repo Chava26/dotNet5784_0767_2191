@@ -1,12 +1,14 @@
-﻿
+
+using BO;
+using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Reflection;
 using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using BO;
-using Newtonsoft.Json.Linq;
 using System.Text.Json;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace Helpers;
+
+using DalApi;
 using System.Net;
 using System.Net.Mail;
 
@@ -15,14 +17,16 @@ using System.Net.Mail;
 
     internal static class Tools
     {
-        /// <summary>
-        /// Extension method to generate a string representation of all the properties of an object of type T using Reflection.
-        /// If a property is a collection, its elements will be included in the string.
-        /// </summary>
-        /// <typeparam name="T">The type of the object to reflect upon.</typeparam>
-        /// <param name="t">The object instance to analyze.</param>
-        /// <returns>A string containing the names and values of all properties of the object, including elements of collections.</returns>
-        public static string ToStringProperty<T>(this T t)
+        private static IDal s_dal = DalApi.Factory.Get;//stage 4
+
+    /// <summary>
+    /// Extension method to generate a string representation of all the properties of an object of type T using Reflection.
+    /// If a property is a collection, its elements will be included in the string.
+    /// </summary>
+    /// <typeparam name="T">The type of the object to reflect upon.</typeparam>
+    /// <param name="t">The object instance to analyze.</param>
+    /// <returns>A string containing the names and values of all properties of the object, including elements of collections.</returns>
+    public static string ToStringProperty<T>(this T t)
         {
             if (t == null)
             {
@@ -48,44 +52,68 @@ using System.Net.Mail;
             return string.Join(", ", propertyValues);
         }
 
-       
-        /// <summary>
-        /// Calculates the status of a call based on its current progress and remaining time until the maximum finish time.
-        /// </summary>
-        /// <param name="assignment">The assignment related to the volunteer.</param>
-        /// <param name="call">The call being handled by the volunteer.</param>
-        /// <param name="riskThreshold">The time threshold (in minutes) for determining a "risk" status.</param>
-        /// <returns>The calculated <see cref="CallStatus"/> of the call.</returns>
-        public static CallStatus CalculateStatus(DO.Assignment assignment, DO.Call call, int riskThreshold = 30)
-        {
-            // Check if the call is currently in progress (not completed)
-            if (assignment.exitTime == null)
-            {
-                // Verify that the call has a defined maximum finish time
-                if (call.MaxFinishTime.HasValue)
-                {
-                    // Calculate the remaining time for the call
-                    var remainingTime = call.MaxFinishTime.Value - DateTime.Now;
 
-                    // Determine if the call is approaching the risk threshold
-                    if (remainingTime.TotalMinutes <= riskThreshold)
-                    {
-                        return CallStatus.InProgressRisk; // Call is in progress and nearing its maximum finish time
-                    }
-                    else
-                    {
-                        return CallStatus.InProgress; // Call is in progress
-                    }
-                }
-                else
-                {
-                    // If MaxFinishTime is not defined, assume the call is simply in progress
-                    return CallStatus.InProgress;
-                }
+    /// <summary>
+    /// Calculates the status of a call based on its properties and the latest assignment
+    /// </summary>
+    /// <param name="call">The call entity from the data layer.</param>
+    /// <param name="latestAssignment">The latest assignment for the call, if any.</param>
+    /// <param name="riskThreshold">The time span considered as a risk threshold.</param>
+    /// <returns>The calculated <see cref="CallStatus"/>.</returns>
+    public static CallStatus CalculateCallStatus(DO.Call call, DO.Assignment? latestAssignment = null)
+    {
+        if (latestAssignment is null)
+        {
+            lock (AdminManager.BlMutex) //stage 7
+                latestAssignment = s_dal.Assignment.ReadAll().FirstOrDefault(a => a.CallId == call.Id);
+        }
+
+        TimeSpan riskThreshold = TimeSpan.FromMinutes(30); // Risk threshold configuration
+
+        // If no assignment exists, determine if the call is open or expired
+        if (latestAssignment == null)
+        {
+            
+            if (call.MaxFinishTime.HasValue && DateTime.Now > call.MaxFinishTime.Value)
+            {
+                return CallStatus.Expired;
             }
 
+            TimeSpan? timeToMax = call.MaxFinishTime.HasValue
+                ? call.MaxFinishTime.Value - DateTime.Now
+                : null;
+
+            if (timeToMax.HasValue && timeToMax <= riskThreshold)
+            {
+                return CallStatus.OpenRisk;
+            }
+
+            return CallStatus.Open;
+        }
+        if (latestAssignment.TypeOfEndTime == DO.EndOfTreatment.expired)
+        {
+            return CallStatus.Expired;
+        }
+        if (latestAssignment.TypeOfEndTime == DO.EndOfTreatment.selfCancel)
+        {
+            return CallStatus.Open;
+        }
+        //If an assignment exists but has an exit time, the call is closed
+        if (latestAssignment.exitTime.HasValue)
+        {
             return CallStatus.Closed;
         }
+
+        // Calculate time remaining for in-progress calls
+        TimeSpan? timeRemaining = call.MaxFinishTime.HasValue
+            ? call.MaxFinishTime.Value - DateTime.Now
+            : null;
+
+        // Determine risk status for in-progress calls
+        bool isAtRisk = timeRemaining.HasValue && timeRemaining <= riskThreshold;
+
+        return isAtRisk ? CallStatus.InProgressRisk : CallStatus.InProgress;
+    }
     /// <summary>
     /// Calculates the great-circle distance between two geographic coordinates 
     /// using the Haversine formula.
@@ -97,7 +125,11 @@ using System.Net.Mail;
     /// <returns>The distance between the two points in kilometers.</returns>
     public static double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
         {
-            var r = 6371; 
+           if(lat1 ==0|| lat2 ==0|| lon1 == 0||lon2==0)
+            {
+                return 0; // No distance if both points are the same
+            }
+        var r = 6371; 
             var dLat = (lat2 - lat1) * Math.PI / 180;
             var dLon = (lon2 - lon1) * Math.PI / 180;
             var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +

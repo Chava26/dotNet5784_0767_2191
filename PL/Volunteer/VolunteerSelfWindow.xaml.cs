@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace PL.Volunteer
 {
@@ -22,6 +23,8 @@ namespace PL.Volunteer
         private BO.Volunteer? _volunteer;
         private string _password = string.Empty;
         private int? _lastCallId = null; // Track last call ID to detect changes
+        private volatile DispatcherOperation? _observerOperation = null; //stage 7
+        private volatile DispatcherOperation? _observerOperation2 = null; //stage 7
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -101,7 +104,7 @@ namespace PL.Volunteer
             if (Volunteer != null)
             {
                 s_bl.Volunteer.AddObserver(Volunteer.Id, OnVolunteerChanged);
-                s_bl.Call.AddObserver(OnCallChanged);
+                s_bl.Call.AddObserver(OnVolunteerChanged);
             }
 
             // Subscribe to window closed event to clean up observer
@@ -120,9 +123,11 @@ namespace PL.Volunteer
 
             try
             {
-                Dispatcher.Invoke(() =>
-                {
-                    int id = Volunteer.Id;
+                if (_observerOperation is null || _observerOperation.Status == DispatcherOperationStatus.Completed)
+                    _observerOperation = Dispatcher.BeginInvoke(() =>
+                    {
+
+                        int id = Volunteer.Id;
                     var refreshedVolunteer = s_bl.Volunteer.GetVolunteerDetails(id);
 
                     // Check if location changed
@@ -149,28 +154,29 @@ namespace PL.Volunteer
 
         /// <summary>
         /// Enhanced callback for call changes
-        /// </summary>
-        private void OnCallChanged()
-        {
-            if (Volunteer == null) return;
+        ///// </summary>
+        //private void OnCallChanged()
+        //{
+        //    if (Volunteer == null) return;
 
-            try
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    // Refresh volunteer data to get updated call information
-                    OnVolunteerChanged();
-                });
-            }
-            catch (Exception ex)
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    MessageBox.Show($"Error handling call change: {ex.Message}", "Error",
-                                   MessageBoxButton.OK, MessageBoxImage.Warning);
-                });
-            }
-        }
+        //    try
+        //    {
+        //        if (_observerOperation2 is null || _observerOperation2.Status == DispatcherOperationStatus.Completed)
+        //            _observerOperation2 = Dispatcher.BeginInvoke(() =>
+        //            {
+        //                // Refresh volunteer data to get updated call information
+        //                OnVolunteerChanged();
+        //              });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Dispatcher.Invoke(() =>
+        //        {
+        //            MessageBox.Show($"Error handling call change: {ex.Message}", "Error",
+        //                           MessageBoxButton.OK, MessageBoxImage.Warning);
+        //        });
+        //    }
+        //}
 
         /// <summary>
         /// Checks if volunteer location has changed
@@ -504,7 +510,7 @@ namespace PL.Volunteer
             if (Volunteer != null)
             {
                 s_bl.Volunteer.RemoveObserver(Volunteer.Id, OnVolunteerChanged);
-                s_bl.Call.RemoveObserver(OnCallChanged);
+                s_bl.Call.RemoveObserver(OnVolunteerChanged);
             }
         }
 

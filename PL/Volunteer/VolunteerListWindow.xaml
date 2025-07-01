@@ -72,7 +72,7 @@
                   EnableRowVirtualization="True"
                   RowDetailsVisibilityMode="VisibleWhenSelected"
                   SelectedItem="{Binding SelectedVolunteer}"
-                  MouseDoubleClick="lsvVolunteerList_MouseDoubleClick">
+                  MouseDoubleClick="lsvVolunteerList_MouseDoubleClick" SelectionChanged="DataGrid_SelectionChanged">
 
             <DataGrid.Columns>
                 <!--  Id -->
@@ -110,19 +110,16 @@
                 <DataGridTextColumn Binding="{Binding TotalHandledCalls}" Header="Total Responses Handled" Width="Auto"/>
 
                 <!--  TotalResponsesCancelled -->
-                <DataGridTextColumn Binding="{Binding TotalHandledCalls}" Header="Total Responses Cancelled" Width="Auto"/>
+                <DataGridTextColumn Binding="{Binding TotalCanceledCalls}" Header="Total Responses Cancelled" Width="Auto"/>
 
                 <!--  TotalExpiredResponses -->
                 <DataGridTextColumn Binding="{Binding TotalExpiredCalls}" Header="Total Expired Responses" Width="Auto"/>
 
-                <!--  SumOfCalls -->
-                <!--<DataGridTextColumn Binding="{Binding SumOfCalls}" Header="Sum of Calls" Width="Auto"/>-->
-
                 <!--  SumOfCancellation -->
-                <DataGridTextColumn Binding="{Binding SumOfCancellation}" Header="Sum of Cancellation" Width="Auto"/>
+                <DataGridTextColumn Binding="{Binding CurrentCallId}" Header="Current Call Id" Width="Auto"/>
 
                 <!--  SumOfExpiredCalls -->
-                <DataGridTextColumn Binding="{Binding SumOfExpiredCalls}" Header="Sum of Expired Calls" Width="Auto"/>
+                <DataGridTextColumn Binding="{Binding CurrentCallType}" Header="Current Call Type" Width="Auto"/>
 
             </DataGrid.Columns>
         </DataGrid>

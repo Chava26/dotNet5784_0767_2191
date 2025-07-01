@@ -1,5 +1,6 @@
 using DalApi; // Using the API for accessing the data layer (DAL)
 using DO; // Using the Data Objects representing the information
+using System;
 using System.Data; // Provides support for database-related structures
 using System.Net.NetworkInformation;
 using System.Numerics;
@@ -78,14 +79,14 @@ public static class Initialization
             string password = EncryptPassword(passwords[i]); // Call the function;
             double Latitude = coordinates[i].Latitude;
             double Longitude = coordinates[i].Longitude;
-            double MaximumDistance = s_rand.Next(5, 50); // Random maximum distance
+            double MaximumDistance = s_rand.Next(5, 60); // Random maximum distance
 
             // Add the volunteer to the database
             s_dal!.Volunteer.Create(new Volunteer(id, name, email, phone, Role.volunteer, true, MaximumDistance, password, addresses[i], Longitude, Latitude));
         }
         string mangerPass = EncryptPassword("Bjnh123@@"); // Call the function;
 
-        s_dal!.Volunteer.Create(new Volunteer(326772191, "Nechama", "nechama191@gmail.com" , "0583200806", Role.Manager, true, 23, mangerPass, "Jerusalem, King George St.", 35.2137, 31.7683));
+        s_dal!.Volunteer.Create(new Volunteer(326772191, "Nechama", "nechama191@gmail.com" , "0583200806", Role.Manager, true, 120, mangerPass, "Jerusalem, King George St.", 35.2137, 31.7683));
 
     }
     private static int GenerateValidIsraeliId(Random rand)
@@ -168,8 +169,9 @@ public static class Initialization
 
             CallType _callType = (CallType)s_rand.Next(1, Enum.GetValues(typeof(CallType)).Length); // Random call type
             DateTime TimeOfOpen = s_dal!.Config.Clock.AddHours(1); // Call open time
-            DateTime MaxTimeToFinish ; // Maximum finish time
-            if (i<25)
+                                                                   //DateTime MaxTimeToFinish; // Maximum finish time
+            DateTime MaxTimeToFinish;
+            if (i < 25)
             {
                 // זמן סיום עתידי בין עכשיו לעוד יומיים
                 MaxTimeToFinish = s_dal.Config.Clock.AddHours(s_rand.Next(1, 48));
@@ -181,13 +183,16 @@ public static class Initialization
                 if (MaxTimeToFinish > s_dal.Config.Clock)
                     MaxTimeToFinish = s_dal.Config.Clock.AddMinutes(-s_rand.Next(10, 60)); // לוודא שהסתיימה בעבר
             }
+            //DateTime MaxTimeToFinish = TimeOfOpen.AddDays(s_rand.Next((s_dal!.Config.Clock - TimeOfOpen).Days) + 1);
+
             // Define call data
             double Longitude = longitudes[i];
             double Latitude = latitudes[i];
             string? Address = addresses[i];
             string? Description = issues[i];
+
             // Add the call to the database
-               s_dal!.Call.Create(new Call(_callType, Address, Longitude, Latitude, TimeOfOpen, MaxTimeToFinish, Description));
+            s_dal!.Call.Create(new Call(_callType, Address, Latitude,Longitude, TimeOfOpen, MaxTimeToFinish, Description));
         
         }
     }
@@ -208,14 +213,13 @@ public static class Initialization
             int validDifference = (int)Math.Max(difference.TotalMinutes, 0);
             DateTime randomTime = minTime.AddMinutes(s_rand.Next(validDifference));
             //אני רוצה בשביל ההמשך שחלק עדין לא יקבלו זמן סיום
-            if (i < 15)
+            if (i>25)
             {
                 //calls.ElementAt(s_rand.Next(calls.Count() - 15)).Id;
                 // Create the assignment
-                s_dal!.Assignment.Create(new Assignment(calls.ElementAt(i).Id, volunteers[s_rand.Next(volunteers.Count)].Id, randomTime, (EndOfTreatment)
-                    s_rand.Next(Enum.GetValues(typeof(EndOfTreatment)).Length - 1), randomTime.AddHours(2)));
+                s_dal!.Assignment.Create(new Assignment(calls.ElementAt(i).Id, volunteers[s_rand.Next(volunteers.Count)].Id, randomTime, EndOfTreatment.selfCancel, randomTime.AddHours(2)));
             }
-            else if(i<35){
+            else if(i<25&&i>15){
                 // Create the assignment
                 s_dal!.Assignment.Create(new Assignment(calls.ElementAt(i).Id, volunteers[s_rand.Next(volunteers.Count)].Id, randomTime));
             }

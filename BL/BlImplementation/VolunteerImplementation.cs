@@ -495,7 +495,7 @@ internal class VolunteerImplementation : IVolunteer
 
                 // סיכומים
                 var handled = aList.Count(a => a.TypeOfEndTime == DO.EndOfTreatment.treated);
-                var canceled = aList.Count(a => a.TypeOfEndTime == DO.EndOfTreatment.administratorCancel);
+                var canceled = aList.Count(a => a.TypeOfEndTime == DO.EndOfTreatment.administratorCancel|| a.TypeOfEndTime == DO.EndOfTreatment.selfCancel);
                 var expired = aList.Count(a => a.TypeOfEndTime == DO.EndOfTreatment.expired);
 
                 // הקצאה פעילה
@@ -591,8 +591,8 @@ internal class VolunteerImplementation : IVolunteer
                     Address = callDetails.Address,
                     OpenTime = callDetails.OpenTime,
                     EntryTime = activeAssignment.EntryTime,
-                    DistanceFromVolunteer = Tools.CalculateDistance(doVolunteer.Latitude ?? 0, doVolunteer.Longitude ?? 0, callDetails.Latitude, callDetails.Longitude),
-                    Status = Tools.CalculateStatus(activeAssignment, callDetails, 30)
+                    DistanceFromVolunteer = Tools.CalculateDistance(doVolunteer.Latitude ?? 0, doVolunteer.Longitude ?? 0, callDetails.Latitude ?? 0, callDetails.Longitude ?? 0),
+                    Status = Tools.CalculateCallStatus(callDetails, activeAssignment)
                 };
             }
             return VolunteerManager.CreateBoVolunteer(doVolunteer, boCallInProgress);

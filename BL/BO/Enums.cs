@@ -105,6 +105,7 @@ public enum EndOfTreatment {
     administratorCancel, 
     expired 
 };
+
 // Enum for volunteer sort
 public enum VolunteerSortField
 {

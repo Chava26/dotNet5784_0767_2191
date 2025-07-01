@@ -49,7 +49,8 @@ internal class CallImplementation : ICall
     [MethodImpl(MethodImplOptions.Synchronized)]
     public IEnumerable<Call> ReadAll(Func<Call, bool>? filter = null)
     {
-        return XMLTools.LoadListFromXMLSerializer<Call>(Config.s_calls_xml);
+        var allCalls = XMLTools.LoadListFromXMLSerializer<Call>(Config.s_calls_xml);
+        return filter == null ? allCalls : allCalls.Where(filter);
     }
     /// <summary>
     /// Updates an existing call in the XML data source.

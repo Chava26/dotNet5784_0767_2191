@@ -26,7 +26,7 @@ public record Assignment
     /// <summary>
     ///  Default constructor
     /// </summary>
-    public Assignment() : this(0,0, DateTime.Now, EndOfTreatment.treated) { }
+    public Assignment() : this(0,0, DateTime.Now) { }
 }
 
 

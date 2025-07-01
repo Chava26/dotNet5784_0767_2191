@@ -1,63 +1,9 @@
-//using System;
-//using System.Collections.Generic;
-//using System.ComponentModel;
-//using System.Windows;
-//using BlApi;
-//using BO;
-
-//namespace PL.Call
-//{
-//    public partial class CallWindow : Window, INotifyPropertyChanged
-//    {
-//        private static readonly IBl s_bl = BlApi.Factory.Get();
-
-//        public BO.Call Call { get; set; }
-//        public IEnumerable<BO.CallType> CallTypes => Enum.GetValues(typeof(BO.CallType)).Cast<CallType>();
-
-//        // Properties for UI logic
-//        public bool IsCallTypeEditable => Call.Status == BO.CallStatus.OpenRisk || Call.Status == BO.CallStatus.Open;
-//        public bool IsDescriptionReadOnly => !(Call.Status == BO.CallStatus.OpenRisk || Call.Status == BO.CallStatus.Open);
-//        public bool IsAddressReadOnly => !(Call.Status == BO.CallStatus.OpenRisk || Call.Status == BO.CallStatus.Open);
-//        public bool IsMaxFinishTimeReadOnly => !(Call.Status == BO.CallStatus.OpenRisk || Call.Status == BO.CallStatus.Open || Call.Status == BO.CallStatus.InProgressRisk || Call.Status == BO.CallStatus.InProgress);
-//        public bool IsUpdateEnabled => Call.Status == BO.CallStatus.Open || Call.Status == BO.CallStatus.OpenRisk || Call.Status == BO.CallStatus.InProgressRisk || Call.Status == BO.CallStatus.InProgress;
-
-//        public event PropertyChangedEventHandler? PropertyChanged;
-//        private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-//        public CallWindow(int callId)
-//        {
-//            InitializeComponent();
-//            Call = s_bl.Call.GetCallDetails(callId);
-//            DataContext = this;
-//        }
-
-//        private void UpdateButton_Click(object sender, RoutedEventArgs e)
-//        {
-//            try
-//            {
-//                // בדיקות פורמט בסיסיות (לדוג' תיאור לא ריק)
-//                if (string.IsNullOrWhiteSpace(Call.Description))
-//                {
-//                    MessageBox.Show("יש להזין תיאור לקריאה.", "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
-//                    return;
-//                }
-//                // שלח עדכון ל-BL
-//                s_bl.Call.UpdateCallDetails(Call);
-//                MessageBox.Show("הקריאה עודכנה בהצלחה.", "הצלחה", MessageBoxButton.OK, MessageBoxImage.Information);
-//                Close();
-//            }
-//            catch (Exception ex)
-//            {
-//                MessageBox.Show("שגיאה בעדכון הקריאה: " + ex.Message, "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
-//            }
-//        }
-//    }
-//}
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Threading;
 using BlApi;
 using BO;
 
@@ -67,6 +13,9 @@ namespace PL.Call
     {
         private static readonly IBl s_bl = BlApi.Factory.Get();
         private int _callId;
+
+        // DispatcherOperation object for the RefreshCall observer method
+        private volatile DispatcherOperation? _refreshCallOperation = null;
 
         public BO.Call Call { get; set; }
         public IEnumerable<BO.CallType> CallTypes => Enum.GetValues(typeof(BO.CallType)).Cast<CallType>();
@@ -118,23 +67,25 @@ namespace PL.Call
 
         /// <summary>
         /// Refreshes the call details from the business logic layer.
+        /// Updated for stage 7 with DispatcherOperation implementation.
         /// </summary>
         private void RefreshCall()
         {
-            if (Call == null) return;
+            if (_refreshCallOperation is null || _refreshCallOperation.Status == DispatcherOperationStatus.Completed)
+                _refreshCallOperation = Dispatcher.BeginInvoke(() =>
+                {
+                    if (Call == null) return;
 
-            int id = Call.Id;
-            //Call = null;
-            Call = s_bl.Call.GetCallDetails(id);
-            DataContext = null;
-            DataContext = this;
+                    int id = Call.Id;
+                    Call = s_bl.Call.GetCallDetails(id);
 
-            // Trigger PropertyChanged for all status-dependent properties
-            OnPropertyChanged(nameof(IsCallTypeEditable));
-            OnPropertyChanged(nameof(IsDescriptionReadOnly));
-            OnPropertyChanged(nameof(IsAddressReadOnly));
-            OnPropertyChanged(nameof(IsMaxFinishTimeReadOnly));
-            OnPropertyChanged(nameof(IsUpdateEnabled));
+                    // Trigger PropertyChanged for all status-dependent properties
+                    OnPropertyChanged(nameof(IsCallTypeEditable));
+                    OnPropertyChanged(nameof(IsDescriptionReadOnly));
+                    OnPropertyChanged(nameof(IsAddressReadOnly));
+                    OnPropertyChanged(nameof(IsMaxFinishTimeReadOnly));
+                    OnPropertyChanged(nameof(IsUpdateEnabled));
+                });
         }
 
         private void UpdateButton_Click(object sender, RoutedEventArgs e)
