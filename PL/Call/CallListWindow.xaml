@@ -27,6 +27,7 @@
         <conv:CallStatusToForegroundConverter x:Key="CallStatusToForegroundConverter" />
         <conv:CallTypeToIconConverter x:Key="CallTypeToIconConverter" />
 
+
         <!-- Styles -->
         <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
             <Setter Property="FontWeight" Value="Bold"/>
@@ -323,6 +324,7 @@
                           BorderThickness="0"
                           Background="Transparent"
                           ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                    
                     <ListView.GroupStyle>
                         <GroupStyle>
                             <GroupStyle.HeaderTemplate>

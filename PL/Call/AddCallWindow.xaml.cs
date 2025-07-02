@@ -55,8 +55,9 @@ namespace PL
                 };
 
                 s_bl.Call.AddCall(newCall);
-                MessageBox.Show("Call added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 this.Close();
+                MessageBox.Show("Call added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
             }
             catch (Exception ex)
             {

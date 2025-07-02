@@ -83,17 +83,26 @@ internal class CallImplementation : BlApi.ICall
             if (!string.IsNullOrEmpty(doCall.Address))
             {
                 var (lat, lon) = await Tools.GetCoordinatesFromAddressAsync(doCall.Address);
-                if (lat is not null && lon is not null)
-                {
-                    doCall = doCall with { Latitude = lat.Value, Longitude = lon.Value };
-                    lock (AdminManager.BlMutex)
-                        _dal.Call.Update(doCall);
+            if (lat is not null && lon is not null)
+            {
+                doCall = doCall with { Latitude = lat.Value, Longitude = lon.Value };
+                lock (AdminManager.BlMutex)
+                    _dal.Call.Update(doCall);
 
-                }
+            }
+            // äôòìú Observers îçåõ ìÎlock
+            _ = Task.Run(() =>
+            {
                 if (boCall is not null)
                     CallManager.SendEmailWhenCalOpened(boCall);
+
                 CallManager.Observers.NotifyListUpdated();
                 CallManager.Observers.NotifyItemUpdated(doCall.Id);
+            });
+            //if (boCall is not null)
+            //        CallManager.SendEmailWhenCalOpened(boCall);
+            //    CallManager.Observers.NotifyListUpdated();
+            //    CallManager.Observers.NotifyItemUpdated(doCall.Id);
 
             }
       

@@ -500,4 +500,94 @@
     <Description>Dashboard lights flickering</Description>
     <Id>1049</Id>
   </Call>
+  <Call>
+    <MyCallType>General</MyCallType>
+    <Address>Highway 6, Central Israel</Address>
+    <Latitude>31.8052969</Latitude>
+    <Longitude>34.8320577</Longitude>
+    <OpenTime>2025-07-02T02:25:25.0975234+03:00</OpenTime>
+    <MaxFinishTime>2025-07-12T00:00:00</MaxFinishTime>
+    <Description>ff</Description>
+    <Id>1050</Id>
+  </Call>
+  <Call>
+    <MyCallType>FlatTire</MyCallType>
+    <Address>Highway 6, Central Israel</Address>
+    <Latitude>31.8052969</Latitude>
+    <Longitude>34.8320577</Longitude>
+    <OpenTime>2025-07-02T02:26:52.6658059+03:00</OpenTime>
+    <MaxFinishTime>2025-07-11T00:00:00</MaxFinishTime>
+    <Description>f</Description>
+    <Id>1051</Id>
+  </Call>
+  <Call>
+    <MyCallType>FlatTire</MyCallType>
+    <Address>Highway 6, Central Israel</Address>
+    <Latitude>31.8052969</Latitude>
+    <Longitude>34.8320577</Longitude>
+    <OpenTime>2025-07-02T02:31:31.915361+03:00</OpenTime>
+    <MaxFinishTime>2025-07-16T00:00:00</MaxFinishTime>
+    <Description>ff</Description>
+    <Id>1052</Id>
+  </Call>
+  <Call>
+    <MyCallType>FlatTire</MyCallType>
+    <Address>Highway 6, Central Israel</Address>
+    <Latitude>31.8052969</Latitude>
+    <Longitude>34.8320577</Longitude>
+    <OpenTime>2025-07-02T02:36:01.1664718+03:00</OpenTime>
+    <MaxFinishTime>2025-07-24T00:00:00</MaxFinishTime>
+    <Description>ff</Description>
+    <Id>1053</Id>
+  </Call>
+  <Call>
+    <MyCallType>DeadBattery</MyCallType>
+    <Address>Begin Boulevard, Jerusalem</Address>
+    <Latitude>31.850233</Latitude>
+    <Longitude>35.210331</Longitude>
+    <OpenTime>2025-07-02T03:02:32.1180015+03:00</OpenTime>
+    <MaxFinishTime>2025-07-11T00:00:00</MaxFinishTime>
+    <Description>nn</Description>
+    <Id>1054</Id>
+  </Call>
+  <Call>
+    <MyCallType>FlatTire</MyCallType>
+    <Address>Begin Boulevard, Jerusalem</Address>
+    <Latitude>31.850233</Latitude>
+    <Longitude>35.210331</Longitude>
+    <OpenTime>2025-07-02T03:08:20.6708985+03:00</OpenTime>
+    <MaxFinishTime>2025-07-25T00:00:00</MaxFinishTime>
+    <Description>g</Description>
+    <Id>1055</Id>
+  </Call>
+  <Call>
+    <MyCallType>None</MyCallType>
+    <Address>Highway 6, Central Israel</Address>
+    <Latitude>31.8052969</Latitude>
+    <Longitude>34.8320577</Longitude>
+    <OpenTime>2025-07-02T03:17:38.1705365+03:00</OpenTime>
+    <MaxFinishTime>2025-07-25T00:00:00</MaxFinishTime>
+    <Description>ff</Description>
+    <Id>1056</Id>
+  </Call>
+  <Call>
+    <MyCallType>FlatTire</MyCallType>
+    <Address>Highway 6, Central Israel</Address>
+    <Latitude>31.8052969</Latitude>
+    <Longitude>34.8320577</Longitude>
+    <OpenTime>2025-07-02T03:31:23.7378536+03:00</OpenTime>
+    <MaxFinishTime>2025-07-10T00:00:00</MaxFinishTime>
+    <Description>xx</Description>
+    <Id>1057</Id>
+  </Call>
+  <Call>
+    <MyCallType>None</MyCallType>
+    <Address>Highway 6, Central Israel</Address>
+    <Latitude>31.8052969</Latitude>
+    <Longitude>34.8320577</Longitude>
+    <OpenTime>2025-07-02T03:32:32.9879068+03:00</OpenTime>
+    <MaxFinishTime>2025-07-03T00:00:00</MaxFinishTime>
+    <Description>gg</Description>
+    <Id>1058</Id>
+  </Call>
 </ArrayOfCall>

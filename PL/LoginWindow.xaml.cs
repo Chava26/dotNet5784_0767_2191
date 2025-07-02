@@ -1,10 +1,11 @@
 
-using System.Windows;
-using System.Windows.Input;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using BlApi;
 using PL.Volunteer;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace PL
 {
@@ -146,7 +147,7 @@ namespace PL
                 var role = s_bl.Volunteer.Login(volunteer.FullName, Password);
 
                 // Success - handle based on role
-                
+                Application.Current.Dispatcher.BeginInvoke(() => {
                     StatusMessage = $"Welcome, {volunteer.FullName}!";
 
                     if (role == BO.Role.Volunteer)
@@ -165,7 +166,7 @@ namespace PL
 
                     // Clear form for next login but keep success message briefly
                     ClearForm();
-                
+                });
             }
             catch (BO.BlDoesNotExistException)
             {
