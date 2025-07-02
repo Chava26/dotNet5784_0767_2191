@@ -63,6 +63,37 @@
             <GradientStop Color="#f39c12" Offset="1"/>
         </LinearGradientBrush>
 
+        <!-- Status Color Gradients -->
+        <LinearGradientBrush x:Key="OpenGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#3498db" Offset="0"/>
+            <GradientStop Color="#2980b9" Offset="1"/>
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="InProgressGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#9b59b6" Offset="0"/>
+            <GradientStop Color="#8e44ad" Offset="1"/>
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="ClosedGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#27ae60" Offset="0"/>
+            <GradientStop Color="#229954" Offset="1"/>
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="ExpiredGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#e74c3c" Offset="0"/>
+            <GradientStop Color="#c0392b" Offset="1"/>
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="OpenRiskGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#f39c12" Offset="0"/>
+            <GradientStop Color="#e67e22" Offset="1"/>
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="InProgressRiskGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#e67e22" Offset="0"/>
+            <GradientStop Color="#d35400" Offset="1"/>
+        </LinearGradientBrush>
+
         <!-- Styles -->
         <Style x:Key="ModernCard" TargetType="Border">
             <Setter Property="Background" Value="{StaticResource CardGradient}"/>
@@ -170,6 +201,17 @@
                     </BeginStoryboard>
                 </EventTrigger>
             </Style.Triggers>
+        </Style>
+
+        <Style x:Key="StatusBox" TargetType="Border">
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="15,10"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#000" BlurRadius="8" ShadowDepth="3" Opacity="0.3"/>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <Style x:Key="ModernTitle" TargetType="TextBlock">
@@ -381,20 +423,151 @@
                         <!-- Service Calls Card -->
                         <Border Background="{StaticResource BlueCardGradient}" 
                                 Style="{StaticResource ActionCard}"
-                                MouseLeftButtonDown="HandleCalls_Click">
-                            <StackPanel HorizontalAlignment="Center">
-                                <Ellipse Width="80" Height="80" 
-                                         Fill="White" 
-                                         Margin="0,0,0,20"/>
+                                MouseLeftButtonDown="HandleCalls_Click"
+                                Height="239" Width="559">
+                            <StackPanel HorizontalAlignment="Center" Margin="0,-12,0,12">
+                                <Ellipse Width="36" Height="22" 
+                                         Fill="White" RenderTransformOrigin="0.612,0.169" 
+                                         />
                                 <TextBlock Text="SERVICE CALLS" 
                                            Foreground="White" 
-                                           FontSize="24" 
+                                           FontSize="20" 
                                            FontWeight="Bold" 
-                                           HorizontalAlignment="Center" 
-                                           Margin="0,0,0,10"/>
-                                <TextBlock Text="Manage emergency service calls and dispatch technicians to customers in need" 
+                                           Height="34" Width="144"/>
+
+                                <!-- Call Status Display -->
+                                <Grid Margin="0,5,0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="33*"/>
+                                        <ColumnDefinition Width="71*"/>
+                                        <ColumnDefinition Width="103*"/>
+                                        <ColumnDefinition Width="96*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="32.812"/>
+                                        <RowDefinition Height="23.108"/>
+                                        <RowDefinition Height="53.028"/>
+                                        <RowDefinition Height="2.892"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- Open Status -->
+                                    <Border Grid.Row="0" Grid.Column="0" 
+                                            Style="{StaticResource StatusBox}"
+                                            Background="{StaticResource OpenGradient}"
+                                            Margin="2,2,2,2" Grid.RowSpan="2" Grid.ColumnSpan="2">
+                                        <StackPanel HorizontalAlignment="Center">
+                                            <TextBlock Text="{Binding OpenCallsCount}" 
+                                                       Foreground="White" 
+                                                       FontSize="16" 
+                                                       FontWeight="Bold" 
+                                                       HorizontalAlignment="Center"/>
+                                            <TextBlock Text="OPEN" 
+                                                       Foreground="White" 
+                                                       FontSize="8" 
+                                                       FontWeight="Bold" 
+                                                       HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- InProgress Status -->
+                                    <Border Grid.Row="0" Grid.Column="2" 
+                                            Style="{StaticResource StatusBox}"
+                                            Background="{StaticResource InProgressGradient}"
+                                            Margin="2,2,2,2" Grid.RowSpan="2">
+                                        <StackPanel HorizontalAlignment="Center">
+                                            <TextBlock Text="{Binding InProgressCallsCount}" 
+                                                       Foreground="White" 
+                                                       FontSize="16" 
+                                                       FontWeight="Bold" 
+                                                       HorizontalAlignment="Center"/>
+                                            <TextBlock Text="PROGRESS" 
+                                                       Foreground="White" 
+                                                       FontSize="8" 
+                                                       FontWeight="Bold" 
+                                                       HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- Closed Status -->
+                                    <Border Grid.Row="0" Grid.Column="3" 
+                                            Style="{StaticResource StatusBox}"
+                                            Background="{StaticResource ClosedGradient}"
+                                            Margin="2,0,2,2" Grid.RowSpan="2">
+                                        <StackPanel HorizontalAlignment="Center">
+                                            <TextBlock Text="{Binding ClosedCallsCount}" 
+                                                       Foreground="White" 
+                                                       FontSize="16" 
+                                                       FontWeight="Bold" 
+                                                       HorizontalAlignment="Center"/>
+                                            <TextBlock Text="CLOSED" 
+                                                       Foreground="White" 
+                                                       FontSize="8" 
+                                                       FontWeight="Bold" 
+                                                       HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- Expired Status -->
+                                    <Border Grid.Row="2" Grid.Column="0" 
+                                            Style="{StaticResource StatusBox}"
+                                            Background="{StaticResource ExpiredGradient}"
+                                            Margin="2,2,2,2" Grid.RowSpan="2" Grid.ColumnSpan="2">
+                                        <StackPanel HorizontalAlignment="Center">
+                                            <TextBlock Text="{Binding ExpiredCallsCount}" 
+                                                       Foreground="White" 
+                                                       FontSize="16" 
+                                                       FontWeight="Bold" 
+                                                       HorizontalAlignment="Center"/>
+                                            <TextBlock Text="EXPIRED" 
+                                                       Foreground="White" 
+                                                       FontSize="8" 
+                                                       FontWeight="Bold" 
+                                                       HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- OpenRisk Status -->
+                                    <Border Grid.Row="2" Grid.Column="2" 
+                                            Style="{StaticResource StatusBox}"
+                                            Background="{StaticResource OpenRiskGradient}"
+                                            Margin="2,2,2,2" Grid.RowSpan="2">
+                                        <StackPanel HorizontalAlignment="Center">
+                                            <TextBlock Text="{Binding OpenRiskCallsCount}" 
+                                                       Foreground="White" 
+                                                       FontSize="16" 
+                                                       FontWeight="Bold" 
+                                                       HorizontalAlignment="Center"/>
+                                            <TextBlock Text="OPEN RISK" 
+                                                       Foreground="White" 
+                                                       FontSize="8" 
+                                                       FontWeight="Bold" 
+                                                       HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- InProgressRisk Status -->
+                                    <Border Grid.Row="2" Grid.Column="3" 
+                                            Style="{StaticResource StatusBox}"
+                                            Background="{StaticResource InProgressRiskGradient}"
+                                            Margin="2,2,2,2" Grid.RowSpan="2">
+                                        <StackPanel HorizontalAlignment="Center">
+                                            <TextBlock Text="{Binding InProgressRiskCallsCount}" 
+                                                       Foreground="White" 
+                                                       FontSize="16" 
+                                                       FontWeight="Bold" 
+                                                       HorizontalAlignment="Center"/>
+                                            <TextBlock Text="PROG RISK" 
+                                                       Foreground="White" 
+                                                       FontSize="8" 
+                                                       FontWeight="Bold" 
+                                                       HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+
+                                <TextBlock Text="Manage emergency service calls and dispatch technicians" 
                                            Foreground="White" 
-                                           FontSize="14" 
+                                           FontSize="12" 
                                            HorizontalAlignment="Center" 
                                            TextWrapping="Wrap" 
                                            TextAlignment="Center" 
@@ -405,20 +578,21 @@
                         <!-- Technicians Card -->
                         <Border Background="{StaticResource PurpleCardGradient}" 
                                 Style="{StaticResource ActionCard}"
-                                MouseLeftButtonDown="HandleVolunteers_Click">
+                                MouseLeftButtonDown="HandleVolunteers_Click"
+                                Height="200">
                             <StackPanel HorizontalAlignment="Center">
-                                <Ellipse Width="80" Height="80" 
+                                <Ellipse Width="60" Height="60" 
                                          Fill="White" 
-                                         Margin="0,0,0,20"/>
+                                         Margin="0,0,0,15"/>
                                 <TextBlock Text="TECHNICIANS" 
                                            Foreground="White" 
-                                           FontSize="24" 
+                                           FontSize="20" 
                                            FontWeight="Bold" 
                                            HorizontalAlignment="Center" 
                                            Margin="0,0,0,10"/>
                                 <TextBlock Text="Manage technician assignments, availability status, and workforce optimization" 
                                            Foreground="White" 
-                                           FontSize="14" 
+                                           FontSize="12" 
                                            HorizontalAlignment="Center" 
                                            TextWrapping="Wrap" 
                                            TextAlignment="Center" 
@@ -625,18 +799,3 @@
         </Grid>
     </Border>
 </Window>
-
-<!-- Footer --><!--
-<Border Grid.Row="3" 
-                    Background="Transparent" 
-                    Padding="30,15" 
-                    CornerRadius="0,0,20,20">
-    <TextBlock Text="Emergency Road Service Control Center - Advanced Management System" 
-                           Foreground="White" 
-                           FontSize="14" 
-                           HorizontalAlignment="Center" 
-                           Opacity="0.7"/>
-</Border>
-</Grid>
-</Border>
-</Window>-->

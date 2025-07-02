@@ -517,19 +517,8 @@ internal class CallImplementation : BlApi.ICall
     /// <returns>An array where each index corresponds to a call status and contains the count of calls with that status.</returns>
     public IEnumerable<int> GetCallQuantitiesByStatus()
     {
-        //IEnumerable<DO.Call> calls;
-        //lock (AdminManager.BlMutex)
-        //    calls = _dal.Call.ReadAll();
-        //var counts = new int[Enum.GetValues(typeof(BO.CallStatus)).Length];
-
-
-
-        //_dal.Call.ReadAll()
-        //            .GroupBy(call => CallManager.CalculateCallStatus(call))
-        //            .ToList()
-        //            .ForEach(g => counts[(int)g.Key] = g.Count());
-        //return counts;
- {
+        
+ 
             // Retrieve all calls
             IEnumerable<DO.Call> calls;
             lock (AdminManager.BlMutex)
@@ -547,7 +536,7 @@ internal class CallImplementation : BlApi.ICall
 
             return result;
         }
-    }
+    
 
 
     /// <summary>

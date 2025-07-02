@@ -9,11 +9,11 @@
         mc:Ignorable="d"
         Title="SingleCallWindow" Height="600" Width="600"
         WindowStartupLocation="CenterScreen">
-    <!--<Window.Resources>
+    <Window.Resources>
         <conv:MissingCoordinatesToBrushConverter x:Key="MissingCoordinatesToBrushConverter"/>
-    </Window.Resources>-->
-    <Grid Margin="20">
-        <!--Background="{Binding Call, Converter={StaticResource MissingCoordinatesToBrushConverter}}"-->
+    </Window.Resources>
+    <Grid Margin="20"  Background="{Binding Call, Converter={StaticResource MissingCoordinatesToBrushConverter}}">
+
         
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
